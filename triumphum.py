@@ -302,7 +302,7 @@ def retrive_history_of_a_game(game):
 # Défffinition de classe
 listOfGames=[]
 class Game:
-	def __init__(self, name=None, codeName=None, licence=None, url=None, year=None, type_=None, author=None, command=None, comments=None):
+	def __init__(self, name=None, codeName=None, licence=None, url=None, year=None, type_=None, author=None, command=None, comments=None, platform=None):
 		self.name = name
 		self.codeName = codeName
 		self.licence = licence
@@ -312,6 +312,7 @@ class Game:
 		self.author = author
 		self.command = command
 		self.comments = comments
+		self.platform = platform
 		self.history = self.get_history()
 
 		listOfGames.append(self) # Adjonction à la liste des jeux
@@ -320,7 +321,16 @@ class Game:
 		# Préparation de la ligne de tableau
 
 		# Vérifier chaque clé pour une éventuelle valeur vide et remplacer par "-"
-		ncurseLine = [self.name or "-", self.licence or "-", self.type_ or "-", self.year or "-", self.latest_opening() or "-", format_timedelta_abbrev(self.history.cumulate_time()) or "0", self]
+		ncurseLine = [
+			self.platform or " ",
+			self.name or "-",
+			self.licence or "-",
+			self.type_ or "-",
+			self.year or "-",
+			self.latest_opening() or "-",
+			format_timedelta_abbrev(self.history.cumulate_time()) or "0",
+			self
+		]
 		return ncurseLine
 
 	def sheet(self):
@@ -435,7 +445,7 @@ def makeItemsList():
 
 items = makeItemsList() # TODO : déglobaliser
 
-HIDED_DATA_COLUMN=6
+HIDED_DATA_COLUMN=7
 
 def main(stdscr):
 	# Initialisation de ncurses
@@ -455,7 +465,7 @@ def main(stdscr):
 	app_name = APP_FANCY_NAME + " | " + APP_DESCRIPTION
 
 	# Titres des colonnes
-	titles = ["Titre", "Licence", "Type", "Date", "Dernière ouverture", "Temps cumulé"]
+	titles = ["Plateforme", "Titre", "Licence", "Type", "Date", "Dernière ouverture", "Temps cumulé"]
 
 	# Données de la liste
 	global items
