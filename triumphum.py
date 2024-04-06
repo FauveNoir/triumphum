@@ -11,6 +11,8 @@ import re
 from datetime import datetime, timedelta
 from tabulate import tabulate
 import humanize
+import pendulum
+
 
 ########################################################################
 # fonctions de test
@@ -30,6 +32,7 @@ APP_VERSION="0.1"
 APP_AUTHOR="Fauve"
 APP_AUTHOR_MAIL="fauve.ordinator@taniere.info"
 APP_URL=""
+
 
 ########################################################################
 # Répertoire de configuration
@@ -273,7 +276,6 @@ class History:
 		return None
 
 	def cumulate_time(self):
-		# "0:00:00.467633"
 		total_time = timedelta()
 		for history_entry in self.history:
 			t = datetime.strptime(history_entry.duration,"%H:%M:%S.%f")
@@ -345,6 +347,19 @@ class Game:
 
 		listOfGames.append(self) # Adjonction à la liste des jeux
 
+	def human_latest_opening(self):
+
+		if self.latest_opening():
+			datetime_date = datetime.fromisoformat(self.latest_opening())
+
+			pendulum_date = pendulum.instance(datetime_date)
+			pendulum_date = pendulum_date.in_tz('local')
+			
+			diff = pendulum.now().diff_for_humans(pendulum_date, absolute=True)
+
+			return diff
+		return ""
+
 	def ncurseLine(self):
 		# Préparation de la ligne de tableau
 
@@ -355,7 +370,7 @@ class Game:
 			self.licence.abbr or "-",
 			self.type_.abbr or "-",
 			self.year or "-",
-			self.latest_opening() or "-",
+			self.human_latest_opening() or "-",
 			format_timedelta_abbrev(self.history.cumulate_time()) or "0",
 			self
 		]
