@@ -8,7 +8,7 @@ import webbrowser
 import pyperclip
 import appdirs
 import re
-from datetime import datetime
+from datetime import datetime, timedelta
 from tabulate import tabulate
 
 ########################################################################
@@ -288,7 +288,7 @@ class Game:
 		# Préparation de la ligne de tableau
 
 		# Vérifier chaque clé pour une éventuelle valeur vide et remplacer par "-"
-		ncurseLine = [self.name or "-", self.licence or "-", self.type_ or "-", self.year or "-", self.latest_opening() or "-", self]
+		ncurseLine = [self.name or "-", self.licence or "-", self.type_ or "-", self.year or "-", self.latest_opening() or "-", self.history.cumulate_time() or "0", self]
 		return ncurseLine
 
 	def sheet(self):
@@ -403,7 +403,7 @@ def makeItemsList():
 
 items = makeItemsList() # TODO : déglobaliser
 
-HIDED_DATA_COLUMN=5
+HIDED_DATA_COLUMN=6
 
 def main(stdscr):
 	# Initialisation de ncurses
