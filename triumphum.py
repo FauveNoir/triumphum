@@ -58,8 +58,8 @@ def format_timedelta_abbrev(td):
 ########################################################################
 
 # Défffinition de classe
-listOfPlateforms=[]
-class Plateform:
+listOfPlatforms=[]
+class Platform:
 	def __init__(self, name=None, code=None, abbr=None):
 		self.name = name
 		self.code = code
@@ -68,11 +68,11 @@ class Plateform:
 
 # Extraction des plateformes
 with open(CONFIG_DIR + '/listOfPlatforms.json') as f:
-	listOfGameTypesData = json.load(f)["platforms"]
+	listOfPlatformsData = json.load(f)["platforms"]
 
 # Déploiment des objet de licence
-for aPlateform in listOfPlateformsData:
-	Plateform(name=aPlateform.get("name"), code=aPlateform.get("code"), abbr=aPlateform.get("abbr"), url=aPlateform.get("url"), shortText=aPlateform.get("shortText"), freedomCoefficient=aPlateform.get("freedomCoefficient"))
+for aPlatform in listOfPlatformsData:
+	Platform(name=aPlatform.get("name"), code=aPlatform.get("code"), abbr=aPlatform.get("abbr"))
 
 ########################################################################
 # Classe des types de jeux
