@@ -161,6 +161,13 @@ class Licence:
 with open(CONFIG_DIR + '/listOfLicences.json') as f:
 	listOfLicencesData = json.load(f)["licences"]
 
+Licence(name="Licence inconue", abbr="-", code="unknownlicence")
+
+def get_licence_object_after_code(code):
+	if code in globals():
+		return globals()[code]
+	return unknownlicence
+
 # Déploiment des objet de licence
 for aLicence in listOfLicencesData:
 	Licence(name=aLicence.get("name"), code=aLicence.get("code"), abbr=aLicence.get("abbr"), url=aLicence.get("url"), shortText=aLicence.get("shortText"), freedomCoefficient=aLicence.get("freedomCoefficient"))
@@ -372,7 +379,7 @@ for aGame in listOfGamesData:
 	Game(
 		name=aGame.get("name"),
 		codeName=aGame.get("codeName"),
-		licence=aGame.get("licence"),
+		licence=get_platform_object_after_code(aGame.get("licence")),
 		url=aGame.get("url"),
 		year=aGame.get("year"),
 		type_=aGame.get("type"),
