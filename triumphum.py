@@ -403,6 +403,8 @@ def makeItemsList():
 
 items = makeItemsList() # TODO : déglobaliser
 
+HIDED_DATA_COLUMN=5
+
 def main(stdscr):
 	# Initialisation de ncurses
 	curses.curs_set(0)  # Masquer le curseur
@@ -421,7 +423,7 @@ def main(stdscr):
 	app_name = APP_FANCY_NAME + " | " + APP_DESCRIPTION
 
 	# Titres des colonnes
-	titles = ["Titre", "Licence", "Type", "Date", "Dernière ouverture"]
+	titles = ["Titre", "Licence", "Type", "Date", "Dernière ouverture", "Temps cumulé"]
 
 	# Données de la liste
 	global items
@@ -453,12 +455,12 @@ def main(stdscr):
 				if i == selected_row:
 					pass
 #				elif j != 4:  # Masquer la colonne "commande"
-				elif j < 5:  # Masquer la colonne "commande"
+				elif j < HIDED_DATA_COLUMN:  # Masquer la colonne "commande"
 					stdscr.addstr(i + 2, sum(col_widths[:j]) + j * 2, str(column))
 
 		stdscr.addstr(selected_row + 2, 0, " " * curses.COLS, curses.color_pair(2))  # Effacer toute la ligne avec la couleur de fond
 		# Affichage des données de la liste avec surbrillance pour la ligne sélectionnée
-		for j, column in enumerate(items[selected_row][:5]):  # Afficher seulement les 4 premières colonnes
+		for j, column in enumerate(items[selected_row][:HIDED_DATA_COLUMN]):  # Afficher seulement les 4 premières colonnes
 			stdscr.addstr(selected_row + 2, sum(col_widths[:j]) + j * 2, str(column), curses.color_pair(2) | curses.A_BOLD)
 
 		# Rafraîchir l'écran
@@ -475,10 +477,10 @@ def main(stdscr):
 		elif key == curses.KEY_ENTER or key in [10, 13]:  # Touche "Entrée"
 			# Exécuter la commande de lancement du jeu associée à la ligne sélectionnée
 			#write_opening_date_on_history(items[selected_row][5])
-			game = items[selected_row][5]
+			game = items[selected_row][HIDED_DATA_COLUMN]
 			threading.Thread(target=run_command_and_write_on_history, args=(game,)).start()
 		elif key == ord('a'):  # Ouvrir le lien associé au jeu si la touche 'a' est pressée
-			url = items[selected_row][5].url  # Supposons que l'URL est stockée à l'indice 5
+			url = items[selected_row][HIDED_DATA_COLUMN].url  # Supposons que l'URL est stockée à l'indice 5
 			webbrowser.open(url)
 		elif key == ord('b'):  # Trier par titre si la touche 'b' est pressée
 			items = sort_by_title(items)
