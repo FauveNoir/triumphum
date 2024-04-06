@@ -311,13 +311,14 @@ def sort_by_type(items):
 def sort_by_date(items):
 	return sorted(items, key=lambda x: str(x[3]))
 
-def run_command(command):
+def run_command(game):
 	# Exécuter le sous-processus tout en redirigeant les entrées/sorties standard
-	runed_command = subprocess.Popen(command.command, stdin=subprocess.PIPE, stdout=subprocess.PIPE)
-	output, error = runed_command.communicate()
-	end_time = datetime.now()
-	with open('/tmp/triumphumlogs', 'w') as f:
-		f.write(end_time.strftime("%Y-%m-%dT%H:%M"))
+	runed_command = subprocess.Popen(game.command, stdin=subprocess.PIPE, stdout=subprocess.PIPE)
+	#output, error = runed_command.communicate()
+	#end_time = datetime.now()
+	#with open('/tmp/triumphumlogs', 'w') as f:
+	#	f.write(end_time.strftime("%Y-%m-%dT%H:%M"))
+
 
 def write_opening_date_on_history(game):
 	# Charger le JSON existant depuis un fichier
@@ -436,8 +437,8 @@ def main(stdscr):
 		elif key == curses.KEY_ENTER or key in [10, 13]:  # Touche "Entrée"
 			# Exécuter la commande de lancement du jeu associée à la ligne sélectionnée
 			write_opening_date_on_history(items[selected_row][5])
-			self = items[selected_row][5]
-			threading.Thread(target=run_command, args=(self,)).start()
+			game = items[selected_row][5]
+			threading.Thread(target=run_command, args=(game,)).start()
 		elif key == ord('a'):  # Ouvrir le lien associé au jeu si la touche 'a' est pressée
 			url = items[selected_row][5].url  # Supposons que l'URL est stockée à l'indice 5
 			webbrowser.open(url)
