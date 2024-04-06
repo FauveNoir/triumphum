@@ -313,7 +313,7 @@ def sort_by_date(items):
 
 def run_command(command):
 	# Exécuter le sous-processus tout en redirigeant les entrées/sorties standard
-	runed_command = subprocess.Popen(command, stdin=subprocess.PIPE, stdout=subprocess.PIPE)
+	runed_command = subprocess.Popen(command.command, stdin=subprocess.PIPE, stdout=subprocess.PIPE)
 	output, error = runed_command.communicate()
 	end_time = datetime.now()
 	with open('/tmp/triumphumlogs', 'w') as f:
