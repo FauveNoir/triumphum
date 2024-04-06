@@ -74,6 +74,15 @@ with open(CONFIG_DIR + '/listOfPlatforms.json') as f:
 for aPlatform in listOfPlatformsData:
 	Platform(name=aPlatform.get("name"), code=aPlatform.get("code"), abbr=aPlatform.get("abbr"))
 
+
+Platform(name="Plateforme inconue", code="unknownplatform", abbr="")
+
+def get_platform_object_after_code(code):
+	if code in globals():
+		return globals()[code]
+	return unknownplatform
+
+
 ########################################################################
 # Classe des types de jeux
 ########################################################################
@@ -320,7 +329,7 @@ class Game:
 
 		# Vérifier chaque clé pour une éventuelle valeur vide et remplacer par "-"
 		ncurseLine = [
-			self.platform or " ",
+			self.platform.abbr or " ",
 			self.name or "-",
 			self.licence or "-",
 			self.type_ or "-",
@@ -358,12 +367,10 @@ class Game:
 with open(CONFIG_DIR + '/games.json') as f:
 	listOfGamesData = json.load(f)["games"]
 
-def get_platform_object_after_code(code):
-	return globals()[code]
-
 ## Déploiment des objet de jeux
 for aGame in listOfGamesData:
-	Game(name=aGame.get("name"),
+	Game(
+		name=aGame.get("name"),
 		codeName=aGame.get("codeName"),
 		licence=aGame.get("licence"),
 		url=aGame.get("url"),
