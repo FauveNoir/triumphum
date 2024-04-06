@@ -10,6 +10,7 @@ import appdirs
 import re
 from datetime import datetime, timedelta
 from tabulate import tabulate
+import humanize
 
 ########################################################################
 # fonctions de test
@@ -41,6 +42,16 @@ BASE_NAME_GAME_FILE="games.json"
 BASE_NAME_TYPE_FILE="listOfGameTypes.json"
 
 print("Répertoire de configuration:", CONFIG_DIR)
+
+########################################################################
+# Fonctions communes aux classes
+########################################################################
+def format_timedelta_abbrev(td):
+	if td == timedelta():
+		return "0"
+	delta = humanize.naturaldelta(td)
+	delta = delta.replace('seconds', 's').replace('minutes', 'm').replace('hours', 'h').replace('days', 'd')
+	return delta
 
 ########################################################################
 # Classe des types de jeux
@@ -288,7 +299,7 @@ class Game:
 		# Préparation de la ligne de tableau
 
 		# Vérifier chaque clé pour une éventuelle valeur vide et remplacer par "-"
-		ncurseLine = [self.name or "-", self.licence or "-", self.type_ or "-", self.year or "-", self.latest_opening() or "-", self.history.cumulate_time() or "0", self]
+		ncurseLine = [self.name or "-", self.licence or "-", self.type_ or "-", self.year or "-", self.latest_opening() or "-", format_timedelta_abbrev(self.history.cumulate_time()) or "0", self]
 		return ncurseLine
 
 	def sheet(self):
