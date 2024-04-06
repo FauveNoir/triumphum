@@ -384,7 +384,6 @@ with open(CONFIG_DIR + '/games.json') as f:
 
 ## Déploiment des objet de jeux
 for aGame in listOfGamesData:
-	print(aGame)
 	Game(
 		name=aGame.get("name"),
 		codeName=aGame.get("codeName"),
