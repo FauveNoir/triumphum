@@ -161,6 +161,17 @@ class Licence:
 with open(CONFIG_DIR + '/listOfLicences.json') as f:
 	listOfLicencesData = json.load(f)["licences"]
 
+# Déploiment des objet de licence
+for aLicence in listOfLicencesData:
+	Licence(
+		name=aLicence.get("name"),
+		code=aLicence.get("code"),
+		abbr=aLicence.get("abbr"),
+		url=aLicence.get("url"),
+		shortText=aLicence.get("shortText"),
+		freedomCoefficient=aLicence.get("freedomCoefficient")
+	)
+
 Licence(name="Licence inconue", abbr="-", code="unknownlicence")
 
 def get_licence_object_after_code(code):
@@ -168,9 +179,6 @@ def get_licence_object_after_code(code):
 		return globals()[code]
 	return unknownlicence
 
-# Déploiment des objet de licence
-for aLicence in listOfLicencesData:
-	Licence(name=aLicence.get("name"), code=aLicence.get("code"), abbr=aLicence.get("abbr"), url=aLicence.get("url"), shortText=aLicence.get("shortText"), freedomCoefficient=aLicence.get("freedomCoefficient"))
 
 ########################################################################
 # Classe des commentaires
@@ -338,7 +346,7 @@ class Game:
 		ncurseLine = [
 			self.platform.abbr or " ",
 			self.name or "-",
-			self.licence or "-",
+			self.licence.abbr or "-",
 			self.type_ or "-",
 			self.year or "-",
 			self.latest_opening() or "-",
@@ -376,10 +384,11 @@ with open(CONFIG_DIR + '/games.json') as f:
 
 ## Déploiment des objet de jeux
 for aGame in listOfGamesData:
+	print(aGame)
 	Game(
 		name=aGame.get("name"),
 		codeName=aGame.get("codeName"),
-		licence=get_platform_object_after_code(aGame.get("licence")),
+		licence=get_licence_object_after_code(aGame.get("licence")),
 		url=aGame.get("url"),
 		year=aGame.get("year"),
 		type_=aGame.get("type"),
