@@ -112,6 +112,13 @@ with open(CONFIG_DIR + '/listOfGameTypes.json') as f:
 for aGameType in listOfGameTypesData:
 	GameType(name=aGameType.get("name"), code=aGameType.get("code"), abbr=aGameType.get("abbr"))
 
+GameType(name="Type inconu", abbr="-", code="unknowntype")
+
+def get_type_object_after_code(code):
+	if code in globals():
+		return globals()[code]
+	return unknowntype
+
 ########################################################################
 # Classe des licences de jeux
 ########################################################################
@@ -178,7 +185,6 @@ def get_licence_object_after_code(code):
 	if code in globals():
 		return globals()[code]
 	return unknownlicence
-
 
 ########################################################################
 # Classe des commentaires
@@ -347,7 +353,7 @@ class Game:
 			self.platform.abbr or " ",
 			self.name or "-",
 			self.licence.abbr or "-",
-			self.type_ or "-",
+			self.type_.abbr or "-",
 			self.year or "-",
 			self.latest_opening() or "-",
 			format_timedelta_abbrev(self.history.cumulate_time()) or "0",
@@ -390,7 +396,7 @@ for aGame in listOfGamesData:
 		licence=get_licence_object_after_code(aGame.get("licence")),
 		url=aGame.get("url"),
 		year=aGame.get("year"),
-		type_=aGame.get("type"),
+		type_=get_type_object_after_code(aGame.get("type")),
 		command=aGame.get("command"),
 		author=aGame.get("author"),
 		platform=get_platform_object_after_code(aGame.get("platform"))
