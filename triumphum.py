@@ -314,10 +314,10 @@ def sort_by_date(items):
 def run_command(game):
 	# Exécuter le sous-processus tout en redirigeant les entrées/sorties standard
 	runed_command = subprocess.Popen(game.command, stdin=subprocess.PIPE, stdout=subprocess.PIPE)
-	#output, error = runed_command.communicate()
-	#end_time = datetime.now()
-	#with open('/tmp/triumphumlogs', 'w') as f:
-	#	f.write(end_time.strftime("%Y-%m-%dT%H:%M"))
+	output, error = runed_command.communicate()
+	end_time = datetime.now()
+	with open('/tmp/triumphumlogs', 'w') as f:
+		f.write(end_time.strftime("%Y-%m-%dT%H:%M"))
 
 
 def write_opening_date_on_history(game):
