@@ -360,7 +360,15 @@ with open(CONFIG_DIR + '/games.json') as f:
 
 ## Déploiment des objet de jeux
 for aGame in listOfGamesData:
-	Game(name=aGame.get("name"), codeName=aGame.get("codeName"), licence=aGame.get("licence"), url=aGame.get("url"), year=aGame.get("year"), type_=aGame.get("type"), command=aGame.get("command"), author=aGame.get("author"))
+	Game(name=aGame.get("name"),
+		codeName=aGame.get("codeName"),
+		licence=aGame.get("licence"),
+		url=aGame.get("url"),
+		year=aGame.get("year"),
+		type_=aGame.get("type"),
+		command=aGame.get("command"),
+		author=aGame.get("author")
+	)
 
 #for aGame in listOfGames:
 #	aGame.sheet()
