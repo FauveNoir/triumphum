@@ -210,6 +210,15 @@ class History:
 			return self.newer().end_time
 		return None
 
+	def cumulate_time(self):
+		# "0:00:00.467633"
+		total_time = timedelta()
+		for history_entry in self.history:
+			t = datetime.strptime(history_entry.duration,"%H:%M:%S.%f")
+			duration = timedelta(hours=t.hour, minutes=t.minute, seconds=t.second, microseconds=t.microsecond)
+			total_time+=duration
+		return total_time
+
 ########################################################################
 # Fonctions d’éxtraction de l’historique pour un jeu donné
 
