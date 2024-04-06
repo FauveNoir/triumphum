@@ -54,6 +54,27 @@ def format_timedelta_abbrev(td):
 	return delta
 
 ########################################################################
+# Classe des plateformes
+########################################################################
+
+# Défffinition de classe
+listOfPlateforms=[]
+class Plateform:
+	def __init__(self, name=None, code=None, abbr=None):
+		self.name = name
+		self.code = code
+		self.abbr = abbr
+		globals()[code] = self # Déclaration de la variable globale pérmétant d’atteindre directement le type voulu
+
+# Extraction des plateformes
+with open(CONFIG_DIR + '/listOfPlatforms.json') as f:
+	listOfGameTypesData = json.load(f)["platforms"]
+
+# Déploiment des objet de licence
+for aPlateform in listOfPlateformsData:
+	Plateform(name=aPlateform.get("name"), code=aPlateform.get("code"), abbr=aPlateform.get("abbr"), url=aPlateform.get("url"), shortText=aPlateform.get("shortText"), freedomCoefficient=aPlateform.get("freedomCoefficient"))
+
+########################################################################
 # Classe des types de jeux
 ########################################################################
 
@@ -129,10 +150,10 @@ class Licence:
 
 # Extraction des licences
 with open(CONFIG_DIR + '/listOfLicences.json') as f:
-	listOfGameTypesData = json.load(f)["licences"]
+	listOfLicencesData = json.load(f)["licences"]
 
 # Déploiment des objet de licence
-for aLicence in listOfGameTypesData:
+for aLicence in listOfLicencesData:
 	Licence(name=aLicence.get("name"), code=aLicence.get("code"), abbr=aLicence.get("abbr"), url=aLicence.get("url"), shortText=aLicence.get("shortText"), freedomCoefficient=aLicence.get("freedomCoefficient"))
 
 ########################################################################

@@ -1,0 +1,230 @@
+{
+	"platforms":
+	[
+		{
+			"name": "3DO",
+			"code": "3do",
+			"abbr": "3DO"
+		},
+		{
+			"name": "Arcade",
+			"code": "arcade",
+			"abbr": "Arc"
+		},
+		{
+			"name": "Atari 2600",
+			"code": "atari2600",
+			"abbr": "At. 2600"
+		},
+		{
+			"name": "Atari 5200",
+			"code": "atari5200",
+			"abbr": "At. 5200"
+		},
+		{
+			"name": "Atari 7800",
+			"code": "atari7800",
+			"abbr": "At. 7800"
+		},
+		{
+			"name": "Atari Jaguar",
+			"code": "jaguar",
+			"abbr": "Jaguar"
+		},
+		{
+			"name": "Atari Lynx",
+			"code": "lynx",
+			"abbr": "Lynx"
+		},
+		{
+			"name": "Atari Falcon",
+			"code": "falcon",
+			"abbr": "Falcon"
+		},
+		{
+			"name": "CHIP-8",
+			"code": "chip8",
+			"abbr": "CHIP-8"
+		},
+		{
+			"name": "ColecoVision",
+			"code": "colecovision",
+			"abbr": "ColecoVision"
+		},
+		{
+			"name": "Commodore 64",
+			"code": "commodore64",
+			"abbr": "C. 64"
+		},
+		{
+			"name": "Dreamcast",
+			"code": "dreamcast",
+			"abbr": "Dreamcast"
+		},
+		{
+			"name": "Famicom Disk System",
+			"code": "fds",
+			"abbr": "FDS"
+		},
+		{
+			"name": "Game Boy Color",
+			"code": "gameboycolor",
+			"abbr": "GB Color"
+		},
+		{
+			"name": "Game Boy Advance",
+			"code": "gameboyadvance",
+			"abbr": "GB Advance"
+		},
+		{
+			"name": "GameCube",
+			"code": "gamecube",
+			"abbr": "GameCube"
+		},
+		{
+			"name": "Game Gear",
+			"code": "gamegear",
+			"abbr": "GG"
+		},
+		{
+			"name": "MSX",
+			"code": "msx",
+			"abbr": "MSX"
+		},
+		{
+			"name": "Neo-Geo Pocket",
+			"code": "neogeopocket",
+			"abbr": "NGP"
+		},
+		{
+			"name": "Neo-Geo Color",
+			"code": "neogeocolor",
+			"abbr": "NGC"
+		},
+		{
+			"name": "NEC PC-98",
+			"code": "necpc98",
+			"abbr": "NEC PC-98"
+		},
+		{
+			"name": "Nintendo 64",
+			"code": "nintendo64",
+			"abbr": "Nin. 64"
+		},
+		{
+			"name": "Nintendo Entertainment System",
+			"code": "nes",
+			"abbr": "NES"
+		},
+		{
+			"name": "Nintendo DS",
+			"code": "nds",
+			"abbr": "NDS"
+		},
+		{
+			"name": "Nintendo 3DS",
+			"code": "n3ds",
+			"abbr": "Nin. 3DS"
+		},
+		{
+			"name": "Odyssey²",
+			"code": "odyssey2",
+			"abbr": "Odyssey²"
+		},
+		{
+			"name": "PC-FX",
+			"code": "pcfx",
+			"abbr": "PC-FX"
+		},
+		{
+			"name": "32X",
+			"code": "32x",
+			"abbr": "32X"
+		},
+		{
+			"name": "Mega CD",
+			"code": "megacd",
+			"abbr": "Mega CD"
+		},
+		{
+			"name": "Mega Drive",
+			"code": "megadrive",
+			"abbr": "MD"
+		},
+		{
+			"name": "Master System",
+			"code": "mastersystem",
+			"abbr": "Master Sys."
+		},
+		{
+			"name": "PlayStation Portable",
+			"code": "playstationportable",
+			"abbr": "PSP"
+		},
+		{
+			"name": "PlayStation",
+			"code": "playstation",
+			"abbr": "PS"
+		},
+		{
+			"name": "Pokémon Mini",
+			"code": "pokemonmini",
+			"abbr": "Pok. Mini"
+		},
+		{
+			"name": "Sega Saturn",
+			"code": "saturn",
+			"abbr": "Saturn"
+		},
+		{
+			"name": "Super NES",
+			"code": "supernes",
+			"abbr": "SNES"
+		},
+		{
+			"name": "Thomson MO/TO",
+			"code": "thomsonmoto",
+			"abbr": "MO/TO"
+		},
+		{
+			"name": "TurboGrafx-16",
+			"code": "turbografx16",
+			"abbr": "TG16"
+		},
+		{
+			"name": "SuperGrafx",
+			"code": "supergrafx",
+			"abbr": "SG"
+		},
+		{
+			"name": "TurboGrafx-CD",
+			"code": "turbografxcd",
+			"abbr": "TG-CD"
+		},
+		{
+			"name": "Vectrex",
+			"code": "vectrex",
+			"abbr": "VX"
+		},
+		{
+			"name": "Virtual Boy",
+			"code": "virtualboy",
+			"abbr": "VB"
+		},
+		{
+			"name": "WonderSwan",
+			"code": "wonderswan",
+			"abbr": "WS"
+		},
+		{
+			"name": "ZX Spectrum",
+			"code": "zxspectrum",
+			"abbr": "ZXS"
+		},
+		{
+			"name": "ZX81",
+			"code": "zx81",
+			"abbr": "ZX81"
+		}
+	]
+}
