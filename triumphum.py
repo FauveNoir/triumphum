@@ -12,6 +12,13 @@ from datetime import datetime
 from tabulate import tabulate
 
 ########################################################################
+# fonctions de test
+########################################################################
+
+def tprint(content):
+	print(content)
+
+########################################################################
 # Variables globales
 ########################################################################
 
@@ -139,10 +146,12 @@ class HistoryEntry:
 
 	def make_data(self):
 		data = {
-			"start_time": self.start_time,
-			"end_time": self.end_time,
-			"duration": self.duration,
+			"start_time": self.start_time.strftime("%Y-%m-%dT%H:%M:%S"),
+			"end_time": self.end_time.strftime("%Y-%m-%dT%H:%M:%S"),
+			"duration": self.duration.__str__(),
 		}
+
+		return data
 
 	def make_json(self):
 		# Bloc de transforamtion en json pour l’inscription dans l’historique persistant
@@ -196,6 +205,7 @@ class History:
 		return None
 
 	def last_date(self):
+		# Retourne la dateHeure de fermeture de la dernière partie jouée
 		if self.newer() != None:
 			return self.newer().end_time
 		return None
@@ -207,7 +217,16 @@ def is_history_date_relevant(date):
 	# Filtre des dates pertinantes
 
 	# Définir le motif de l'expression régulière pour le format AAAA-MM-JJThh:mm
-	pattern = re.compile(r'^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$')
+	pattern = re.compile(r'^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}$')
+	if pattern.match(date):
+		return True
+	return False
+
+def is_history_duration_relevant(date):
+	# Filtre des dates pertinantes
+
+	# Définir le motif de l'expression régulière pour le format AAAA-MM-JJThh:mm
+	pattern = re.compile(r'^\d+:\d{2}:\d{2}.\d{6}$')
 	if pattern.match(date):
 		return True
 	return False
@@ -215,7 +234,7 @@ def is_history_date_relevant(date):
 def is_history_entry_relevant(history_entry):
 	
 	if "start_time" in history_entry and "end_time" in history_entry and "duration" in history_entry :
-		if is_history_date_relevant(history_entry["start_time"]) and is_history_date_relevant(history_entry["end_time"]) and is_history_date_relevant(history_entry["duration"]):
+		if is_history_date_relevant(history_entry["start_time"]) and is_history_date_relevant(history_entry["end_time"]) and is_history_duration_relevant(history_entry["duration"]):
 			return True
 	return False
 
@@ -223,10 +242,13 @@ def retrive_history_of_a_game(game):
 	prepared_history = History()
 	with open(CONFIG_DIR + '/history.json') as f:
 		data = json.load(f)
+
 	if 'history' in data and game.codeName in data['history']:
 		# Récupération de l’historique du jeu en cours
-		get_history = data['history'][game.codeName]
-		for history_entry in get_history:
+		game_history = data['history'][game.codeName]
+		print(game.codeName)
+		print(game_history)
+		for history_entry in game_history:
 			if is_history_entry_relevant(history_entry):
 				prepared_history.append(HistoryEntry(dictionnary=history_entry))
 
@@ -291,6 +313,9 @@ with open(CONFIG_DIR + '/games.json') as f:
 for aGame in listOfGamesData:
 	Game(name=aGame.get("name"), codeName=aGame.get("codeName"), licence=aGame.get("licence"), url=aGame.get("url"), year=aGame.get("year"), type_=aGame.get("type"), command=aGame.get("command"), author=aGame.get("author"))
 
+#for aGame in listOfGames:
+#	aGame.sheet()
+
 ########################################################################
 # Fonctions de l’interface interactive
 ########################################################################
@@ -312,8 +337,7 @@ def sort_by_date(items):
 	return sorted(items, key=lambda x: str(x[3]))
 
 
-def write_opening_date_on_history(game):
-	# Charger le JSON existant depuis un fichier
+def history_data_with_current_game(game):
 	with open(CONFIG_DIR + '/history.json') as f:
 		data = json.load(f)
 
@@ -322,16 +346,26 @@ def write_opening_date_on_history(game):
 
 	if game.codeName not in data['history']:
 		data['history'][game.codeName] = []
-	data['history'][game.codeName].append(datetime.now().strftime("%Y-%m-%dT%H:%M"))
+
+	return data
+
+
+def write_opening_date_on_history(game=None, start_time=None, end_time=None, duration=None):
+	# Charger le JSON existant depuis un fichier
+	with open(CONFIG_DIR + '/history.json') as f:
+		data = json.load(f)
+
+	data = history_data_with_current_game(game)
+	history_entry=HistoryEntry(start_time=start_time, end_time=end_time, duration=duration)
+	data['history'][game.codeName].append(history_entry.make_data())
 
 	# Enregistrer la structure de données modifiée en tant que JSON
 	with open(CONFIG_DIR + '/history.json', 'w') as f:
 		json.dump(data, f, indent=4)
 
-
 def run_command_and_write_on_history(game):
 	# Enregistrement de l’heure de début
-	running_start_time = datetime.now()
+	start_time = datetime.now()
 
 	# Lancement du procéssus
 	command_process = subprocess.Popen(game.command, stdin=subprocess.PIPE, stdout=subprocess.PIPE)
@@ -339,10 +373,13 @@ def run_command_and_write_on_history(game):
 	output, error = command_process.communicate()
 
 	# Récupération de l’heure de fin
-	running_end_time = datetime.now()
+	end_time = datetime.now()
 
 	# Date
-	running_duration = running_end_time - running_start_time
+	duration = end_time - start_time
+
+	# Inscription de l’évenement dans l’historique
+	write_opening_date_on_history(game, start_time=start_time, end_time=end_time, duration=duration)
 
 ########################################################################
 # Interface
@@ -385,7 +422,7 @@ def main(stdscr):
 
 	# Boucle principale
 	while True:
-		curses.noecho()  # Désactiver l'écho des touches
+#		curses.noecho()  # Désactiver l'écho des touches # TODO à édcommenter avant prod
 		stdscr.clear()
 
 		# Dessiner la barre supérieure avec le nom de l'application
@@ -428,7 +465,7 @@ def main(stdscr):
 			selected_row = max(0, selected_row - 1)
 		elif key == curses.KEY_ENTER or key in [10, 13]:  # Touche "Entrée"
 			# Exécuter la commande de lancement du jeu associée à la ligne sélectionnée
-			write_opening_date_on_history(items[selected_row][5])
+			#write_opening_date_on_history(items[selected_row][5])
 			game = items[selected_row][5]
 			threading.Thread(target=run_command_and_write_on_history, args=(game,)).start()
 		elif key == ord('a'):  # Ouvrir le lien associé au jeu si la touche 'a' est pressée
