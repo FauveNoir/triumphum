@@ -12,6 +12,8 @@ from datetime import datetime, timedelta
 from tabulate import tabulate
 import humanize
 import pendulum
+import locale
+
 
 
 ########################################################################
@@ -33,6 +35,8 @@ APP_AUTHOR="Fauve"
 APP_AUTHOR_MAIL="fauve.ordinator@taniere.info"
 APP_URL=""
 
+# Définir la locale dans Pendulum
+pendulum.set_locale('fr')
 
 ########################################################################
 # Répertoire de configuration
@@ -51,7 +55,7 @@ print("Répertoire de configuration:", CONFIG_DIR)
 ########################################################################
 def format_timedelta_abbrev(td):
 	if td == timedelta():
-		return "0"
+		return " "
 	delta = humanize.naturaldelta(td)
 	delta = delta.replace('seconds', 's').replace('minutes', 'm').replace('hours', 'h').replace('days', 'd')
 	return delta
