@@ -287,8 +287,6 @@ def retrive_history_of_a_game(game):
 	if 'history' in data and game.codeName in data['history']:
 		# Récupération de l’historique du jeu en cours
 		game_history = data['history'][game.codeName]
-		print(game.codeName)
-		print(game_history)
 		for history_entry in game_history:
 			if is_history_entry_relevant(history_entry):
 				prepared_history.append(HistoryEntry(dictionnary=history_entry))
@@ -465,7 +463,7 @@ def main(stdscr):
 	app_name = APP_FANCY_NAME + " | " + APP_DESCRIPTION
 
 	# Titres des colonnes
-	titles = ["Plateforme", "Titre", "Licence", "Type", "Date", "Dernière ouverture", "Temps cumulé"]
+	titles = [" ", "Titre", "Licence", "Type", "Date", "Dernière ouverture", "Temps cumulé"]
 
 	# Données de la liste
 	global items
