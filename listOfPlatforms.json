@@ -2,6 +2,26 @@
 	"platforms":
 	[
 		{
+			"name": "Linux",
+			"code": "linux",
+			"abbr": "LIN"
+		},
+		{
+			"name": "Windows",
+			"code": "windows",
+			"abbr": "WIN"
+		},
+		{
+			"name": "Mac OS",
+			"code": "macos",
+			"abbr": "MAC"
+		},
+		{
+			"name": "DOS",
+			"code": "dos",
+			"abbr": "dos"
+		},
+		{
 			"name": "3DO",
 			"code": "3do",
 			"abbr": "3DO"

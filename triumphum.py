@@ -358,6 +358,9 @@ class Game:
 with open(CONFIG_DIR + '/games.json') as f:
 	listOfGamesData = json.load(f)["games"]
 
+def get_platform_object_after_code(code):
+	return globals()[code]
+
 ## Déploiment des objet de jeux
 for aGame in listOfGamesData:
 	Game(name=aGame.get("name"),
@@ -367,7 +370,8 @@ for aGame in listOfGamesData:
 		year=aGame.get("year"),
 		type_=aGame.get("type"),
 		command=aGame.get("command"),
-		author=aGame.get("author")
+		author=aGame.get("author"),
+		platform=get_platform_object_after_code(aGame.get("platform"))
 	)
 
 #for aGame in listOfGames:
