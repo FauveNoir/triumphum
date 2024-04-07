@@ -27,7 +27,7 @@ def tprint(content):
 
 APP_CODE_NAME="triumphum"
 APP_FANCY_NAME="Triumphum"
-APP_DESCRIPTION="Gestionnaire de ludothèque en Python et NCurses"
+APP_DESCRIPTION="Gestionnaire de ludothèque en Python et NCurses pour Linux"
 APP_VERSION="0.1"
 APP_AUTHOR="Fauve"
 APP_AUTHOR_MAIL="fauve.ordinator@taniere.info"
@@ -45,8 +45,8 @@ CONFIG_DIR = appdirs.user_config_dir(APP_CODE_NAME)
 
 BASE_NAME_GAME_FILE="games.json"
 BASE_NAME_TYPE_FILE="listOfGameTypes.json"
-
-print("Répertoire de configuration:", CONFIG_DIR)
+BASE_NAME_LICENCE_FILE="listOfLicences.json"
+BASE_NAME_PLATFORM_FILE="listOfPlatforms.json"
 
 ########################################################################
 # Fonctions communes aux classes
@@ -160,22 +160,22 @@ class Licence:
 
 	def __lt__(self, other):
 		if isinstance(other, Licence):
-			return self.freedomCoefficient < other.freedomCoefficient
+			return self.freedomCoefficient <  other.freedomCoefficient
 		return NotImplemented
 
 	def __le__(self, other):
 		if isinstance(other, Licence):
-			return self.freedomCoefficient < other.freedomCoefficient
+			return self.freedomCoefficient <= other.freedomCoefficient
 		return NotImplemented
 
 	def __gt__(self, other):
 		if isinstance(other, Licence):
-			return self.freedomCoefficient > other.freedomCoefficient
+			return self.freedomCoefficient >  other.freedomCoefficient
 		return NotImplemented
 
 	def __ge__(self, other):
 		if isinstance(other, Licence):
-			return self.freedomCoefficient > other.freedomCoefficient
+			return self.freedomCoefficient >= other.freedomCoefficient
 		return NotImplemented
 
 def create_licence_objects():
@@ -191,7 +191,7 @@ def create_licence_objects():
 			abbr=aLicence.get("abbr"),
 			url=aLicence.get("url"),
 			shortText=aLicence.get("shortText"),
-			freedomCoefficient=aLicence.get("freedomCoefficient")
+			freedomCoefficient=aLicence.get("freedomCoefficient") or 0
 		)
 
 Licence(name="Licence inconue", abbr="-", code="unknownlicence")
@@ -454,7 +454,7 @@ def sort_by_title(items):
 
 # Fonction pour trier les jeux par licence
 def sort_by_license(items):
-	return sorted(items, key=lambda x: x[1].lower())
+	return sorted(items, key=lambda x: x[7].licence)
 
 # Fonction pour trier les jeux par type
 def sort_by_type(items):
@@ -489,6 +489,8 @@ def write_opening_date_on_history(game=None, start_time=None, end_time=None, dur
 		# Enregistrer la structure de données modifiée en tant que JSON
 		with open(CONFIG_DIR + '/history.json', 'w') as f:
 			json.dump(data, f, indent=4)
+	except:
+		pass
 
 def run_command_and_write_on_history(game):
 	# Enregistrement de l’heure de début
@@ -513,6 +515,9 @@ def run_command_and_write_on_history(game):
 ########################################################################
 
 retrive_datas()
+
+for aGame in listOfGames:
+	print(aGame.name +": " + str(aGame.licence.freedomCoefficient))
 
 def makeItemsList():
 	items=[]
