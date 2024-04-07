@@ -454,7 +454,7 @@ def sort_by_title(items):
 
 # Fonction pour trier les jeux par licence
 def sort_by_license(items):
-	return sorted(items, key=lambda x: x[7].licence)
+	return sorted(sort_by_title(items), key=lambda x: x[7].licence)
 
 # Fonction pour trier les jeux par type
 def sort_by_type(items):
