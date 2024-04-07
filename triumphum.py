@@ -477,17 +477,18 @@ def history_data_with_current_game(game):
 	return data
 
 def write_opening_date_on_history(game=None, start_time=None, end_time=None, duration=None):
-	# Charger le JSON existant depuis un fichier
-	with open(CONFIG_DIR + '/history.json') as f:
-		data = json.load(f)
+	try:
+		# Charger le JSON existant depuis un fichier
+		with open(CONFIG_DIR + '/history.json') as f:
+			data = json.load(f)
 
-	data = history_data_with_current_game(game)
-	history_entry=HistoryEntry(start_time=start_time, end_time=end_time, duration=duration)
-	data['history'][game.codeName].append(history_entry.make_data())
+		data = history_data_with_current_game(game)
+		history_entry=HistoryEntry(start_time=start_time, end_time=end_time, duration=duration)
+		data['history'][game.codeName].append(history_entry.make_data())
 
-	# Enregistrer la structure de données modifiée en tant que JSON
-	with open(CONFIG_DIR + '/history.json', 'w') as f:
-		json.dump(data, f, indent=4)
+		# Enregistrer la structure de données modifiée en tant que JSON
+		with open(CONFIG_DIR + '/history.json', 'w') as f:
+			json.dump(data, f, indent=4)
 
 def run_command_and_write_on_history(game):
 	# Enregistrement de l’heure de début
