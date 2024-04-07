@@ -87,9 +87,6 @@ def create_platform_objects():
 			abbr=aPlatform.get("abbr")
 		)
 
-# Déploiement des objets de plateforme
-create_platform_objects()
-
 
 Platform(name="Plateforme inconue", code="unknownplatform", abbr="")
 
@@ -132,8 +129,6 @@ def create_game_type_objects():
 			code=aGameType.get("code"),
 			abbr=aGameType.get("abbr")
 		)
-
-create_game_type_objects()
 
 GameType(name="Type inconu", abbr="-", code="unknowntype")
 
@@ -202,8 +197,6 @@ def create_licence_objects():
 			shortText=aLicence.get("shortText"),
 			freedomCoefficient=aLicence.get("freedomCoefficient")
 		)
-
-create_licence_objects()
 
 Licence(name="Licence inconue", abbr="-", code="unknownlicence")
 
@@ -441,11 +434,18 @@ def create_game_objects():
 			platform=get_platform_object_after_code(aGame.get("platform"))
 		)
 
-create_game_objects()
-
 ########################################################################
 # Fonctions d’extraction des données
 ########################################################################
+
+# Déploiement des objets de plateforme
+create_platform_objects()
+# Déploiement des objets de types de jeux
+create_game_type_objects()
+# Déploiement des objets de licence
+create_licence_objects()
+# Déploiement des objets de jeux
+create_game_objects()
 
 ########################################################################
 # Fonctions de l’interface interactive
