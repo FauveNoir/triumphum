@@ -14,8 +14,6 @@ import humanize
 import pendulum
 import locale
 
-
-
 ########################################################################
 # fonctions de test
 ########################################################################
@@ -87,14 +85,12 @@ def create_platform_objects():
 			abbr=aPlatform.get("abbr")
 		)
 
-
 Platform(name="Plateforme inconue", code="unknownplatform", abbr="")
 
 def get_platform_object_after_code(code):
 	if code in globals():
 		return globals()[code]
 	return unknownplatform
-
 
 ########################################################################
 # Classe des types de jeux
@@ -438,14 +434,15 @@ def create_game_objects():
 # Fonctions d’extraction des données
 ########################################################################
 
-# Déploiement des objets de plateforme
-create_platform_objects()
-# Déploiement des objets de types de jeux
-create_game_type_objects()
-# Déploiement des objets de licence
-create_licence_objects()
-# Déploiement des objets de jeux
-create_game_objects()
+def retrive_datas():
+	# Déploiement des objets de plateforme
+	create_platform_objects()
+	# Déploiement des objets de types de jeux
+	create_game_type_objects()
+	# Déploiement des objets de licence
+	create_licence_objects()
+	# Déploiement des objets de jeux
+	create_game_objects()
 
 ########################################################################
 # Fonctions de l’interface interactive
@@ -467,7 +464,6 @@ def sort_by_type(items):
 def sort_by_date(items):
 	return sorted(items, key=lambda x: str(x[3]))
 
-
 def history_data_with_current_game(game):
 	with open(CONFIG_DIR + '/history.json') as f:
 		data = json.load(f)
@@ -479,7 +475,6 @@ def history_data_with_current_game(game):
 		data['history'][game.codeName] = []
 
 	return data
-
 
 def write_opening_date_on_history(game=None, start_time=None, end_time=None, duration=None):
 	# Charger le JSON existant depuis un fichier
@@ -515,6 +510,8 @@ def run_command_and_write_on_history(game):
 ########################################################################
 # Interface
 ########################################################################
+
+retrive_datas()
 
 def makeItemsList():
 	items=[]
