@@ -53,6 +53,7 @@ print("Répertoire de configuration:", CONFIG_DIR)
 ########################################################################
 # Fonctions communes aux classes
 ########################################################################
+
 def format_timedelta_abbrev(td):
 	if td == timedelta():
 		return " "
@@ -73,13 +74,21 @@ class Platform:
 		self.abbr = abbr
 		globals()[code] = self # Déclaration de la variable globale pérmétant d’atteindre directement le type voulu
 
-# Extraction des plateformes
-with open(CONFIG_DIR + '/listOfPlatforms.json') as f:
-	listOfPlatformsData = json.load(f)["platforms"]
+def create_platform_objects():
+	# Extraction des plateformes
+	with open(CONFIG_DIR + '/listOfPlatforms.json') as f:
+		listOfPlatformsData = json.load(f)["platforms"]
 
-# Déploiment des objet de licence
-for aPlatform in listOfPlatformsData:
-	Platform(name=aPlatform.get("name"), code=aPlatform.get("code"), abbr=aPlatform.get("abbr"))
+	# Déploiment des objet de licence
+	for aPlatform in listOfPlatformsData:
+		Platform(
+			name=aPlatform.get("name"),
+			code=aPlatform.get("code"),
+			abbr=aPlatform.get("abbr")
+		)
+
+# Déploiement des objets de plateforme
+create_platform_objects()
 
 
 Platform(name="Plateforme inconue", code="unknownplatform", abbr="")
@@ -111,13 +120,20 @@ class GameType:
 				return self.abbr
 			return self.name
 
-# Extraction des types de jeux
-with open(CONFIG_DIR + '/listOfGameTypes.json') as f:
-	listOfGameTypesData = json.load(f)["gameTypes"]
+def create_game_type_objects():
+	# Extraction des types de jeux
+	with open(CONFIG_DIR + '/listOfGameTypes.json') as f:
+		listOfGameTypesData = json.load(f)["gameTypes"]
 
-# Déploiment des objet de type de jeux
-for aGameType in listOfGameTypesData:
-	GameType(name=aGameType.get("name"), code=aGameType.get("code"), abbr=aGameType.get("abbr"))
+	# Déploiment des objet de type de jeux
+	for aGameType in listOfGameTypesData:
+		GameType(
+			name=aGameType.get("name"),
+			code=aGameType.get("code"),
+			abbr=aGameType.get("abbr")
+		)
+
+create_game_type_objects()
 
 GameType(name="Type inconu", abbr="-", code="unknowntype")
 
@@ -171,20 +187,23 @@ class Licence:
 			return self.freedomCoefficient > other.freedomCoefficient
 		return NotImplemented
 
-# Extraction des licences
-with open(CONFIG_DIR + '/listOfLicences.json') as f:
-	listOfLicencesData = json.load(f)["licences"]
+def create_licence_objects():
+	# Extraction des licences
+	with open(CONFIG_DIR + '/listOfLicences.json') as f:
+		listOfLicencesData = json.load(f)["licences"]
 
-# Déploiment des objet de licence
-for aLicence in listOfLicencesData:
-	Licence(
-		name=aLicence.get("name"),
-		code=aLicence.get("code"),
-		abbr=aLicence.get("abbr"),
-		url=aLicence.get("url"),
-		shortText=aLicence.get("shortText"),
-		freedomCoefficient=aLicence.get("freedomCoefficient")
-	)
+	# Déploiment des objet de licence
+	for aLicence in listOfLicencesData:
+		Licence(
+			name=aLicence.get("name"),
+			code=aLicence.get("code"),
+			abbr=aLicence.get("abbr"),
+			url=aLicence.get("url"),
+			shortText=aLicence.get("shortText"),
+			freedomCoefficient=aLicence.get("freedomCoefficient")
+		)
+
+create_licence_objects()
 
 Licence(name="Licence inconue", abbr="-", code="unknownlicence")
 
@@ -403,26 +422,30 @@ class Game:
 		# Retourne la dernière date où le jeu a ét éouvert
 		return self.history.last_date()
 
-# Extraction des jeux
-with open(CONFIG_DIR + '/games.json') as f:
-	listOfGamesData = json.load(f)["games"]
+def create_game_objects():
+	# Extraction des jeux
+	with open(CONFIG_DIR + '/games.json') as f:
+		listOfGamesData = json.load(f)["games"]
 
-## Déploiment des objet de jeux
-for aGame in listOfGamesData:
-	Game(
-		name=aGame.get("name"),
-		codeName=aGame.get("codeName"),
-		licence=get_licence_object_after_code(aGame.get("licence")),
-		url=aGame.get("url"),
-		year=aGame.get("year"),
-		type_=get_type_object_after_code(aGame.get("type")),
-		command=aGame.get("command"),
-		author=aGame.get("author"),
-		platform=get_platform_object_after_code(aGame.get("platform"))
-	)
+	## Déploiment des objet de jeux
+	for aGame in listOfGamesData:
+		Game(
+			name=aGame.get("name"),
+			codeName=aGame.get("codeName"),
+			licence=get_licence_object_after_code(aGame.get("licence")),
+			url=aGame.get("url"),
+			year=aGame.get("year"),
+			type_=get_type_object_after_code(aGame.get("type")),
+			command=aGame.get("command"),
+			author=aGame.get("author"),
+			platform=get_platform_object_after_code(aGame.get("platform"))
+		)
 
-#for aGame in listOfGames:
-#	aGame.sheet()
+create_game_objects()
+
+########################################################################
+# Fonctions d’extraction des données
+########################################################################
 
 ########################################################################
 # Fonctions de l’interface interactive
@@ -503,6 +526,7 @@ def makeItemsList():
 items = makeItemsList() # TODO : déglobaliser
 
 HIDED_DATA_COLUMN=7
+SPACE_COLUMN_SEPARATION_NUMBER=2
 
 def main(stdscr):
 	# Initialisation de ncurses
@@ -543,8 +567,6 @@ def main(stdscr):
 		col_widths = [max(len(str(column)) for column in col) for col in zip(*items)]
 		# Affichage des titres de colonnes
 		for i, title in enumerate(titles):
-			#stdscr.addstr(1, i * 20, title)
-#			stdscr.addstr(1, (i * 20 + i), title)
 			stdscr.addstr(1, sum(col_widths[:i]) + i * 2, str(title), curses.color_pair(2) | curses.A_BOLD)
 
 		# Affichage des données de la liste
@@ -553,7 +575,6 @@ def main(stdscr):
 				# Mettre en surbrillance la ligne sélectionnée
 				if i == selected_row:
 					pass
-#				elif j != 4:  # Masquer la colonne "commande"
 				elif j < HIDED_DATA_COLUMN:  # Masquer la colonne "commande"
 					stdscr.addstr(i + 2, sum(col_widths[:j]) + j * 2, str(column))
 
