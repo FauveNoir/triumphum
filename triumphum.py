@@ -575,15 +575,14 @@ def main(stdscr):
 
 		# Affichage des données de la liste
 		for row_number, item in enumerate(items):
-			for column_number, column in enumerate(item):
-				# Mettre en surbrillance la ligne sélectionnée
-				if row_number == selected_row:
-					pass
-				elif column_number < HIDED_DATA_COLUMN:  # Masquer la colonne "commande"
+			for column_number, column in enumerate(item): # Mettre en surbrillance la ligne sélectionnée
+				if column_number < HIDED_DATA_COLUMN:  # Masquer la colonne "commande"
 					stdscr.addstr(row_number + 2, sum(col_widths[:column_number]) + column_number * 2, str(column))
 
 		stdscr.addstr(selected_row + 2, 0, " " * curses.COLS, curses.color_pair(2))  # Effacer toute la ligne avec la couleur de fond
+
 		# Affichage des données de la liste avec surbrillance pour la ligne sélectionnée
+		# Cas particulier de la ligne ayant le focus
 		for column_number, column in enumerate(items[selected_row][:HIDED_DATA_COLUMN]):  # Afficher seulement les 4 premières colonnes
 			stdscr.addstr(selected_row + 2, sum(col_widths[:column_number]) + column_number * 2, str(column), curses.color_pair(2) | curses.A_BOLD)
 
