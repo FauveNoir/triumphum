@@ -454,7 +454,8 @@ def sort_by_title(items):
 
 # Fonction pour trier les jeux par licence
 def sort_by_license(items):
-	return sorted(sort_by_title(items), key=lambda x: x[7].licence)
+	items_sorted_by_licence_name=sorted(items, key=lambda x: x[7].licence.name)
+	return sorted(items_sorted_by_licence_name, key=lambda x: x[7].licence)
 
 # Fonction pour trier les jeux par type
 def sort_by_type(items):
@@ -569,22 +570,22 @@ def main(stdscr):
 
 		col_widths = [max(len(str(column)) for column in col) for col in zip(*items)]
 		# Affichage des titres de colonnes
-		for i, title in enumerate(titles):
-			stdscr.addstr(1, sum(col_widths[:i]) + i * 2, str(title), curses.color_pair(2) | curses.A_BOLD)
+		for row_number, title in enumerate(titles):
+			stdscr.addstr(1, sum(col_widths[:row_number]) + row_number * 2, str(title), curses.color_pair(2) | curses.A_BOLD)
 
 		# Affichage des données de la liste
-		for i, item in enumerate(items):
-			for j, column in enumerate(item):
+		for row_number, item in enumerate(items):
+			for column_number, column in enumerate(item):
 				# Mettre en surbrillance la ligne sélectionnée
-				if i == selected_row:
+				if row_number == selected_row:
 					pass
-				elif j < HIDED_DATA_COLUMN:  # Masquer la colonne "commande"
-					stdscr.addstr(i + 2, sum(col_widths[:j]) + j * 2, str(column))
+				elif column_number < HIDED_DATA_COLUMN:  # Masquer la colonne "commande"
+					stdscr.addstr(row_number + 2, sum(col_widths[:column_number]) + column_number * 2, str(column))
 
 		stdscr.addstr(selected_row + 2, 0, " " * curses.COLS, curses.color_pair(2))  # Effacer toute la ligne avec la couleur de fond
 		# Affichage des données de la liste avec surbrillance pour la ligne sélectionnée
-		for j, column in enumerate(items[selected_row][:HIDED_DATA_COLUMN]):  # Afficher seulement les 4 premières colonnes
-			stdscr.addstr(selected_row + 2, sum(col_widths[:j]) + j * 2, str(column), curses.color_pair(2) | curses.A_BOLD)
+		for column_number, column in enumerate(items[selected_row][:HIDED_DATA_COLUMN]):  # Afficher seulement les 4 premières colonnes
+			stdscr.addstr(selected_row + 2, sum(col_widths[:column_number]) + column_number * 2, str(column), curses.color_pair(2) | curses.A_BOLD)
 
 		# Rafraîchir l'écran
 		stdscr.refresh()
