@@ -445,7 +445,7 @@ def retrive_datas():
 	create_game_objects()
 
 ########################################################################
-# Fonctions de l’interface interactive
+# Fonctions foncitonnelles de l’interface interactive
 ########################################################################
 
 # Fonction pour trier les jeux par titre
@@ -512,13 +512,27 @@ def run_command_and_write_on_history(game):
 	write_opening_date_on_history(game, start_time=start_time, end_time=end_time, duration=duration)
 
 ########################################################################
+# Fonctions ésthétiques de l’interface interactive
+########################################################################
+
+def getColWidths():
+	global titles
+	global items
+
+	itemsMergedWithTitle = items[:]
+	itemsMergedWithTitle.append(titles)
+	col_widths = [max(len(str(column)) for column in col) for col in zip(*itemsMergedWithTitle)]
+
+	return col_widths
+
+########################################################################
 # Interface
 ########################################################################
 
 retrive_datas()
 
-for aGame in listOfGames:
-	print(aGame.name +": " + str(aGame.licence.freedomCoefficient))
+#for aGame in listOfGames:
+#	print(aGame.name +": " + str(aGame.licence.freedomCoefficient))
 
 def makeItemsList():
 	items=[]
@@ -528,6 +542,8 @@ def makeItemsList():
 	return items
 
 items = makeItemsList() # TODO : déglobaliser
+# Titres des colonnes
+titles = [" ", "Titre", "Licence", "Type", "Date", "Dernière ouverture", "Temps cumulé"]
 
 HIDED_DATA_COLUMN=7
 SPACE_COLUMN_SEPARATION_NUMBER=2
@@ -549,8 +565,6 @@ def main(stdscr):
 	# Nom de l'application
 	app_name = APP_FANCY_NAME + " | " + APP_DESCRIPTION
 
-	# Titres des colonnes
-	titles = [" ", "Titre", "Licence", "Type", "Date", "Dernière ouverture", "Temps cumulé"]
 
 	# Données de la liste
 	global items
@@ -568,14 +582,14 @@ def main(stdscr):
 		stdscr.addstr(0, 0, app_name.ljust(curses.COLS), curses.color_pair(2))
 		stdscr.attroff(curses.color_pair(1))
 
-		col_widths = [max(len(str(column)) for column in col) for col in zip(*items)]
+		col_widths = getColWidths()
 		# Affichage des titres de colonnes
 		for row_number, title in enumerate(titles):
 			stdscr.addstr(1, sum(col_widths[:row_number]) + row_number * 2, str(title), curses.color_pair(2) | curses.A_BOLD)
 
 		# Affichage des données de la liste
 		for row_number, item in enumerate(items):
-			for column_number, column in enumerate(item): # Mettre en surbrillance la ligne sélectionnée
+			for column_number, column in enumerate(item):
 				if column_number < HIDED_DATA_COLUMN:  # Masquer la colonne "commande"
 					stdscr.addstr(row_number + 2, sum(col_widths[:column_number]) + column_number * 2, str(column))
 
