@@ -53,11 +53,7 @@ BASE_NAME_PLATFORM_FILE="listOfPlatforms.json"
 # Fonctions communes aux classes
 ########################################################################
 
-def format_timedelta_abbrev(td):
-	if td == timedelta():
-		return " "
-	delta = humanize.naturaldelta(td)
-	return delta
+# Néan
 
 ########################################################################
 # Classe des plateformes
@@ -370,7 +366,7 @@ class Game:
 			self.type_.abbr or "-",
 			self.year or "-",
 			self.human_latest_opening_duration() or "-",
-			format_timedelta_abbrev(self.cumulate_time()) or "0",
+			self.human_cumulate_time() or "0",
 			self
 		]
 		return ncurseLine
@@ -397,6 +393,13 @@ class Game:
 	def cumulate_time(self):
 		# Temps de jeu cumulé
 		return self.history.cumulate_time()
+
+	def human_cumulate_time(self):
+		# Retourne le temps total joué humainement lisible
+		if self.history.cumulate_time() == timedelta(): # test si le temps cumulate_time() retourne bien un delta et non le caractère "-"
+			return " "
+		delta = humanize.naturaldelta(self.history.cumulate_time())
+		return delta
 
 	def latest_opening_date(self):
 		# Retourne la dernière date où le jeu a ét éouvert
