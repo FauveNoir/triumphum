@@ -35,6 +35,7 @@ APP_URL=""
 
 # Définir la locale dans Pendulum
 pendulum.set_locale('fr')
+_t = humanize.i18n.activate("fr_FR")
 
 ########################################################################
 # Répertoire de configuration
@@ -56,7 +57,6 @@ def format_timedelta_abbrev(td):
 	if td == timedelta():
 		return " "
 	delta = humanize.naturaldelta(td)
-	delta = delta.replace('seconds', 's').replace('minutes', 'm').replace('hours', 'h').replace('days', 'd')
 	return delta
 
 ########################################################################
@@ -359,19 +359,6 @@ class Game:
 
 		listOfGames.append(self) # Adjonction à la liste des jeux
 
-	def human_latest_opening(self):
-
-		if self.latest_opening():
-			datetime_date = datetime.fromisoformat(self.latest_opening())
-
-			pendulum_date = pendulum.instance(datetime_date)
-			pendulum_date = pendulum_date.in_tz('local')
-			
-			diff = pendulum.now().diff_for_humans(pendulum_date, absolute=True)
-
-			return diff
-		return ""
-
 	def ncurseLine(self):
 		# Préparation de la ligne de tableau
 
@@ -382,8 +369,8 @@ class Game:
 			self.licence.abbr or "-",
 			self.type_.abbr or "-",
 			self.year or "-",
-			self.human_latest_opening() or "-",
-			format_timedelta_abbrev(self.history.cumulate_time()) or "0",
+			self.human_latest_opening_duration() or "-",
+			format_timedelta_abbrev(self.cumulate_time()) or "0",
 			self
 		]
 		return ncurseLine
@@ -398,7 +385,7 @@ class Game:
 			["Type", self.type_],
 			["Auteur", self.author],
 			["Commande", self.command],
-			["Dernière ouverture", self.latest_opening()],
+			["Dernière ouverture", self.latest_opening_date()],
 		]
 
 		print(tabulate(sheet_data))
@@ -407,9 +394,30 @@ class Game:
 		# Retourne l’historique des dates et heures de parties jouées
 		return retrive_history_of_a_game(self)
 
-	def latest_opening(self):
+	def cumulate_time(self):
+		# Temps de jeu cumulé
+		return self.history.cumulate_time()
+
+	def latest_opening_date(self):
 		# Retourne la dernière date où le jeu a ét éouvert
 		return self.history.last_date()
+
+	def latest_opening_duration(self):
+		# Retourne la durée depuis laquelle le jeu a été ouvert
+		if self.latest_opening_date():
+			print(self.history.last_date())
+
+			# Réception de la chaine string et transformation en datetime
+			last_date= datetime.strptime(self.history.last_date(), "%Y-%m-%dT%H:%M:%S") 
+			delta=datetime.now() - last_date
+			return delta
+		return None
+
+	def human_latest_opening_duration(self):
+		# Temps depuis la dernière ouverture humainement lisible
+		if self.latest_opening_date():
+			return humanize.naturaldelta(self.latest_opening_duration())
+		return "-"
 
 def create_game_objects():
 	# Extraction des jeux
