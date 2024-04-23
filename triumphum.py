@@ -13,6 +13,7 @@ from tabulate import tabulate
 import humanize
 import pendulum
 import locale
+import time
 
 ########################################################################
 # fonctions de test
@@ -20,6 +21,10 @@ import locale
 
 def tprint(content):
 	print(content)
+
+def writeInTmp(text):
+	with open(CONFIG_DIR + '/tmp/test', 'a') as f:
+		f.write(f"[{datetime.datetime.now()}] {text} \n")
 
 ########################################################################
 # Variables globales
@@ -69,6 +74,8 @@ class Platform:
 		globals()[code] = self # Déclaration de la variable globale pérmétant d’atteindre directement le type voulu
 
 def create_platform_objects():
+	# Création de la liste des plateformes disponibles
+
 	# Extraction des plateformes
 	with open(CONFIG_DIR + '/listOfPlatforms.json') as f:
 		listOfPlatformsData = json.load(f)["platforms"]
@@ -111,6 +118,12 @@ class GameType:
 
 def create_game_type_objects():
 	# Extraction des types de jeux
+
+	# Réinitialisation de la liste des jeux
+	global listOfGameTypes
+	listOfGameTypes=[]
+
+	# Extraction des types de jeux du fichier
 	with open(CONFIG_DIR + '/listOfGameTypes.json') as f:
 		listOfGameTypesData = json.load(f)["gameTypes"]
 
@@ -408,7 +421,6 @@ class Game:
 	def latest_opening_duration(self):
 		# Retourne la durée depuis laquelle le jeu a été ouvert
 		if self.latest_opening_date():
-			print(self.history.last_date())
 
 			# Réception de la chaine string et transformation en datetime
 			last_date= datetime.strptime(self.history.last_date(), "%Y-%m-%dT%H:%M:%S") 
@@ -423,6 +435,12 @@ class Game:
 		return "-"
 
 def create_game_objects():
+	# Création de la liste des jeux
+
+	# Intialisation
+	global listOfGames
+	listOfGames=[]
+
 	# Extraction des jeux
 	with open(CONFIG_DIR + '/games.json') as f:
 		listOfGamesData = json.load(f)["games"]
@@ -522,6 +540,8 @@ def run_command_and_write_on_history(game):
 	# Inscription de l’évenement dans l’historique
 	write_opening_date_on_history(game, start_time=start_time, end_time=end_time, duration=duration)
 
+
+
 ########################################################################
 # Fonctions ésthétiques de l’interface interactive
 ########################################################################
@@ -545,14 +565,19 @@ retrive_datas()
 #for aGame in listOfGames:
 #	print(aGame.name +": " + str(aGame.licence.freedomCoefficient))
 
+items=[]
 def makeItemsList():
+	global items
 	items=[]
 	global listOfGames
 	for aGame in listOfGames:
 		items.append(aGame.ncurseLine())
+		tprint(aGame.ncurseLine())
+	tprint("--")
 	return items
 
-items = makeItemsList() # TODO : déglobaliser
+#makeItemsList()
+
 # Titres des colonnes
 titles = [" ", "Titre", "Licence", "Type", "Date", "Dernière ouverture", "Temps cumulé"]
 
@@ -583,8 +608,19 @@ def main(stdscr):
 	# Index de la ligne sélectionnée
 	selected_row = 0
 
+
+	# TODO delete
+	i = 0
+
 	# Boucle principale
 	while True:
+
+		# Mise à jour de l’historique
+	#	retrive_datas()
+		create_game_type_objects()
+		# Mise à jour de la liste des jeux
+		makeItemsList() # TODO : déglobaliser
+
 #		curses.noecho()  # Désactiver l'écho des touches # TODO à édcommenter avant prod
 		stdscr.clear()
 
@@ -593,8 +629,9 @@ def main(stdscr):
 		stdscr.addstr(0, 0, app_name.ljust(curses.COLS), curses.color_pair(2))
 		stdscr.attroff(curses.color_pair(1))
 
+		# Calcul de la largeur des colones
 		col_widths = getColWidths()
-		# Affichage des titres de colonnes
+
 		for row_number, title in enumerate(titles):
 			stdscr.addstr(1, sum(col_widths[:row_number]) + row_number * 2, str(title), curses.color_pair(2) | curses.A_BOLD)
 
@@ -614,6 +651,8 @@ def main(stdscr):
 		# Rafraîchir l'écran
 		stdscr.refresh()
 
+		stdscr.addstr(0, 0, f"Itération {i} : {items[0]}")
+		i+=1
 		# Lecture de la touche pressée
 		key = stdscr.getch()
 
@@ -624,7 +663,6 @@ def main(stdscr):
 			selected_row = max(0, selected_row - 1)
 		elif key == curses.KEY_ENTER or key in [10, 13]:  # Touche "Entrée"
 			# Exécuter la commande de lancement du jeu associée à la ligne sélectionnée
-			#write_opening_date_on_history(items[selected_row][5])
 			game = items[selected_row][HIDED_DATA_COLUMN]
 			threading.Thread(target=run_command_and_write_on_history, args=(game,)).start()
 		elif key == ord('a'):  # Ouvrir le lien associé au jeu si la touche 'a' est pressée
@@ -639,10 +677,17 @@ def main(stdscr):
 		elif key == ord('o'):  # Trier par date si la touche 'o' est pressée
 			items = sort_by_date(items)
 		elif key == ord('y'):  # Trier par date si la touche 'o' est pressée
-			url = items[selected_row][5].url  
+			url = items[selected_row][5].url
 			pyperclip.copy(url)
+		elif key == ord('l'):  # Rafraichir
+			create_game_type_objects()
+			makeItemsList()
 		elif key == ord('q'):  # Quitter si la touche 'q' est pressée
 			break
+
+		# Rafraichissement des donées
+
+
 
 curses.wrapper(main)
 
