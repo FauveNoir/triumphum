@@ -568,10 +568,6 @@ def makeItemsList():
 	global listOfGames
 	for aGame in listOfGames:
 		items.append(aGame.ncurseLine())
-		tprint(aGame.ncurseLine())
-	writeInTmp("entering")
-	writeInTmp("makeitems")
-	writeInTmp(items[0])
 	return items
 
 #makeItemsList()
@@ -607,9 +603,6 @@ def main(stdscr):
 	selected_row = 0
 
 
-	# TODO delete
-	i = 0
-
 	# Boucle principale
 	while True:
 
@@ -618,7 +611,7 @@ def main(stdscr):
 		# Mise à jour de la liste des jeux
 		makeItemsList() # TODO : déglobaliser
 
-#		curses.noecho()  # Désactiver l'écho des touches # TODO à édcommenter avant prod
+		curses.noecho()  # Désactiver l'écho des touches # TODO à édcommenter avant prod
 		stdscr.clear()
 
 		# Dessiner la barre supérieure avec le nom de l'application
@@ -648,8 +641,6 @@ def main(stdscr):
 		# Rafraîchir l'écran
 		stdscr.refresh()
 
-		stdscr.addstr(0, 0, f"Itération {i} : {items[0]}")
-		i+=1
 		# Lecture de la touche pressée
 		key = stdscr.getch()
 
