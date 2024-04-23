@@ -23,8 +23,8 @@ def tprint(content):
 	print(content)
 
 def writeInTmp(text):
-	with open(CONFIG_DIR + '/tmp/test', 'a') as f:
-		f.write(f"[{datetime.datetime.now()}] {text} \n")
+	with open('/tmp/output', 'a') as f:
+		f.write(f"[{datetime.now()}] {text} \n")
 
 ########################################################################
 # Variables globales
@@ -560,10 +560,6 @@ def getColWidths():
 # Interface
 ########################################################################
 
-retrive_datas()
-
-#for aGame in listOfGames:
-#	print(aGame.name +": " + str(aGame.licence.freedomCoefficient))
 
 items=[]
 def makeItemsList():
@@ -573,7 +569,9 @@ def makeItemsList():
 	for aGame in listOfGames:
 		items.append(aGame.ncurseLine())
 		tprint(aGame.ncurseLine())
-	tprint("--")
+	writeInTmp("entering")
+	writeInTmp("makeitems")
+	writeInTmp(items[0])
 	return items
 
 #makeItemsList()
@@ -616,8 +614,7 @@ def main(stdscr):
 	while True:
 
 		# Mise à jour de l’historique
-	#	retrive_datas()
-		create_game_type_objects()
+		retrive_datas()
 		# Mise à jour de la liste des jeux
 		makeItemsList() # TODO : déglobaliser
 
@@ -680,7 +677,7 @@ def main(stdscr):
 			url = items[selected_row][5].url
 			pyperclip.copy(url)
 		elif key == ord('l'):  # Rafraichir
-			create_game_type_objects()
+			retrive_datas()
 			makeItemsList()
 		elif key == ord('q'):  # Quitter si la touche 'q' est pressée
 			break
