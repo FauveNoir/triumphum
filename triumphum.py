@@ -460,6 +460,33 @@ def create_game_objects():
 		)
 
 ########################################################################
+# Classe des tris de liste
+########################################################################
+
+listOflistSorting=[]
+class Sort:
+	def __init__(self, label=None, code=None, command=None):
+		self.label = label
+		self.code = code
+		self.command = command
+
+		listOflistSorting.append(self) # Adjonction à la liste des jeux
+
+
+class VisualListOfGames:
+	def __init__(self):
+		self.list=None
+
+	def refresh(self):
+		pass
+
+	def sortby(self):
+		pass
+
+	def getColumnsWidth(self):
+		pass
+
+########################################################################
 # Fonctions d’extraction des données
 ########################################################################
 
@@ -476,6 +503,7 @@ def retrive_datas():
 ########################################################################
 # Fonctions foncitonnelles de l’interface interactive
 ########################################################################
+
 
 # Fonction pour trier les jeux par titre
 def sort_by_title(items):
@@ -560,6 +588,8 @@ def getColWidths():
 # Interface
 ########################################################################
 
+
+SORTING_COLUMN=0
 
 items=[]
 def makeItemsList():
