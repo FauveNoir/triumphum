@@ -460,7 +460,33 @@ def create_game_objects():
 		)
 
 ########################################################################
-# Classe des tris de liste
+# Classe des colones de la liste visuelle
+########################################################################
+
+listOfPossibleColumns=[]
+class VisuaColumn:
+	def __init__(self, label=None, property_=None):
+		self.label=label
+		self.property=property_
+
+		listOfPossibleColumns.append(self)
+########################################################################
+# Fonctions d’extraction des données
+########################################################################
+
+def retrive_datas():
+	# Déploiement des objets de plateforme
+	create_platform_objects()
+	# Déploiement des objets de types de jeux
+	create_game_type_objects()
+	# Déploiement des objets de licence
+	create_licence_objects()
+	# Déploiement des objets de jeux
+	create_game_objects()
+
+
+########################################################################
+# Classe de la liste visuelle
 ########################################################################
 
 listOflistSorting=[]
@@ -475,30 +501,49 @@ class Sort:
 
 class VisualListOfGames:
 	def __init__(self):
+		self.columns=None
+		self.titles = [" ", "Titre", "Licence", "Type", "Date", "Dernière ouverture", "Temps cumulé"]
 		self.list=None
 
+		self.refresh()
+		globals()["THE_VISUAL_LIST_OF_GAMES"] = self # Le seul objet de cette classe est TheVisualListOfGames
+
 	def refresh(self):
-		pass
+		retrive_datas()
+		global listOfGames
+
+		self.list=[]
+		for aGame in listOfGames:
+			self.list.append(aGame.ncurseLine())
 
 	def sortby(self):
 		pass
 
-	def getColumnsWidth(self):
+	def columnsWidth(self):
+		itemsMergedWithTitle = self.items[:]
+		itemsMergedWithTitle.append(self.titles)
+		col_widths = [max(len(str(column)) for column in col) for col in zip(*itemsMergedWithTitle)]
+
+		return col_widths
+
+	def cumulatedPlayingForDay(self):
 		pass
 
-########################################################################
-# Fonctions d’extraction des données
-########################################################################
+	def cumulatedPlayingForWeek(self):
+		pass
 
-def retrive_datas():
-	# Déploiement des objets de plateforme
-	create_platform_objects()
-	# Déploiement des objets de types de jeux
-	create_game_type_objects()
-	# Déploiement des objets de licence
-	create_licence_objects()
-	# Déploiement des objets de jeux
-	create_game_objects()
+	def cumulatedPlayingForMonth(self):
+		pass
+
+	def cumulatedPlayingForYear(self):
+		pass
+
+	def filterByPattern(self, pattern):
+		pass
+
+VisualListOfGames()
+print(THE_VISUAL_LIST_OF_GAMES.list)
+
 
 ########################################################################
 # Fonctions foncitonnelles de l’interface interactive
@@ -589,6 +634,9 @@ def getColWidths():
 ########################################################################
 
 
+# Titres des colonnes
+titles = [" ", "Titre", "Licence", "Type", "Date", "Dernière ouverture", "Temps cumulé"]
+
 SORTING_COLUMN=0
 
 items=[]
@@ -601,9 +649,6 @@ def makeItemsList():
 	return items
 
 #makeItemsList()
-
-# Titres des colonnes
-titles = [" ", "Titre", "Licence", "Type", "Date", "Dernière ouverture", "Temps cumulé"]
 
 HIDED_DATA_COLUMN=7
 SPACE_COLUMN_SEPARATION_NUMBER=2
