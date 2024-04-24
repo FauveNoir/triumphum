@@ -508,6 +508,9 @@ class VisualListOfGames:
 		self.refresh()
 		globals()["THE_VISUAL_LIST_OF_GAMES"] = self # Le seul objet de cette classe est TheVisualListOfGames
 
+	def hiden_data_column_number(self):
+		return len(self.list[0])-1
+
 	def refresh(self):
 		retrive_datas()
 		global listOfGames
@@ -542,7 +545,7 @@ class VisualListOfGames:
 		pass
 
 VisualListOfGames()
-print(THE_VISUAL_LIST_OF_GAMES.list)
+print(THE_VISUAL_LIST_OF_GAMES.hiden_data_column_number())
 
 
 ########################################################################
@@ -671,9 +674,6 @@ def main(stdscr):
 	app_name = APP_FANCY_NAME + " | " + APP_DESCRIPTION
 
 
-	# Données de la liste
-	global items
-
 	# Index de la ligne sélectionnée
 	selected_row = 0
 
@@ -701,7 +701,7 @@ def main(stdscr):
 			stdscr.addstr(1, sum(col_widths[:row_number]) + row_number * 2, str(title), curses.color_pair(2) | curses.A_BOLD)
 
 		# Affichage des données de la liste
-		for row_number, item in enumerate(items):
+		for row_number, item in enumerate(THE_VISUAL_LIST_OF_GAMES.list):
 			for column_number, column in enumerate(item):
 				if column_number < HIDED_DATA_COLUMN:  # Masquer la colonne "commande"
 					stdscr.addstr(row_number + 2, sum(col_widths[:column_number]) + column_number * 2, str(column))
@@ -710,7 +710,7 @@ def main(stdscr):
 
 		# Affichage des données de la liste avec surbrillance pour la ligne sélectionnée
 		# Cas particulier de la ligne ayant le focus
-		for column_number, column in enumerate(items[selected_row][:HIDED_DATA_COLUMN]):  # Afficher seulement les 4 premières colonnes
+		for column_number, column in enumerate(THE_VISUAL_LIST_OF_GAMES.list[selected_row][:HIDED_DATA_COLUMN]):  # Afficher seulement les 4 premières colonnes
 			stdscr.addstr(selected_row + 2, sum(col_widths[:column_number]) + column_number * 2, str(column), curses.color_pair(2) | curses.A_BOLD)
 
 		# Rafraîchir l'écran
@@ -721,26 +721,26 @@ def main(stdscr):
 
 		# Gestion de la navigation entre les lignes
 		if key == ord('t'):
-			selected_row = min(len(items) - 1, selected_row + 1)
+			selected_row = min(len(THE_VISUAL_LIST_OF_GAMES.list) - 1, selected_row + 1)
 		elif key == ord('s'):
 			selected_row = max(0, selected_row - 1)
 		elif key == curses.KEY_ENTER or key in [10, 13]:  # Touche "Entrée"
 			# Exécuter la commande de lancement du jeu associée à la ligne sélectionnée
-			game = items[selected_row][HIDED_DATA_COLUMN]
+			game = THE_VISUAL_LIST_OF_GAMES.list[selected_row][HIDED_DATA_COLUMN]
 			threading.Thread(target=run_command_and_write_on_history, args=(game,)).start()
 		elif key == ord('a'):  # Ouvrir le lien associé au jeu si la touche 'a' est pressée
-			url = items[selected_row][HIDED_DATA_COLUMN].url  # Supposons que l'URL est stockée à l'indice 5
+			url = THE_VISUAL_LIST_OF_GAMES.list[selected_row][HIDED_DATA_COLUMN].url  # Supposons que l'URL est stockée à l'indice 5
 			webbrowser.open(url)
 		elif key == ord('b'):  # Trier par titre si la touche 'b' est pressée
-			items = sort_by_title(items)
+			THE_VISUAL_LIST_OF_GAMES.list = sort_by_title(THE_VISUAL_LIST_OF_GAMES.list)
 		elif key == ord('é'):  # Trier par licence si la touche 'é' est pressée
-			items = sort_by_license(items)
+			THE_VISUAL_LIST_OF_GAMES.list = sort_by_license(THE_VISUAL_LIST_OF_GAMES.list)
 		elif key == ord('p'):  # Trier par type si la touche 'p' est pressée
-			items = sort_by_license(items)
+			THE_VISUAL_LIST_OF_GAMES.list = sort_by_license(THE_VISUAL_LIST_OF_GAMES.list)
 		elif key == ord('o'):  # Trier par date si la touche 'o' est pressée
-			items = sort_by_date(items)
+			THE_VISUAL_LIST_OF_GAMES.list = sort_by_date(THE_VISUAL_LIST_OF_GAMES.list)
 		elif key == ord('y'):  # Trier par date si la touche 'o' est pressée
-			url = items[selected_row][5].url
+			url = THE_VISUAL_LIST_OF_GAMES.list[selected_row][5].url
 			pyperclip.copy(url)
 		elif key == ord('l'):  # Rafraichir
 			retrive_datas()
