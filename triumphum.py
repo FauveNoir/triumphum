@@ -116,6 +116,21 @@ class GameType:
 				return self.abbr
 			return self.name
 
+	def __eq__(self, other):
+		if isinstance(other, GameType):
+			return self.abbr == other.abbr
+		return NotImplemented
+
+	def __lt__(self, other):
+		if isinstance(other, GameType):
+			return self.abbr <  other.abbr
+		return NotImplemented
+
+	def __gt__(self, other):
+		if isinstance(other, GameType):
+			return self.abbr > other.abbr
+		return NotImplemented
+
 def create_game_type_objects():
 	# Extraction des types de jeux
 
@@ -499,12 +514,27 @@ class Sort:
 		listOflistSorting.append(self) # Adjonction à la liste des jeux
 
 
+SORTING_ORDER=[True, False]
+
+
+def getNextSortingOrder(currentSortingOrder):
+	global SORTING_ORDER
+	currentIndex=SORTING_ORDER.index(currentSortingOrder)
+	tmpNextIndex=currentIndex+1
+	realNextIndex=tmpNextIndex % len(SORTING_ORDER)
+	writeInTmp(realNextIndex)
+	nextSortingOrder=SORTING_ORDER[realNextIndex]
+	
+	return nextSortingOrder
+
+
 class VisualListOfGames:
 	def __init__(self):
 		self.columns=None
 		self.titles = [" ", "Titre", "Licence", "Type", "Date", "Dernière ouverture", "Temps cumulé"]
 		self.list=None
 		self.sortByProperty=None
+		self.sortingState=SORTING_ORDER[1]
 
 		self.refresh()
 		globals()["THE_VISUAL_LIST_OF_GAMES"] = self # Le seul objet de cette classe est TheVisualListOfGames
@@ -519,14 +549,23 @@ class VisualListOfGames:
 		self.list=[]
 		for aGame in listOfGames:
 			self.list.append(aGame.ncurseLine())
-		self.sortBy(self.sortByProperty)
+		self.softSortBy(self.sortByProperty)
 
-	def sortBy(self, property_):
+	def shiftSortingState(self, property_):
+		if ( property_ == self.sortByProperty) :
+			self.sortingState=getNextSortingOrder(self.sortingState)
+			writeInTmp(self.sortingState)
+
+	def softSortBy(self, property_):
 		if property_:
 			self.sortByProperty=property_
 			tmpList=self.list
-			self.list=sorted(tmpList, key=lambda x: getattr(x[self.hiden_data_column_number()], property_))
-		writeInTmp(self.list)
+			self.list=sorted(tmpList, reverse=self.sortingState, key=lambda x: getattr(x[self.hiden_data_column_number()], property_))
+		writeInTmp([anItem[3] for anItem in self.list])
+
+	def sortBy(self, property_):
+		self.shiftSortingState(property_)
+		self.softSortBy(property_)
 
 	def columnsWidth(self):
 		itemsMergedWithTitle = self.items[:]
@@ -741,14 +780,15 @@ def main(stdscr):
 			url = THE_VISUAL_LIST_OF_GAMES.list[selected_row][HIDED_DATA_COLUMN].url  # Supposons que l'URL est stockée à l'indice 5
 			webbrowser.open(url)
 		elif key == ord('b'):  # Trier par titre si la touche 'b' est pressée
-			THE_VISUAL_LIST_OF_GAMES.list = sort_by_title(THE_VISUAL_LIST_OF_GAMES.list)
-			THE_VISUAL_LIST_OF_GAMES.sortBy("licence")
+			THE_VISUAL_LIST_OF_GAMES.sortBy("name")
 		elif key == ord('u'):  # Trier par licence si la touche 'é' est pressée
 			THE_VISUAL_LIST_OF_GAMES.sortBy("licence")
 		elif key == ord('p'):  # Trier par type si la touche 'p' est pressée
-			THE_VISUAL_LIST_OF_GAMES.list = sort_by_license(THE_VISUAL_LIST_OF_GAMES.list)
+			THE_VISUAL_LIST_OF_GAMES.sortBy("type_")
 		elif key == ord('o'):  # Trier par date si la touche 'o' est pressée
-			THE_VISUAL_LIST_OF_GAMES.list = sort_by_date(THE_VISUAL_LIST_OF_GAMES.list)
+			THE_VISUAL_LIST_OF_GAMES.sortBy("year")
+		elif key == ord('i'):  # Trier par date si la touche 'o' est pressée
+			THE_VISUAL_LIST_OF_GAMES.sortBy("latest_opening_date")
 		elif key == ord('y'):  # Trier par date si la touche 'o' est pressée
 			url = THE_VISUAL_LIST_OF_GAMES.list[selected_row][5].url
 			pyperclip.copy(url)
