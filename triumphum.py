@@ -504,6 +504,7 @@ class VisualListOfGames:
 		self.columns=None
 		self.titles = [" ", "Titre", "Licence", "Type", "Date", "Dernière ouverture", "Temps cumulé"]
 		self.list=None
+		self.sortByProperty=None
 
 		self.refresh()
 		globals()["THE_VISUAL_LIST_OF_GAMES"] = self # Le seul objet de cette classe est TheVisualListOfGames
@@ -518,9 +519,14 @@ class VisualListOfGames:
 		self.list=[]
 		for aGame in listOfGames:
 			self.list.append(aGame.ncurseLine())
+		self.sortBy(self.sortByProperty)
 
-	def sortby(self):
-		pass
+	def sortBy(self, property_):
+		if property_:
+			self.sortByProperty=property_
+			tmpList=self.list
+			self.list=sorted(tmpList, key=lambda x: getattr(x[self.hiden_data_column_number()], property_))
+		writeInTmp(self.list)
 
 	def columnsWidth(self):
 		itemsMergedWithTitle = self.items[:]
@@ -678,13 +684,15 @@ def main(stdscr):
 	selected_row = 0
 
 
+	global THE_VISUAL_LIST_OF_GAMES
 	# Boucle principale
 	while True:
 
 		# Mise à jour de l’historique
-		retrive_datas()
+		#retrive_datas()
 		# Mise à jour de la liste des jeux
 		makeItemsList() # TODO : déglobaliser
+		THE_VISUAL_LIST_OF_GAMES.refresh()
 
 		curses.noecho()  # Désactiver l'écho des touches # TODO à édcommenter avant prod
 		stdscr.clear()
@@ -724,6 +732,7 @@ def main(stdscr):
 			selected_row = min(len(THE_VISUAL_LIST_OF_GAMES.list) - 1, selected_row + 1)
 		elif key == ord('s'):
 			selected_row = max(0, selected_row - 1)
+
 		elif key == curses.KEY_ENTER or key in [10, 13]:  # Touche "Entrée"
 			# Exécuter la commande de lancement du jeu associée à la ligne sélectionnée
 			game = THE_VISUAL_LIST_OF_GAMES.list[selected_row][HIDED_DATA_COLUMN]
@@ -733,8 +742,9 @@ def main(stdscr):
 			webbrowser.open(url)
 		elif key == ord('b'):  # Trier par titre si la touche 'b' est pressée
 			THE_VISUAL_LIST_OF_GAMES.list = sort_by_title(THE_VISUAL_LIST_OF_GAMES.list)
-		elif key == ord('é'):  # Trier par licence si la touche 'é' est pressée
-			THE_VISUAL_LIST_OF_GAMES.list = sort_by_license(THE_VISUAL_LIST_OF_GAMES.list)
+			THE_VISUAL_LIST_OF_GAMES.sortBy("licence")
+		elif key == ord('u'):  # Trier par licence si la touche 'é' est pressée
+			THE_VISUAL_LIST_OF_GAMES.sortBy("licence")
 		elif key == ord('p'):  # Trier par type si la touche 'p' est pressée
 			THE_VISUAL_LIST_OF_GAMES.list = sort_by_license(THE_VISUAL_LIST_OF_GAMES.list)
 		elif key == ord('o'):  # Trier par date si la touche 'o' est pressée
