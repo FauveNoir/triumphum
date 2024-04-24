@@ -790,7 +790,8 @@ def main(stdscr):
 		elif key == ord('i'):  # Trier par date si la touche 'o' est pressée
 			THE_VISUAL_LIST_OF_GAMES.sortBy("latest_opening_date")
 		elif key == ord('y'):  # Trier par date si la touche 'o' est pressée
-			url = THE_VISUAL_LIST_OF_GAMES.list[selected_row][5].url
+			url = THE_VISUAL_LIST_OF_GAMES.list[selected_row][THE_VISUAL_LIST_OF_GAMES.hiden_data_column_number()].url
+			writeInTmp(url)
 			pyperclip.copy(url)
 		elif key == ord('l'):  # Rafraichir
 			retrive_datas()
