@@ -733,6 +733,24 @@ def makeItemsList():
 HIDED_DATA_COLUMN=9
 SPACE_COLUMN_SEPARATION_NUMBER=2
 
+def setBottomBarContent(newBottomBarText):
+	global BOTTOM_BAR_TEXT
+	BOTTOM_BAR_TEXT = newBottomBarText
+
+# Barre inférieure
+def draw_bottom_bar(stdscr):
+	# Récupère les dimensions de l'écran
+	global BOTTOM_BAR_TEXT
+	h, w = stdscr.getmaxyx()
+
+	# Dessine la barre au bas de l'écran
+	bar_text = f" {BOTTOM_BAR_TEXT} "
+#	stdscr.addstr(h-1, 0, bar_text.ljust(w), curses.A_REVERSE)
+	stdscr.addstr(h-1, 0, bar_text, curses.A_REVERSE)
+	stdscr.chgat(h-1, 0, w, curses.A_REVERSE)
+
+BOTTOM_BAR_TEXT="test"
+
 def main(stdscr):
 	# Initialisation de ncurses
 	curses.curs_set(0)  # Masquer le curseur
@@ -756,6 +774,7 @@ def main(stdscr):
 
 
 	global THE_VISUAL_LIST_OF_GAMES
+	global BOTTOM_BAR_TEXT
 	# Boucle principale
 	while True:
 
@@ -772,6 +791,9 @@ def main(stdscr):
 		stdscr.attron(curses.color_pair(1))
 		stdscr.addstr(0, 0, app_name.ljust(curses.COLS), curses.color_pair(2))
 		stdscr.attroff(curses.color_pair(1))
+
+
+		draw_bottom_bar(stdscr)
 
 		# Calcul de la largeur des colones
 		col_widths = getColWidths()
@@ -806,26 +828,40 @@ def main(stdscr):
 
 		elif key == curses.KEY_ENTER or key in [10, 13]:  # Touche "Entrée"
 			# Exécuter la commande de lancement du jeu associée à la ligne sélectionnée
+			setBottomBarContent(f"Ouverture de « {THE_VISUAL_LIST_OF_GAMES.list[selected_row][HIDED_DATA_COLUMN].name} »")
 			game = THE_VISUAL_LIST_OF_GAMES.list[selected_row][HIDED_DATA_COLUMN]
 			threading.Thread(target=run_command_and_write_on_history, args=(game,)).start()
-		elif key == ord('a'):  # Ouvrir le lien associé au jeu si la touche 'a' est pressée
+		elif key == ord('A'):  # Ouvrir le lien associé au jeu si la touche 'a' est pressée
 			url = THE_VISUAL_LIST_OF_GAMES.list[selected_row][HIDED_DATA_COLUMN].url  # Supposons que l'URL est stockée à l'indice 5
 			if url != None:
+				setBottomBarContent(f"Ouverture de « {THE_VISUAL_LIST_OF_GAMES.list[selected_row][HIDED_DATA_COLUMN].url} »")
+				draw_bottom_bar(stdscr)
 				webbrowser.open(url)
+			else:
+				setBottomBarContent(f"Pas de lien associé à « {THE_VISUAL_LIST_OF_GAMES.list[selected_row][HIDED_DATA_COLUMN].name} »")
 		elif key == ord('b'):  # Trier par titre si la touche 'b' est pressée
 			THE_VISUAL_LIST_OF_GAMES.sortBy("name")
+			setBottomBarContent(f"Tri par ordre alphabétique.")
 		elif key == ord('u'):  # Trier par licence si la touche 'é' est pressée
 			THE_VISUAL_LIST_OF_GAMES.sortBy("licence")
+			setBottomBarContent(f"Tri par permissivité des licences.")
 		elif key == ord('p'):  # Trier par type si la touche 'p' est pressée
 			THE_VISUAL_LIST_OF_GAMES.sortBy("type_")
+			setBottomBarContent(f"Tri par type.")
 		elif key == ord('o'):  # Trier par date si la touche 'o' est pressée
 			THE_VISUAL_LIST_OF_GAMES.sortBy("year")
+			setBottomBarContent(f"Tri par année de sortie.")
 		elif key == ord('i'):  # Trier par date si la touche 'o' est pressée
 			THE_VISUAL_LIST_OF_GAMES.sortBy("latest_opening_date")
+			setBottomBarContent(f"Tri par date de dernière ouverture.")
 		elif key == ord('y'):  # Trier par date si la touche 'o' est pressée
 			url = THE_VISUAL_LIST_OF_GAMES.list[selected_row][THE_VISUAL_LIST_OF_GAMES.hiden_data_column_number()].url
-			writeInTmp(url)
-			pyperclip.copy(url)
+			if url != None:
+				setBottomBarContent(f"Copie de « {THE_VISUAL_LIST_OF_GAMES.list[selected_row][HIDED_DATA_COLUMN].url} » dans le presse-papier.")
+				writeInTmp(url)
+				pyperclip.copy(url)
+			else:
+				setBottomBarContent(f"Aucun lien associé à « {THE_VISUAL_LIST_OF_GAMES.list[selected_row][HIDED_DATA_COLUMN].name} », rien à copier.")
 		elif key == ord('l'):  # Rafraichir
 			retrive_datas()
 			makeItemsList()
