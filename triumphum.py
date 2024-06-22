@@ -54,6 +54,11 @@ BASE_NAME_TYPE_FILE="listOfGameTypes.json"
 BASE_NAME_LICENCE_FILE="listOfLicences.json"
 BASE_NAME_PLATFORM_FILE="listOfPlatforms.json"
 
+GAME_FILE=CONFIG_DIR + "/" + BASE_NAME_GAME_FILE
+TYPE_FILE=CONFIG_DIR + "/" + BASE_NAME_TYPE_FILE
+LICENCE_FILE=CONFIG_DIR + "/" + BASE_NAME_LICENCE_FILE
+PLATFORM_FILE=CONFIG_DIR + "/" + BASE_NAME_PLATFORM_FILE
+
 ########################################################################
 # Fonctions communes aux classes
 ########################################################################
@@ -778,7 +783,8 @@ def main(stdscr):
 			threading.Thread(target=run_command_and_write_on_history, args=(game,)).start()
 		elif key == ord('a'):  # Ouvrir le lien associé au jeu si la touche 'a' est pressée
 			url = THE_VISUAL_LIST_OF_GAMES.list[selected_row][HIDED_DATA_COLUMN].url  # Supposons que l'URL est stockée à l'indice 5
-			webbrowser.open(url)
+			if url != None:
+				webbrowser.open(url)
 		elif key == ord('b'):  # Trier par titre si la touche 'b' est pressée
 			THE_VISUAL_LIST_OF_GAMES.sortBy("name")
 		elif key == ord('u'):  # Trier par licence si la touche 'é' est pressée
