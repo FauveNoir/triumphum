@@ -36,11 +36,13 @@ APP_DESCRIPTION="Gestionnaire de ludothèque en Python et NCurses pour GNU/Linux
 APP_VERSION="0.1"
 APP_AUTHOR="Fauve"
 APP_AUTHOR_MAIL="fauve.ordinator@taniere.info"
+APP_AUTHOR_DONATION_LINK="https://paypal.me/ihidev"
 APP_URL=""
 
 # Définir la locale dans Pendulum
 pendulum.set_locale('fr')
 _t = humanize.i18n.activate("fr_FR")
+
 
 ########################################################################
 # Répertoire de configuration
@@ -387,6 +389,52 @@ def retrive_history_of_a_game(game):
 	return prepared_history
 
 ########################################################################
+# Classe année permetant la comparaison avec les années non renseignées, donc none
+########################################################################
+
+class Year:
+	def __init__(self, year=None):
+		if year is None:
+			self._year = None
+			self.includeInSorting=False
+		else:
+			self._year = int(year)
+			self.includeInSorting=True
+
+	def __str__(self):
+		if self._year is None:
+			return "-"
+		return str(self._year)
+
+	def __eq__(self, other):
+		if isinstance(other, Year):
+			if self._year is None:
+				return other._year is None
+			else:
+				return self._year == other._year
+		return NotImplemented
+
+	def __lt__(self, other):
+		if isinstance(other, Year):
+			if self._year is None:
+				return True
+			elif other._year is None:
+				return False
+			else:
+				return self._year < other._year
+		return NotImplemented
+
+	def __gt__(self, other):
+		if isinstance(other, Year):
+			if self._year is None:
+				return False
+			elif other._year is None:
+				return True
+			else:
+				return self._year > other._year
+		return NotImplemented
+
+########################################################################
 # Classe des jeux
 ########################################################################
 
@@ -398,7 +446,7 @@ class Game:
 		self.codeName = codeName
 		self.licence = licence
 		self.url = url
-		self.year = year
+		self.year = Year(year)
 		self.type_ = type_
 		self.authors = authors
 		self.studios = studios
@@ -872,11 +920,11 @@ def main(stdscr):
 			setBottomBarContent(f"Tri par permissivité des licences.")
 		elif key == ord('p'):  # Trier par type si la touche 'p' est pressée
 			THE_VISUAL_LIST_OF_GAMES.sortBy("type_")
-			setBottomBarContent(f"Tri par type.")
+			setBottomBarContent(f"Tri par type de jeu.")
 		elif key == ord('o'):  # Trier par date si la touche 'o' est pressée
 			THE_VISUAL_LIST_OF_GAMES.sortBy("year")
 			setBottomBarContent(f"Tri par année de sortie.")
-		elif key == ord('i'):  # Trier par date si la touche 'o' est pressée
+		elif key == ord('i'):  # Trier par date de dernière ouverture 
 			THE_VISUAL_LIST_OF_GAMES.sortBy("latest_opening_date")
 			setBottomBarContent(f"Tri par date de dernière ouverture.")
 		elif key == ord('y'):  # Trier par date si la touche 'o' est pressée
