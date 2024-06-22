@@ -72,10 +72,11 @@ PLATFORM_FILE=CONFIG_DIR + "/" + BASE_NAME_PLATFORM_FILE
 # Défffinition de classe
 listOfPlatforms=[]
 class Platform:
-	def __init__(self, name=None, code=None, abbr=None):
+	def __init__(self, name=None, code=None, abbr=None, includeInSorting=True):
 		self.name = name
 		self.code = code
 		self.abbr = abbr
+		self.includeInSorting = includeInSorting
 		globals()[code] = self # Déclaration de la variable globale pérmétant d’atteindre directement le type voulu
 
 def create_platform_objects():
@@ -93,7 +94,7 @@ def create_platform_objects():
 			abbr=aPlatform.get("abbr")
 		)
 
-Platform(name="Plateforme inconue", code="unknownplatform", abbr="")
+Platform(name="Plateforme inconue", code="unknownplatform", abbr="", includeInSorting=False)
 
 def get_platform_object_after_code(code):
 	if code in globals():
@@ -124,10 +125,11 @@ def formatDataListToLitteralList(list_):
 # Défffinition de classe
 listOfGameTypes=[]
 class GameType:
-	def __init__(self, name=None, code=None, abbr=None):
+	def __init__(self, name=None, code=None, abbr=None, includeInSorting=True):
 		self.name = name
 		self.code = code
 		self.abbr = abbr
+		self.includeInSorting = includeInSorting
 
 		listOfGameTypes.append(self) # Adjonction à la liste des types de jeux
 		globals()[code] = self # Déclaration de la variable globale pérmétant d’atteindre directement le type voulu
@@ -172,7 +174,7 @@ def create_game_type_objects():
 			abbr=aGameType.get("abbr")
 		)
 
-GameType(name="Type inconu", abbr="-", code="unknowntype")
+GameType(name="Type inconu", abbr="-", code="unknowntype", includeInSorting=False)
 
 def get_type_object_after_code(code):
 	if code in globals():
@@ -186,7 +188,7 @@ def get_type_object_after_code(code):
 # Défffinition de classe
 listOfLicences=[]
 class Licence:
-	def __init__(self, name=None, abbr=None, code=None, url=None, shortText=None, fullText=None, freedomCoefficient=0):
+	def __init__(self, name=None, abbr=None, code=None, url=None, shortText=None, fullText=None, freedomCoefficient=0, includeInSorting=True):
 		self.name = name
 		self.abbr = abbr
 		self.code = code
@@ -194,6 +196,7 @@ class Licence:
 		self.shortText = shortText
 		self.fullText = fullText
 		self.freedomCoefficient = freedomCoefficient
+		self.includeInSorting = includeInSorting
 
 		listOfLicences.append(self) # Adjonction à la liste des licences
 		globals()[code] = self # Déclaration de la variable globale pérmétant d’atteindre directement le type voulu
@@ -240,7 +243,7 @@ def create_licence_objects():
 			freedomCoefficient=aLicence.get("freedomCoefficient") or 0
 		)
 
-Licence(name="Licence inconue", abbr="-", code="unknownlicence")
+Licence(name="Licence inconue", abbr="-", code="unknownlicence", includeInSorting=False)
 
 def get_licence_object_after_code(code):
 	if code in globals():
@@ -554,7 +557,6 @@ def getNextSortingOrder(currentSortingOrder):
 	currentIndex=SORTING_ORDER.index(currentSortingOrder)
 	tmpNextIndex=currentIndex+1
 	realNextIndex=tmpNextIndex % len(SORTING_ORDER)
-	writeInTmp(realNextIndex)
 	nextSortingOrder=SORTING_ORDER[realNextIndex]
 	
 	return nextSortingOrder
@@ -586,14 +588,37 @@ class VisualListOfGames:
 	def shiftSortingState(self, property_):
 		if ( property_ == self.sortByProperty) :
 			self.sortingState=getNextSortingOrder(self.sortingState)
-			writeInTmp(self.sortingState)
+
+	def isAtributeShouldBeSorted(self, attribute):
+		if attribute in ["-", None]:
+			return False
+		if hasattr(attribute, "includeInSorting"):
+			if attribute.includeInSorting == False:
+				return False
+
+		return True
+
+	def putVoidAtEnd(self, oldList, property_):
+		beginingOfNewList=[]
+		endOfNewList=[]
+		for item in oldList:
+			if self.isAtributeShouldBeSorted(getattr(item[self.hiden_data_column_number()], property_)) :
+				beginingOfNewList.append(item)
+			else:
+				endOfNewList.append(item)
+		newList= beginingOfNewList + endOfNewList
+		writeInTmp(newList)
+		return newList
 
 	def softSortBy(self, property_):
 		if property_:
 			self.sortByProperty=property_
-			tmpList=self.list
-			self.list=sorted(tmpList, reverse=self.sortingState, key=lambda x: getattr(x[self.hiden_data_column_number()], property_))
-		writeInTmp([anItem[3] for anItem in self.list])
+			tmpList0=self.list
+			tmpList1=sorted(tmpList0, reverse=self.sortingState, key=lambda x: getattr(x[self.hiden_data_column_number()], property_))
+			tmpList2=self.putVoidAtEnd(tmpList1, property_)
+			# Déplacer les entrées avec property_ == "-" à la fin
+			self.list=tmpList2
+		#writeInTmp([anItem[1] for anItem in self.list])
 
 	def sortBy(self, property_):
 		self.shiftSortingState(property_)
@@ -835,7 +860,7 @@ def main(stdscr):
 			url = THE_VISUAL_LIST_OF_GAMES.list[selected_row][HIDED_DATA_COLUMN].url  # Supposons que l'URL est stockée à l'indice 5
 			if url != None:
 				setBottomBarContent(f"Ouverture de « {THE_VISUAL_LIST_OF_GAMES.list[selected_row][HIDED_DATA_COLUMN].url} »")
-				draw_bottom_bar(stdscr)
+				THE_VISUAL_LIST_OF_GAMES.refresh()
 				webbrowser.open(url)
 			else:
 				setBottomBarContent(f"Pas de lien associé à « {THE_VISUAL_LIST_OF_GAMES.list[selected_row][HIDED_DATA_COLUMN].name} »")
@@ -858,7 +883,6 @@ def main(stdscr):
 			url = THE_VISUAL_LIST_OF_GAMES.list[selected_row][THE_VISUAL_LIST_OF_GAMES.hiden_data_column_number()].url
 			if url != None:
 				setBottomBarContent(f"Copie de « {THE_VISUAL_LIST_OF_GAMES.list[selected_row][HIDED_DATA_COLUMN].url} » dans le presse-papier.")
-				writeInTmp(url)
 				pyperclip.copy(url)
 			else:
 				setBottomBarContent(f"Aucun lien associé à « {THE_VISUAL_LIST_OF_GAMES.list[selected_row][HIDED_DATA_COLUMN].name} », rien à copier.")
