@@ -32,7 +32,7 @@ def writeInTmp(text):
 
 APP_CODE_NAME="triumphum"
 APP_FANCY_NAME="Triumphum"
-APP_DESCRIPTION="Gestionnaire de ludothèque en Python et NCurses pour Linux"
+APP_DESCRIPTION="Gestionnaire de ludothèque en Python et NCurses pour GNU/Linux"
 APP_VERSION="0.1"
 APP_AUTHOR="Fauve"
 APP_AUTHOR_MAIL="fauve.ordinator@taniere.info"
@@ -103,6 +103,23 @@ def get_platform_object_after_code(code):
 ########################################################################
 # Classe des types de jeux
 ########################################################################
+
+# 
+
+def formatDataListToLitteralList(list_):
+	try:
+		n = len(list_)
+	except:
+		n = 0
+	if n == 0:
+		return "-"
+	elif n == 1:
+		return list_[0]
+	elif n == 2:
+		return f"{list_[0]} et {list_[1]}"
+	else:
+		elements = ", ".join(list_[:-1])
+		return f"{elements}, et {list_[-1]}"
 
 # Défffinition de classe
 listOfGameTypes=[]
@@ -373,14 +390,15 @@ def retrive_history_of_a_game(game):
 # Défffinition de classe
 listOfGames=[]
 class Game:
-	def __init__(self, name=None, codeName=None, licence=None, url=None, year=None, type_=None, author=None, command=None, comments=None, platform=None):
+	def __init__(self, name=None, codeName=None, licence=None, url=None, year=None, type_=None, authors=None, studios=[], command=None, comments=None, platform=None):
 		self.name = name
 		self.codeName = codeName
 		self.licence = licence
 		self.url = url
 		self.year = year
 		self.type_ = type_
-		self.author = author
+		self.authors = authors
+		self.studios = studios
 		self.command = command
 		self.comments = comments
 		self.platform = platform
@@ -400,6 +418,8 @@ class Game:
 			self.year or "-",
 			self.human_latest_opening_duration() or "-",
 			self.human_cumulate_time() or "0",
+			self.listOfAuthors(),
+			self.listOfStudios(),
 			self
 		]
 		return ncurseLine
@@ -454,6 +474,12 @@ class Game:
 			return humanize.naturaldelta(self.latest_opening_duration())
 		return "-"
 
+	def listOfAuthors(self):
+		return formatDataListToLitteralList(self.authors)
+
+	def listOfStudios(self):
+		return formatDataListToLitteralList(self.studios)
+
 def create_game_objects():
 	# Création de la liste des jeux
 
@@ -475,8 +501,9 @@ def create_game_objects():
 			year=aGame.get("year"),
 			type_=get_type_object_after_code(aGame.get("type")),
 			command=aGame.get("command"),
-			author=aGame.get("author"),
-			platform=get_platform_object_after_code(aGame.get("platform"))
+			authors=aGame.get("authors"),
+			studios=aGame.get("studios"),
+			platform=get_platform_object_after_code(aGame.get("platform")),
 		)
 
 ########################################################################
@@ -536,7 +563,7 @@ def getNextSortingOrder(currentSortingOrder):
 class VisualListOfGames:
 	def __init__(self):
 		self.columns=None
-		self.titles = [" ", "Titre", "Licence", "Type", "Date", "Dernière ouverture", "Temps cumulé"]
+		self.titles = [" ", "Titre", "Licence", "Type", "Date", "Dernière ouverture", "Temps cumulé", "Auteur", "Studio"]
 		self.list=None
 		self.sortByProperty=None
 		self.sortingState=SORTING_ORDER[1]
@@ -688,7 +715,7 @@ def getColWidths():
 
 
 # Titres des colonnes
-titles = [" ", "Titre", "Licence", "Type", "Date", "Dernière ouverture", "Temps cumulé"]
+titles = [" ", "Titre", "Licence", "Type", "Date", "Dernière ouverture", "Temps cumulé", "Auteur", "Studio"]
 
 SORTING_COLUMN=0
 
@@ -703,7 +730,7 @@ def makeItemsList():
 
 #makeItemsList()
 
-HIDED_DATA_COLUMN=7
+HIDED_DATA_COLUMN=9
 SPACE_COLUMN_SEPARATION_NUMBER=2
 
 def main(stdscr):
