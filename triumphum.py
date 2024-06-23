@@ -62,6 +62,30 @@ LICENCE_FILE=CONFIG_DIR + "/" + BASE_NAME_LICENCE_FILE
 PLATFORM_FILE=CONFIG_DIR + "/" + BASE_NAME_PLATFORM_FILE
 
 ########################################################################
+# Configurations
+########################################################################
+
+GENERAL_VOID_SYMBOL="-"
+
+_VOID_SYMBOL=GENERAL_VOID_SYMBOL
+TITLE_VOID_SYMBOL=GENERAL_VOID_SYMBOL
+LICENCE_VOID_SYMBOL=GENERAL_VOID_SYMBOL
+TYPE__VOID_SYMBOL=GENERAL_VOID_SYMBOL
+DATE_VOID_SYMBOL=GENERAL_VOID_SYMBOL
+LASTOPENING_VOID_SYMBOL=GENERAL_VOID_SYMBOL
+CUMULATEDTIME_VOID_SYMBOL=GENERAL_VOID_SYMBOL
+AUTHOR_VOID_SYMBOL=GENERAL_VOID_SYMBOL
+STUDIO_VOID_SYMBOL=GENERAL_VOID_SYMBOL
+
+
+CUMULATED_TIME_PLAYED_PER_DAY="J"
+CUMULATED_TIME_PLAYED_PER_WEEK="S"
+CUMULATED_TIME_PLAYED_PER_MONTH="M"
+CUMULATED_TIME_PLAYED_PER_YEAR="Y"
+CUMULATED_TIME_PLAYED_SEPARATOR="|"
+
+
+########################################################################
 # Fonctions communes aux classes
 ########################################################################
 
@@ -454,6 +478,7 @@ class Game:
 		self.comments = comments
 		self.platform = platform
 		self.history = self.get_history()
+		self.latest_opening_date_value = self.latest_opening_date()
 
 		listOfGames.append(self) # Adjonction à la liste des jeux
 
@@ -822,7 +847,7 @@ def draw_bottom_bar(stdscr):
 	stdscr.addstr(h-1, 0, bar_text, curses.A_REVERSE)
 	stdscr.chgat(h-1, 0, w, curses.A_REVERSE)
 
-BOTTOM_BAR_TEXT="test"
+BOTTOM_BAR_TEXT=""
 
 def main(stdscr):
 	# Initialisation de ncurses
@@ -925,7 +950,7 @@ def main(stdscr):
 			THE_VISUAL_LIST_OF_GAMES.sortBy("year")
 			setBottomBarContent(f"Tri par année de sortie.")
 		elif key == ord('i'):  # Trier par date de dernière ouverture 
-			THE_VISUAL_LIST_OF_GAMES.sortBy("latest_opening_date")
+			THE_VISUAL_LIST_OF_GAMES.sortBy("latest_opening_date_value")
 			setBottomBarContent(f"Tri par date de dernière ouverture.")
 		elif key == ord('y'):  # Trier par date si la touche 'o' est pressée
 			url = THE_VISUAL_LIST_OF_GAMES.list[selected_row][THE_VISUAL_LIST_OF_GAMES.hiden_data_column_number()].url
