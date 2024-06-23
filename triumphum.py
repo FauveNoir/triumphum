@@ -871,17 +871,17 @@ def prepareTextForRightIndicator(visualListOfGames):
 	global CUMULATED_TIME_PLAYED_SEPARATOR
 
 	rightIndicatorText=  CUMULATED_TIME_PLAYED_PER_DAY + ": "
-	rightIndicatorText+= str(visualListOfGames.allHistoryEntries().cumulatedPlayingTimeFromNDays(1))
+	rightIndicatorText+= humanize.naturaldelta(visualListOfGames.allHistoryEntries().cumulatedPlayingTimeFromNDays(1))
 
 	rightIndicatorText+= " " + CUMULATED_TIME_PLAYED_SEPARATOR + " "
 
 	rightIndicatorText+= CUMULATED_TIME_PLAYED_PER_WEEK + ": "
-	rightIndicatorText+= str(visualListOfGames.allHistoryEntries().cumulatedPlayingTimeFromNDays(7))
+	rightIndicatorText+= humanize.naturaldelta(visualListOfGames.allHistoryEntries().cumulatedPlayingTimeFromNDays(7))
 
 	rightIndicatorText+= " " + CUMULATED_TIME_PLAYED_SEPARATOR + " "
 
 	rightIndicatorText+= CUMULATED_TIME_PLAYED_PER_MONTH + ": "
-	rightIndicatorText+= str(visualListOfGames.allHistoryEntries().cumulatedPlayingTimeFromNDays(30))
+	rightIndicatorText+= humanize.naturaldelta(visualListOfGames.allHistoryEntries().cumulatedPlayingTimeFromNDays(30))
 
 	rightIndicatorText+= " " + CUMULATED_TIME_PLAYED_SEPARATOR + " "
 
