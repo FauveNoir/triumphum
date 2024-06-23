@@ -8,7 +8,7 @@ import webbrowser
 import pyperclip
 import appdirs
 import re
-from datetime import datetime, timedelta
+from datetime import date, datetime, timedelta
 from tabulate import tabulate
 import humanize
 import pendulum
@@ -370,6 +370,20 @@ class History:
 			total_time+=duration
 		return total_time
 
+	def historyEntriesFromNDays(self, numberOfDays):
+		today = date.today()
+		durationAgo = today - timedelta(days=numberOfDays)
+		durationEntries = History()
+		for entry in self.history:
+			if durationAgo <= datetime.strptime(entry.start_time, '%Y-%m-%dT%H:%M:%S').date() <= today:
+				durationEntries.append(entry)
+
+		return durationEntries
+
+	def cumulatedPlayingTimeFromNDays(self, numberOfDays):
+		cumulatedTime=self.historyEntriesFromNDays(numberOfDays)
+		return cumulatedTime.cumulate_time()
+
 ########################################################################
 # Fonctions d’éxtraction de l’historique pour un jeu donné
 
@@ -593,6 +607,7 @@ class VisuaColumn:
 		self.property=property_
 
 		listOfPossibleColumns.append(self)
+
 ########################################################################
 # Fonctions d’extraction des données
 ########################################################################
@@ -635,6 +650,7 @@ def getNextSortingOrder(currentSortingOrder):
 	return nextSortingOrder
 
 
+HIDED_DATA_COLUMN=9
 class VisualListOfGames:
 	def __init__(self):
 		self.columns=None
@@ -645,6 +661,7 @@ class VisualListOfGames:
 
 		self.refresh()
 		globals()["THE_VISUAL_LIST_OF_GAMES"] = self # Le seul objet de cette classe est TheVisualListOfGames
+		writeInTmp(self.allHistoryEntries().cumulatedPlayingTimeFromNDays(7))
 
 	def hiden_data_column_number(self):
 		return len(self.list[0])-1
@@ -704,17 +721,15 @@ class VisualListOfGames:
 
 		return col_widths
 
-	def cumulatedPlayingForDay(self):
-		pass
+	def allHistoryEntries(self):
+		global HIDED_DATA_COLUMN
 
-	def cumulatedPlayingForWeek(self):
-		pass
+		allHistoryEntriesList=History()
+		for aGameRow in self.list:
+			allHistoryEntriesList.history.extend(aGameRow[HIDED_DATA_COLUMN].history.history)
 
-	def cumulatedPlayingForMonth(self):
-		pass
+		return allHistoryEntriesList
 
-	def cumulatedPlayingForYear(self):
-		pass
 
 	def filterByPattern(self, pattern):
 		pass
@@ -828,9 +843,9 @@ def makeItemsList():
 
 #makeItemsList()
 
-HIDED_DATA_COLUMN=9
 SPACE_COLUMN_SEPARATION_NUMBER=2
 
+BOTTOM_BAR_TEXT=""
 def setBottomBarContent(newBottomBarText):
 	global BOTTOM_BAR_TEXT
 	BOTTOM_BAR_TEXT = newBottomBarText
@@ -847,7 +862,55 @@ def draw_bottom_bar(stdscr):
 	stdscr.addstr(h-1, 0, bar_text, curses.A_REVERSE)
 	stdscr.chgat(h-1, 0, w, curses.A_REVERSE)
 
-BOTTOM_BAR_TEXT=""
+
+def prepareTextForRightIndicator(visualListOfGames):
+	global CUMULATED_TIME_PLAYED_PER_DAY
+	global CUMULATED_TIME_PLAYED_PER_WEEK
+	global CUMULATED_TIME_PLAYED_PER_MONTH
+	global CUMULATED_TIME_PLAYED_PER_YEAR
+	global CUMULATED_TIME_PLAYED_SEPARATOR
+
+	rightIndicatorText=  CUMULATED_TIME_PLAYED_PER_DAY + ": "
+	rightIndicatorText+= str(visualListOfGames.allHistoryEntries().cumulatedPlayingTimeFromNDays(1))
+
+	rightIndicatorText+= " " + CUMULATED_TIME_PLAYED_SEPARATOR + " "
+
+	rightIndicatorText+= CUMULATED_TIME_PLAYED_PER_WEEK + ": "
+	rightIndicatorText+= str(visualListOfGames.allHistoryEntries().cumulatedPlayingTimeFromNDays(7))
+
+	rightIndicatorText+= " " + CUMULATED_TIME_PLAYED_SEPARATOR + " "
+
+	rightIndicatorText+= CUMULATED_TIME_PLAYED_PER_MONTH + ": "
+	rightIndicatorText+= str(visualListOfGames.allHistoryEntries().cumulatedPlayingTimeFromNDays(30))
+
+	rightIndicatorText+= " " + CUMULATED_TIME_PLAYED_SEPARATOR + " "
+
+	rightIndicatorText+= CUMULATED_TIME_PLAYED_PER_YEAR + ": "
+	rightIndicatorText+= str(visualListOfGames.allHistoryEntries().cumulatedPlayingTimeFromNDays(365))
+
+	return rightIndicatorText
+
+# Barre inférieure
+def draw_bottom_right(stdscr, visualListOfGames):
+	# Récupère les dimensions de l'écran
+
+	rightIndicatorText=prepareTextForRightIndicator(visualListOfGames)
+	h, w = stdscr.getmaxyx()
+
+	# Définir le texte de la barre inférieure
+
+	# Calculer la position de départ pour l'alignement à droite
+	x_start = w - len(rightIndicatorText) - 1  # -1 pour éviter le débordement
+
+	# Effacer l'arrière-plan de la ligne
+	stdscr.move(h-1, 0)
+
+	# Dessiner le texte avec la couleur d'origine, sans arrière-plan
+	stdscr.addstr(h-1, x_start, rightIndicatorText, curses.A_REVERSE)
+
+	# Rafraîchir l'écran
+	stdscr.refresh()
+
 
 def main(stdscr):
 	# Initialisation de ncurses
@@ -892,6 +955,7 @@ def main(stdscr):
 
 
 		draw_bottom_bar(stdscr)
+		draw_bottom_right(stdscr, THE_VISUAL_LIST_OF_GAMES)
 
 		# Calcul de la largeur des colones
 		col_widths = getColWidths()
