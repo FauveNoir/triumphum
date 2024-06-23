@@ -886,7 +886,7 @@ def prepareTextForRightIndicator(visualListOfGames):
 	rightIndicatorText+= " " + CUMULATED_TIME_PLAYED_SEPARATOR + " "
 
 	rightIndicatorText+= CUMULATED_TIME_PLAYED_PER_YEAR + ": "
-	rightIndicatorText+= str(visualListOfGames.allHistoryEntries().cumulatedPlayingTimeFromNDays(365))
+	rightIndicatorText+= humanize.naturaldelta(visualListOfGames.allHistoryEntries().cumulatedPlayingTimeFromNDays(365))
 
 	return rightIndicatorText
 
