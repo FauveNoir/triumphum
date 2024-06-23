@@ -1026,6 +1026,9 @@ def main(stdscr):
 		elif key == ord('l'):  # Rafraichir
 			retrive_datas()
 			makeItemsList()
+		elif key == ord('x'):  # Ouvrir le lien associé au jeu si la touche 'a' est pressée
+			setBottomBarContent(f"Merci de me faire un don sur « {APP_AUTHOR_DONATION_LINK} » (^.^)")
+			webbrowser.open(APP_AUTHOR_DONATION_LINK)
 		elif key == ord('q'):  # Quitter si la touche 'q' est pressée
 			break
 
