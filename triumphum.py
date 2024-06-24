@@ -15,6 +15,8 @@ import pendulum
 import locale
 import time
 import argparse
+import configparser
+
 
 ########################################################################
 # fonctions de test
@@ -108,6 +110,22 @@ parser.add_argument("-t", "--game-types", help = "Select different game type fil
 
 args = parser.parse_args()
 
+########################################################################
+# Traitement du fichier de configuration
+########################################################################
+
+config = configparser.ConfigParser()
+
+########################################################################
+# Classe des racoucris dactyliques
+########################################################################
+listOfPlatforms=[]
+class Binding:
+	def __init__(self, key=None, description=None):
+		self.key = key
+		self.description = description
+
+########################################################################
 # Classe des plateformes
 ########################################################################
 
@@ -146,8 +164,6 @@ def get_platform_object_after_code(code):
 ########################################################################
 # Classe des types de jeux
 ########################################################################
-
-# 
 
 def formatDataListToLitteralList(list_):
 	try:
