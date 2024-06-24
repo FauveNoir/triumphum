@@ -127,15 +127,15 @@ class Binding:
 		self.code = code
 		globals()[code] = self # Déclaration de la variable globale pérmétant d’atteindre directement le type voulu
 
-Binding(key="a", code="bindSortByPlatform", description="Trier par plateforme")
 Binding(key="b", code="bindSortByName", description="Trier par nom")
 Binding(key="é", code="bindSortByLicence", description="Trire par licence")
 Binding(key="p", code="bindSortByType", description="Trier par type")
 Binding(key="o", code="bindSortByDate", description="Trier par date")
 Binding(key="è", code="bindSortByLastOpening", description="Trier par date d’ouverture")
 Binding(key="^", code="bindSortByPlayingDuration", description="Trier par heure cumulé")
+Binding(key="!", code="bindSortByPlatform", description="Trier par plateforme")
 
-Binding(key="a", code="bindOpenWesite", description="Ouvrir le site web associé")
+Binding(key="A", code="bindOpenWesite", description="Ouvrir le site web associé")
 Binding(key="e", code="bindEditData", description="Éditer les données")
 Binding(key="i", code="bindComment", description="Commenter")
 Binding(key="u", code="bindDonate", description="Faire un don")
