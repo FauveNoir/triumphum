@@ -52,6 +52,8 @@ _t = humanize.i18n.activate("fr_FR")
 # Obtenez le répertoire de configuration de l'application
 CONFIG_DIR = appdirs.user_config_dir(APP_CODE_NAME)
 
+CONFIG_FILE=CONFIG_DIR + "triumphumrc"
+
 BASE_NAME_GAME_FILE="games.json"
 BASE_NAME_TYPE_FILE="listOfGameTypes.json"
 BASE_NAME_LICENCE_FILE="listOfLicences.json"
@@ -1062,6 +1064,8 @@ def getGameObjectByItCodeName(codeName):
 # Que faire
 ########################################################################
 
+if args.config_file != None:
+	GAME_FILE=args.config_file
 if args.games != None:
 	GAME_FILE=args.games
 if args.game_types != None:
@@ -1072,6 +1076,7 @@ if args.platforms != None:
 	PLATFORM_FILE=args.platforms
 
 elif  args.about != True:
+	print(f"Fichier de configuration principal : {CONFIG_FILE}")
 	print(f"Fichier des jeux : {GAME_FILE}")
 	print(f"Fichier des types de jeux : {TYPE_FILE}")
 	print(f"Fichier des licences : {LICENCE_FILE}")
