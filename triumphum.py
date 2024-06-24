@@ -121,13 +121,26 @@ config = configparser.ConfigParser()
 ########################################################################
 listOfBindings=[]
 class Binding:
-	def __init__(self, key=None, code=None, description=None):
+	def __init__(self, key=None, code=None, description=None, configFileName=None, instructions=None):
 		self.key = key
 		self.description = description
 		self.code = code
+		self.configFileName = configFileName
 		globals()[code] = self # Déclaration de la variable globale pérmétant d’atteindre directement le type voulu
+		if instructions:
+			setattr(self, 'executeInstructions', instructions)
 
-Binding(key="b", code="bindSortByName", description="Trier par nom")
+
+def bindSortByNameFunction():
+	global THE_VISUAL_LIST_OF_GAMES
+	THE_VISUAL_LIST_OF_GAMES.sortBy("name")
+	setBottomBarContent(f"Tri par ordre alphabétique.")
+
+Binding(key="j", code="bindGoDown", description="Aller en haut")
+Binding(key="k", code="bindGoUp", description="Aller en bas")
+
+Binding(key="b", code="bindSortByName", description="Trier par nom", instructions=bindSortByNameFunction)
+print(dir(bindSortByName))
 Binding(key="é", code="bindSortByLicence", description="Trire par licence")
 Binding(key="p", code="bindSortByType", description="Trier par type")
 Binding(key="o", code="bindSortByDate", description="Trier par date")
@@ -140,7 +153,8 @@ Binding(key="e", code="bindEditData", description="Éditer les données")
 Binding(key="i", code="bindComment", description="Commenter")
 Binding(key="u", code="bindDonate", description="Faire un don")
 Binding(key="w", code="bindShowFullLicence", description="Afficher le texte de la licence")
-Binding(key="/", code="bindFilter", description="Filter")
+Binding(key="/", code="bindFilter", description="Filtrer")
+Binding(key="h", code="bindSeeBindingHelp", description="Montrer l’aide")
 
 ########################################################################
 # classe des plateformes
@@ -984,6 +998,7 @@ def main(stdscr):
 
 	global THE_VISUAL_LIST_OF_GAMES
 	global BOTTOM_BAR_TEXT
+	global bindSortByName
 	# Boucle principale
 	while True:
 
@@ -1050,8 +1065,9 @@ def main(stdscr):
 			else:
 				setBottomBarContent(f"Pas de lien associé à « {THE_VISUAL_LIST_OF_GAMES.list[selected_row][HIDED_DATA_COLUMN].name} »")
 		elif key == ord('b'):  # Trier par titre si la touche 'b' est pressée
-			THE_VISUAL_LIST_OF_GAMES.sortBy("name")
-			setBottomBarContent(f"Tri par ordre alphabétique.")
+			bindSortByName.executeInstructions()
+#			THE_VISUAL_LIST_OF_GAMES.sortBy("name")
+#			setBottomBarContent(f"Tri par ordre alphabétique.")
 		elif key == ord('u'):  # Trier par licence si la touche 'é' est pressée
 			THE_VISUAL_LIST_OF_GAMES.sortBy("licence")
 			setBottomBarContent(f"Tri par permissivité des licences.")
