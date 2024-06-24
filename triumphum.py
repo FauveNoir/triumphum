@@ -67,7 +67,6 @@ PLATFORM_FILE=CONFIG_DIR + "/" + BASE_NAME_PLATFORM_FILE
 
 GENERAL_VOID_SYMBOL="-"
 
-_VOID_SYMBOL=GENERAL_VOID_SYMBOL
 TITLE_VOID_SYMBOL=GENERAL_VOID_SYMBOL
 LICENCE_VOID_SYMBOL=GENERAL_VOID_SYMBOL
 TYPE__VOID_SYMBOL=GENERAL_VOID_SYMBOL
@@ -82,7 +81,7 @@ CUMULATED_TIME_PLAYED_PER_DAY="J"
 CUMULATED_TIME_PLAYED_PER_WEEK="S"
 CUMULATED_TIME_PLAYED_PER_MONTH="M"
 CUMULATED_TIME_PLAYED_PER_YEAR="Y"
-CUMULATED_TIME_PLAYED_SEPARATOR="|"
+CUMULATED_TIME_PLAYED_SEPARATOR="│"
 
 
 ########################################################################
@@ -873,17 +872,17 @@ def prepareTextForRightIndicator(visualListOfGames):
 	rightIndicatorText=  CUMULATED_TIME_PLAYED_PER_DAY + ": "
 	rightIndicatorText+= humanize.naturaldelta(visualListOfGames.allHistoryEntries().cumulatedPlayingTimeFromNDays(1))
 
-	rightIndicatorText+= " " + CUMULATED_TIME_PLAYED_SEPARATOR + " "
+	rightIndicatorText+= "" + CUMULATED_TIME_PLAYED_SEPARATOR + ""
 
 	rightIndicatorText+= CUMULATED_TIME_PLAYED_PER_WEEK + ": "
 	rightIndicatorText+= humanize.naturaldelta(visualListOfGames.allHistoryEntries().cumulatedPlayingTimeFromNDays(7))
 
-	rightIndicatorText+= " " + CUMULATED_TIME_PLAYED_SEPARATOR + " "
+	rightIndicatorText+= "" + CUMULATED_TIME_PLAYED_SEPARATOR + ""
 
 	rightIndicatorText+= CUMULATED_TIME_PLAYED_PER_MONTH + ": "
 	rightIndicatorText+= humanize.naturaldelta(visualListOfGames.allHistoryEntries().cumulatedPlayingTimeFromNDays(30))
 
-	rightIndicatorText+= " " + CUMULATED_TIME_PLAYED_SEPARATOR + " "
+	rightIndicatorText+= "" + CUMULATED_TIME_PLAYED_SEPARATOR + ""
 
 	rightIndicatorText+= CUMULATED_TIME_PLAYED_PER_YEAR + ": "
 	rightIndicatorText+= humanize.naturaldelta(visualListOfGames.allHistoryEntries().cumulatedPlayingTimeFromNDays(365))
@@ -998,7 +997,7 @@ def main(stdscr):
 			if url != None:
 				setBottomBarContent(f"Ouverture de « {THE_VISUAL_LIST_OF_GAMES.list[selected_row][HIDED_DATA_COLUMN].url} »")
 				THE_VISUAL_LIST_OF_GAMES.refresh()
-				webbrowser.open(url)
+				threading.Thread(target=webbrowser.open, args=(url,)).start()
 			else:
 				setBottomBarContent(f"Pas de lien associé à « {THE_VISUAL_LIST_OF_GAMES.list[selected_row][HIDED_DATA_COLUMN].name} »")
 		elif key == ord('b'):  # Trier par titre si la touche 'b' est pressée
