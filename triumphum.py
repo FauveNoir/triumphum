@@ -119,18 +119,35 @@ config = configparser.ConfigParser()
 ########################################################################
 # Classe des racoucris dactyliques
 ########################################################################
-listOfPlatforms=[]
+listOfBindings=[]
 class Binding:
-	def __init__(self, key=None, description=None):
+	def __init__(self, key=None, code=None, description=None):
 		self.key = key
 		self.description = description
+		self.code = code
+		globals()[code] = self # Déclaration de la variable globale pérmétant d’atteindre directement le type voulu
+
+Binding(key="a", code="bindSortByPlatform", description="Trier par plateforme")
+Binding(key="b", code="bindSortByName", description="Trier par nom")
+Binding(key="é", code="bindSortByLicence", description="Trire par licence")
+Binding(key="p", code="bindSortByType", description="Trier par type")
+Binding(key="o", code="bindSortByDate", description="Trier par date")
+Binding(key="è", code="bindSortByLastOpening", description="Trier par date d’ouverture")
+Binding(key="^", code="bindSortByPlayingDuration", description="Trier par heure cumulé")
+
+Binding(key="a", code="bindOpenWesite", description="Ouvrir le site web associé")
+Binding(key="e", code="bindEditData", description="Éditer les données")
+Binding(key="i", code="bindComment", description="Commenter")
+Binding(key="u", code="bindDonate", description="Faire un don")
+Binding(key="w", code="bindShowFullLicence", description="Afficher le texte de la licence")
+Binding(key="/", code="bindFilter", description="Filter")
 
 ########################################################################
-# Classe des plateformes
+# classe des plateformes
 ########################################################################
 
-# Défffinition de classe
-listOfPlatforms=[]
+# défffinition de classe
+listofPlatforms=[]
 class Platform:
 	def __init__(self, name=None, code=None, abbr=None, includeInSorting=True):
 		self.name = name
