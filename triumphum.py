@@ -95,8 +95,8 @@ parser = argparse.ArgumentParser(description=APP_FANCY_NAME + " " + APP_VERSION 
 
 parser.add_argument("--tui", action="store_true", default = True, help = "Run the game selection interface (default).")
 parser.add_argument("-r", "--run", help = "Run a given game and track playing time.")
-parser.add_argument("-a", "--about ", action="store_true", help = "Show about message.")
-parser.add_argument("-d", "--donate ", action="store_true", help = "Open link to give a tip.")
+parser.add_argument("-a", "--about", action="store_true", help = "Show about message.")
+parser.add_argument("-d", "--donate", action="store_true", help = "Open link to give a tip.")
 #parser.add_argument("-h", "--help ", help = "Print help message (this one).")
 parser.add_argument("-c", "--config-file", help = "Select different config file from default one.")
 parser.add_argument("-g", "--games", help = "Select different game file from default one.")
@@ -105,8 +105,6 @@ parser.add_argument("-l", "--licences", help = "Select different licence file fr
 parser.add_argument("-t", "--game-types", help = "Select different game type file from default one.")
 
 args = parser.parse_args()
-
-print(vars(args))
 
 # Classe des plateformes
 ########################################################################
@@ -1064,6 +1062,21 @@ def getGameObjectByItCodeName(codeName):
 # Que faire
 ########################################################################
 
+if args.games != None:
+	GAME_FILE=args.games
+if args.game_types != None:
+	TYPE_FILE=args.game_types
+if args.licences != None:
+	LICENCE_FILE=args.licences
+if args.platforms != None:
+	PLATFORM_FILE=args.platforms
+
+elif  args.about != True:
+	print(f"Fichier des jeux : {GAME_FILE}")
+	print(f"Fichier des types de jeux : {TYPE_FILE}")
+	print(f"Fichier des licences : {LICENCE_FILE}")
+	print(f"Fichier des plateformes : {PLATFORM_FILE}")
+
 if args.run not in [None, False]:
 	theGame=getGameObjectByItCodeName(args.run)
 	if theGame != None:
@@ -1071,6 +1084,13 @@ if args.run not in [None, False]:
 		threading.Thread(target=run_command_and_write_on_history, args=(theGame,)).start()
 	else:
 		print(f"Aucun jeu ne correspond à l’identifiant « {args.run} »")
+
+elif  args.about == True:
+	print(APP_FANCY_NAME + " " + APP_VERSION + " " + APP_DESCRIPTION)
+
+elif args.donate == True:
+	print(f"Pour soutenir {APP_FANCY_NAME} et faire en sorte qu’il continue et s’améliore, merci de faire un don à <{APP_AUTHOR_DONATION_LINK}>. (^.^)")
+	webbrowser.open(APP_AUTHOR_DONATION_LINK)
 
 elif args.tui == True:
 	curses.wrapper(main)
