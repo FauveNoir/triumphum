@@ -108,6 +108,15 @@ parser.add_argument("-p", "--platforms", help = "Select different platform file 
 parser.add_argument("-l", "--licences", help = "Select different licence file from default one.")
 parser.add_argument("-t", "--game-types", help = "Select different game type file from default one.")
 
+parser.add_argument("--add-game", help = "Ajouter un nouveau jeu.")
+parser.add_argument("--add-licence", help = "Ajouter une nouvelle licence.")
+parser.add_argument("--add-type", help = "Ajouter un nouveau type de jeu.")
+parser.add_argument("--add-platform", help = "Ajouter une nouvelle plateforme.")
+
+parser.add_argument("--qwerty", help = "Lancer l’interface avec une carte de touches adaptée à la disposition QWERTY.")
+parser.add_argument("--azerty", help = "Lancer l’interface avec une carte de touches adaptée à la disposition AZERTY.")
+parser.add_argument("--bepo", help = "Lancer l’interface avec une carte de touches adaptée à la disposition BÉPO.")
+
 args = parser.parse_args()
 
 ########################################################################
@@ -119,6 +128,14 @@ config = configparser.ConfigParser()
 ########################################################################
 # Classe des racoucris dactyliques
 ########################################################################
+
+def getListOfKeyBindingsStrokes():
+	global listOfBindings
+	listOfKeyBindingsStrokes
+	for aBinding in listOfBindings:
+		listOfKeyBindingsStrokes.append(aBinding.key)
+	return listOfKeyBindingsStrokes
+
 listOfBindings=[]
 class Binding:
 	def __init__(self, key=None, code=None, description=None, configFileName=None, instructions=None):
@@ -136,15 +153,36 @@ def bindSortByNameFunction():
 	THE_VISUAL_LIST_OF_GAMES.sortBy("name")
 	setBottomBarContent(f"Tri par ordre alphabétique.")
 
+def bindSortByLicenceFunction():
+	global THE_VISUAL_LIST_OF_GAMES
+	THE_VISUAL_LIST_OF_GAMES.sortBy("licence")
+	setBottomBarContent(f"Tri par permissivité des licences.")
+
+def bindSortByTypeFunction():
+	global THE_VISUAL_LIST_OF_GAMES
+	THE_VISUAL_LIST_OF_GAMES.sortBy("type_")
+	setBottomBarContent(f"Tri par type de jeu.")
+
+def bindSortByDateFunction():
+	global THE_VISUAL_LIST_OF_GAMES
+	THE_VISUAL_LIST_OF_GAMES.sortBy("year")
+	setBottomBarContent(f"Tri par année de sortie.")
+
+def bindSortByLastOpeningFunction():
+	global THE_VISUAL_LIST_OF_GAMES
+	THE_VISUAL_LIST_OF_GAMES.sortBy("latest_opening_date_value")
+	setBottomBarContent(f"Tri par date de dernière ouverture.")
+
 Binding(key="j", code="bindGoDown", description="Aller en haut")
 Binding(key="k", code="bindGoUp", description="Aller en bas")
 
 Binding(key="b", code="bindSortByName", description="Trier par nom", instructions=bindSortByNameFunction)
-print(dir(bindSortByName))
-Binding(key="é", code="bindSortByLicence", description="Trire par licence")
-Binding(key="p", code="bindSortByType", description="Trier par type")
-Binding(key="o", code="bindSortByDate", description="Trier par date")
-Binding(key="è", code="bindSortByLastOpening", description="Trier par date d’ouverture")
+Binding(key="é", code="bindSortByLicence", description="Trire par licence", instructions=bindSortByLicenceFunction)
+Binding(key="p", code="bindSortByType", description="Trier par type", instructions=bindSortByTypeFunction)
+Binding(key="o", code="bindSortByDate", description="Trier par date", instructions=bindSortByDateFunction)
+Binding(key="è", code="bindSortByLastOpening", description="Trier par date de dernière ouverture", instructions=bindSortByLastOpeningFunction)
+
+
 Binding(key="^", code="bindSortByPlayingDuration", description="Trier par heure cumulé")
 Binding(key="!", code="bindSortByPlatform", description="Trier par plateforme")
 
@@ -1066,21 +1104,15 @@ def main(stdscr):
 				setBottomBarContent(f"Pas de lien associé à « {THE_VISUAL_LIST_OF_GAMES.list[selected_row][HIDED_DATA_COLUMN].name} »")
 		elif key == ord('b'):  # Trier par titre si la touche 'b' est pressée
 			bindSortByName.executeInstructions()
-#			THE_VISUAL_LIST_OF_GAMES.sortBy("name")
-#			setBottomBarContent(f"Tri par ordre alphabétique.")
 		elif key == ord('u'):  # Trier par licence si la touche 'é' est pressée
-			THE_VISUAL_LIST_OF_GAMES.sortBy("licence")
-			setBottomBarContent(f"Tri par permissivité des licences.")
+			bindSortByLicence.executeInstructions()
 		elif key == ord('p'):  # Trier par type si la touche 'p' est pressée
-			THE_VISUAL_LIST_OF_GAMES.sortBy("type_")
-			setBottomBarContent(f"Tri par type de jeu.")
+			bindSortByType.executeInstructions()
 		elif key == ord('o'):  # Trier par date si la touche 'o' est pressée
-			THE_VISUAL_LIST_OF_GAMES.sortBy("year")
-			setBottomBarContent(f"Tri par année de sortie.")
+			bindSortByDate.executeInstructions()
 		elif key == ord('i'):  # Trier par date de dernière ouverture 
-			THE_VISUAL_LIST_OF_GAMES.sortBy("latest_opening_date_value")
-			setBottomBarContent(f"Tri par date de dernière ouverture.")
-		elif key == ord('y'):  # Trier par date si la touche 'o' est pressée
+			bindSortByLastOpening.executeInstructions()
+		elif key == ord('y'):  # Copier le
 			url = THE_VISUAL_LIST_OF_GAMES.list[selected_row][THE_VISUAL_LIST_OF_GAMES.hiden_data_column_number()].url
 			if url != None:
 				setBottomBarContent(f"Copie de « {THE_VISUAL_LIST_OF_GAMES.list[selected_row][HIDED_DATA_COLUMN].url} » dans le presse-papier.")
@@ -1090,7 +1122,7 @@ def main(stdscr):
 		elif key == ord('l'):  # Rafraichir
 			retrive_datas()
 			makeItemsList()
-		elif key == ord('x'):  # Ouvrir le lien associé au jeu si la touche 'a' est pressée
+		elif key == ord('x'):  # Faire un don
 			setBottomBarContent(f"Merci de me faire un don sur « {APP_AUTHOR_DONATION_LINK} » (^.^)")
 			webbrowser.open(APP_AUTHOR_DONATION_LINK)
 		elif key == ord('q'):  # Quitter si la touche 'q' est pressée
