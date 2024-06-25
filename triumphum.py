@@ -759,10 +759,16 @@ class VisualListOfGames:
 		self.list=None
 		self.sortByProperty=None
 		self.sortingState=SORTING_ORDER[1]
+		self.selected_row = 0
 
 		self.refresh()
 		globals()["THE_VISUAL_LIST_OF_GAMES"] = self # Le seul objet de cette classe est TheVisualListOfGames
 		writeInTmp(self.allHistoryEntries().cumulatedPlayingTimeFromNDays(7))
+
+	def goDown(self):
+		self.selected_row = min(len(self.list) - 1, self.selected_row + 1)
+	def goUp(self):
+		self.selected_row = max(0, self.selected_row - 1)
 
 	def hiden_data_column_number(self):
 		return len(self.list[0])-1
@@ -830,7 +836,6 @@ class VisualListOfGames:
 			allHistoryEntriesList.history.extend(aGameRow[HIDED_DATA_COLUMN].history.history)
 
 		return allHistoryEntriesList
-
 
 	def filterByPattern(self, pattern):
 		pass
@@ -1030,10 +1035,6 @@ def main(stdscr):
 	app_name = APP_FANCY_NAME + " | " + APP_DESCRIPTION
 
 
-	# Index de la ligne sélectionnée
-	selected_row = 0
-
-
 	global THE_VISUAL_LIST_OF_GAMES
 	global BOTTOM_BAR_TEXT
 	global bindSortByName
@@ -1070,12 +1071,12 @@ def main(stdscr):
 				if column_number < HIDED_DATA_COLUMN:  # Masquer la colonne "commande"
 					stdscr.addstr(row_number + 2, sum(col_widths[:column_number]) + column_number * 2, str(column))
 
-		stdscr.addstr(selected_row + 2, 0, " " * curses.COLS, curses.color_pair(2))  # Effacer toute la ligne avec la couleur de fond
+		stdscr.addstr(THE_VISUAL_LIST_OF_GAMES.selected_row + 2, 0, " " * curses.COLS, curses.color_pair(2))  # Effacer toute la ligne avec la couleur de fond
 
 		# Affichage des données de la liste avec surbrillance pour la ligne sélectionnée
 		# Cas particulier de la ligne ayant le focus
-		for column_number, column in enumerate(THE_VISUAL_LIST_OF_GAMES.list[selected_row][:HIDED_DATA_COLUMN]):  # Afficher seulement les 4 premières colonnes
-			stdscr.addstr(selected_row + 2, sum(col_widths[:column_number]) + column_number * 2, str(column), curses.color_pair(2) | curses.A_BOLD)
+		for column_number, column in enumerate(THE_VISUAL_LIST_OF_GAMES.list[THE_VISUAL_LIST_OF_GAMES.selected_row][:HIDED_DATA_COLUMN]):  # Afficher seulement les 4 premières colonnes
+			stdscr.addstr(THE_VISUAL_LIST_OF_GAMES.selected_row + 2, sum(col_widths[:column_number]) + column_number * 2, str(column), curses.color_pair(2) | curses.A_BOLD)
 
 		# Rafraîchir l'écran
 		stdscr.refresh()
@@ -1085,23 +1086,23 @@ def main(stdscr):
 
 		# Gestion de la navigation entre les lignes
 		if key == ord('t'):
-			selected_row = min(len(THE_VISUAL_LIST_OF_GAMES.list) - 1, selected_row + 1)
+			THE_VISUAL_LIST_OF_GAMES.goDown()
 		elif key == ord('s'):
-			selected_row = max(0, selected_row - 1)
+			THE_VISUAL_LIST_OF_GAMES.goUp()
 
 		elif key == curses.KEY_ENTER or key in [10, 13]:  # Touche "Entrée"
 			# Exécuter la commande de lancement du jeu associée à la ligne sélectionnée
-			setBottomBarContent(f"Ouverture de « {THE_VISUAL_LIST_OF_GAMES.list[selected_row][HIDED_DATA_COLUMN].name} »")
-			game = THE_VISUAL_LIST_OF_GAMES.list[selected_row][HIDED_DATA_COLUMN]
+			setBottomBarContent(f"Ouverture de « {THE_VISUAL_LIST_OF_GAMES.list[THE_VISUAL_LIST_OF_GAMES.selected_row][HIDED_DATA_COLUMN].name} »")
+			game = THE_VISUAL_LIST_OF_GAMES.list[THE_VISUAL_LIST_OF_GAMES.selected_row][HIDED_DATA_COLUMN]
 			threading.Thread(target=run_command_and_write_on_history, args=(game,)).start()
 		elif key == ord('A'):  # Ouvrir le lien associé au jeu si la touche 'a' est pressée
-			url = THE_VISUAL_LIST_OF_GAMES.list[selected_row][HIDED_DATA_COLUMN].url  # Supposons que l'URL est stockée à l'indice 5
+			url = THE_VISUAL_LIST_OF_GAMES.list[THE_VISUAL_LIST_OF_GAMES.selected_row][HIDED_DATA_COLUMN].url  # Supposons que l'URL est stockée à l'indice 5
 			if url != None:
-				setBottomBarContent(f"Ouverture de « {THE_VISUAL_LIST_OF_GAMES.list[selected_row][HIDED_DATA_COLUMN].url} »")
+				setBottomBarContent(f"Ouverture de « {THE_VISUAL_LIST_OF_GAMES.list[THE_VISUAL_LIST_OF_GAMES.selected_row][HIDED_DATA_COLUMN].url} »")
 				THE_VISUAL_LIST_OF_GAMES.refresh()
 				threading.Thread(target=webbrowser.open, args=(url,)).start()
 			else:
-				setBottomBarContent(f"Pas de lien associé à « {THE_VISUAL_LIST_OF_GAMES.list[selected_row][HIDED_DATA_COLUMN].name} »")
+				setBottomBarContent(f"Pas de lien associé à « {THE_VISUAL_LIST_OF_GAMES.list[THE_VISUAL_LIST_OF_GAMES.selected_row][HIDED_DATA_COLUMN].name} »")
 		elif key == ord('b'):  # Trier par titre si la touche 'b' est pressée
 			bindSortByName.executeInstructions()
 		elif key == ord('u'):  # Trier par licence si la touche 'é' est pressée
@@ -1113,12 +1114,12 @@ def main(stdscr):
 		elif key == ord('i'):  # Trier par date de dernière ouverture 
 			bindSortByLastOpening.executeInstructions()
 		elif key == ord('y'):  # Copier le
-			url = THE_VISUAL_LIST_OF_GAMES.list[selected_row][THE_VISUAL_LIST_OF_GAMES.hiden_data_column_number()].url
+			url = THE_VISUAL_LIST_OF_GAMES.list[THE_VISUAL_LIST_OF_GAMES.selected_row][THE_VISUAL_LIST_OF_GAMES.hiden_data_column_number()].url
 			if url != None:
-				setBottomBarContent(f"Copie de « {THE_VISUAL_LIST_OF_GAMES.list[selected_row][HIDED_DATA_COLUMN].url} » dans le presse-papier.")
+				setBottomBarContent(f"Copie de « {THE_VISUAL_LIST_OF_GAMES.list[THE_VISUAL_LIST_OF_GAMES.selected_row][HIDED_DATA_COLUMN].url} » dans le presse-papier.")
 				pyperclip.copy(url)
 			else:
-				setBottomBarContent(f"Aucun lien associé à « {THE_VISUAL_LIST_OF_GAMES.list[selected_row][HIDED_DATA_COLUMN].name} », rien à copier.")
+				setBottomBarContent(f"Aucun lien associé à « {THE_VISUAL_LIST_OF_GAMES.list[THE_VISUAL_LIST_OF_GAMES.selected_row][HIDED_DATA_COLUMN].name} », rien à copier.")
 		elif key == ord('l'):  # Rafraichir
 			retrive_datas()
 			makeItemsList()
