@@ -148,7 +148,10 @@ class Binding:
 		self.key = key
 		self.description = description
 		self.code = code
-		self.configFileName = configFileName
+		if configFileName == None:
+			self.configFileName = self.code
+		else:
+			self.configFileName = configFileName
 		globals()[code] = self # Déclaration de la variable globale pérmétant d’atteindre directement le type voulu
 		if instructions:
 			setattr(self, 'executeInstructions', instructions)
@@ -201,30 +204,31 @@ def bindMakeDonationFunction():
 def bindRefreshScreenFunction():
 	THE_VISUAL_LIST_OF_GAMES.refresh()
 
-Binding(key="t", code="bindGoDown", description="Aller en haut", instructions=bindGoDownFunction)
-Binding(key="s", code="bindGoUp", description="Aller en bas", instructions=bindGoUpFunction)
-Binding(key="\n", code="bindRunGame", description="Lancer le jeu", instructions=bindRunGameFunction)
+Binding(key="t", code="bindGoDown", description="Aller en haut", instructions=bindGoDownFunction, configFileName="bind_down")
+Binding(key="s", code="bindGoUp", description="Aller en bas", instructions=bindGoUpFunction, configFileName="bind_up")
+Binding(key="\n", code="bindRunGame", description="Lancer le jeu", instructions=bindRunGameFunction, configFileName="bind_play")
 
-Binding(key="b", code="bindSortByName", description="Trier par nom", instructions=bindSortByNameFunction)
-Binding(key="é", code="bindSortByLicence", description="Trire par licence", instructions=bindSortByLicenceFunction)
-Binding(key="p", code="bindSortByType", description="Trier par type", instructions=bindSortByTypeFunction)
-Binding(key="o", code="bindSortByDate", description="Trier par date", instructions=bindSortByDateFunction)
-Binding(key="è", code="bindSortByLastOpening", description="Trier par date de dernière ouverture", instructions=bindSortByLastOpeningFunction)
+Binding(key="b", code="bindSortByName", description="Trier par nom", instructions=bindSortByNameFunction, configFileName="bind_sort_title")
+Binding(key="é", code="bindSortByLicence", description="Trire par licence", instructions=bindSortByLicenceFunction, configFileName="bind_sort_licence")
+Binding(key="p", code="bindSortByType", description="Trier par type", instructions=bindSortByTypeFunction, configFileName="bind_sort_game_type")
+Binding(key="o", code="bindSortByDate", description="Trier par date", instructions=bindSortByDateFunction, configFileName="bind_sort_year")
+Binding(key="è", code="bindSortByLastOpening", description="Trier par date de dernière ouverture", instructions=bindSortByLastOpeningFunction, configFileName="bind_sort_last_opening")
 
 
-Binding(key="^", code="bindSortByPlayingDuration", description="Trier par heure cumulé")
-Binding(key="!", code="bindSortByPlatform", description="Trier par plateforme")
+Binding(key="^", code="bindSortByPlayingDuration", description="Trier par heure cumulé", configFileName="bind_sort_playing_duration")
+Binding(key="!", code="bindSortByPlatform", description="Trier par plateforme", configFileName="bind_sort_playing_platform")
 
-Binding(key="A", code="bindOpenLink", description="Ouvrir le site web associé", instructions=bindOpenLinkFunction)
-Binding(key="e", code="bindEditData", description="Éditer les données")
-Binding(key="i", code="bindComment", description="Commenter")
-Binding(key="u", code="bindMakeDonation", description="Faire un don", instructions=bindMakeDonationFunction)
-Binding(key="w", code="bindShowFullLicence", description="Afficher le texte de la licence")
-Binding(key="/", code="bindFilter", description="Filtrer")
-Binding(key="h", code="bindSeeBindingHelp", description="Montrer l’aide")
-Binding(key="y", code="bindCopyLink", description="Montrer l’aide", instructions=bindCopyLinkFunction)
-Binding(key="l", code="bindRefreshScreen", description="Rafraichir l’écran", instructions=bindRefreshScreenFunction)
-Binding(key="q", code="bindQuit", description=f"Quitter {APP_FANCY_NAME}")
+Binding(key="A", code="bindOpenLink", description="Ouvrir le site web associé", instructions=bindOpenLinkFunction, configFileName="bind_open_link")
+Binding(key="e", code="bindEditData", description="Éditer les données", configFileName="bind_edit")
+Binding(key="i", code="bindComment", description="Commenter", configFileName="")
+bind_comment=""
+Binding(key="u", code="bindMakeDonation", description="Faire un don", instructions=bindMakeDonationFunction, configFileName="bind_donate")
+Binding(key="w", code="bindShowFullLicence", description="Afficher le texte de la licence", configFileName="bind_show_licence")
+Binding(key="/", code="bindFilter", description="Filtrer", configFileName="bind_filter")
+Binding(key="h", code="bindSeeBindingHelp", description="Montrer l’aide", configFileName="bind_help")
+Binding(key="y", code="bindCopyLink", description="Copier le lien dans le presse-papier", instructions=bindCopyLinkFunction, configFileName="bind_copy_link")
+Binding(key="l", code="bindRefreshScreen", description="Rafraichir l’écran", instructions=bindRefreshScreenFunction, configFileName="bind_refresh")
+Binding(key="q", code="bindQuit", description=f"Quitter {APP_FANCY_NAME}", configFileName="bind_quit")
 
 ########################################################################
 # classe des plateformes
@@ -1150,8 +1154,6 @@ def main(stdscr):
 		if key == ord('q'):  # Quitter si la touche 'q' est pressée
 			break
 		elif key in getListOfKeyBindingsCodes():
-			writeInTmp("Entrée")
-			setBottomBarContent(f"Entrée.")
 			returnBindingAfterKeyStroke(key).executeInstructions()
 
 ########################################################################
