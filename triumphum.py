@@ -116,14 +116,9 @@ parser.add_argument("--add-platform", help = "Ajouter une nouvelle plateforme.")
 parser.add_argument("--qwerty", help = "Lancer l’interface avec une carte de touches adaptée à la disposition QWERTY.")
 parser.add_argument("--azerty", help = "Lancer l’interface avec une carte de touches adaptée à la disposition AZERTY.")
 parser.add_argument("--bepo", help = "Lancer l’interface avec une carte de touches adaptée à la disposition BÉPO.")
+parser.add_argument("--list-games", help = "Afficher la liste des jeux.")
 
 args = parser.parse_args()
-
-########################################################################
-# Traitement du fichier de configuration
-########################################################################
-
-config = configparser.ConfigParser()
 
 ########################################################################
 # Classe des racoucris dactyliques
@@ -141,6 +136,23 @@ def returnBindingAfterKeyStroke(key):
 		if key == ord(aBinding.key):
 			return aBinding
 	return None
+
+########################################################################
+
+def getListOfConfigKeyCodes():
+	global listOfBindings
+	listOfConfigKeyCodes=[]
+	for aBinding in listOfBindings:
+		listOfConfigKeyCodes.append(aBinding.configFileName)
+	return listOfConfigKeyCodes
+
+def returnBindingAfterConfigKeyCode(configKeyCode):
+	for aBinding in listOfBindings:
+		if configKeyCode == aBinding.configFileName:
+			return aBinding
+	return None
+
+########################################################################
 
 listOfBindings=[]
 class Binding:
@@ -220,8 +232,7 @@ Binding(key="!", code="bindSortByPlatform", description="Trier par plateforme", 
 
 Binding(key="A", code="bindOpenLink", description="Ouvrir le site web associé", instructions=bindOpenLinkFunction, configFileName="bind_open_link")
 Binding(key="e", code="bindEditData", description="Éditer les données", configFileName="bind_edit")
-Binding(key="i", code="bindComment", description="Commenter", configFileName="")
-bind_comment=""
+Binding(key="i", code="bindComment", description="Commenter", configFileName="bind_comment")
 Binding(key="u", code="bindMakeDonation", description="Faire un don", instructions=bindMakeDonationFunction, configFileName="bind_donate")
 Binding(key="w", code="bindShowFullLicence", description="Afficher le texte de la licence", configFileName="bind_show_licence")
 Binding(key="/", code="bindFilter", description="Filtrer", configFileName="bind_filter")
@@ -229,6 +240,19 @@ Binding(key="h", code="bindSeeBindingHelp", description="Montrer l’aide", conf
 Binding(key="y", code="bindCopyLink", description="Copier le lien dans le presse-papier", instructions=bindCopyLinkFunction, configFileName="bind_copy_link")
 Binding(key="l", code="bindRefreshScreen", description="Rafraichir l’écran", instructions=bindRefreshScreenFunction, configFileName="bind_refresh")
 Binding(key="q", code="bindQuit", description=f"Quitter {APP_FANCY_NAME}", configFileName="bind_quit")
+
+########################################################################
+# Traitement du fichier de configuration
+########################################################################
+
+config = configparser.ConfigParser()
+config.read('triumphumrc')
+configValues={}
+
+for aConfigKey in getListOfConfigKeyCodes():
+	configValues[aConfigKey]=config.get("General", aConfigKey)
+	returnBindingAfterConfigKeyCode(aConfigKey).key=configValues[aConfigKey]
+print(configValues)
 
 ########################################################################
 # classe des plateformes
