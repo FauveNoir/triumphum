@@ -129,12 +129,18 @@ config = configparser.ConfigParser()
 # Classe des racoucris dactyliques
 ########################################################################
 
-def getListOfKeyBindingsStrokes():
+def getListOfKeyBindingsCodes():
 	global listOfBindings
-	listOfKeyBindingsStrokes
+	listOfKeyBindingsStrokes=[]
 	for aBinding in listOfBindings:
-		listOfKeyBindingsStrokes.append(aBinding.key)
+		listOfKeyBindingsStrokes.append(ord(aBinding.key))
 	return listOfKeyBindingsStrokes
+
+def returnBindingAfterKeyStroke(key):
+	for aBinding in listOfBindings:
+		if key == ord(aBinding.key):
+			return aBinding
+	return None
 
 listOfBindings=[]
 class Binding:
@@ -147,6 +153,12 @@ class Binding:
 		if instructions:
 			setattr(self, 'executeInstructions', instructions)
 
+		listOfBindings.append(self) # Adjonction à la liste des types de jeux
+
+def bindGoDownFunction():
+	THE_VISUAL_LIST_OF_GAMES.goDown()
+def bindGoUpFunction():
+	THE_VISUAL_LIST_OF_GAMES.goUp()
 
 def bindSortByNameFunction():
 	global THE_VISUAL_LIST_OF_GAMES
@@ -173,8 +185,25 @@ def bindSortByLastOpeningFunction():
 	THE_VISUAL_LIST_OF_GAMES.sortBy("latest_opening_date_value")
 	setBottomBarContent(f"Tri par date de dernière ouverture.")
 
-Binding(key="j", code="bindGoDown", description="Aller en haut")
-Binding(key="k", code="bindGoUp", description="Aller en bas")
+def bindRunGameFunction():
+	THE_VISUAL_LIST_OF_GAMES.openCurrent()
+
+def bindOpenLinkFunction():
+	THE_VISUAL_LIST_OF_GAMES.openLink()
+
+def bindCopyLinkFunction():
+	THE_VISUAL_LIST_OF_GAMES.copyLinkToClipBoard()
+
+def bindMakeDonationFunction():
+	setBottomBarContent(f"Merci de me faire un don sur « {APP_AUTHOR_DONATION_LINK} » (^.^)")
+	threading.Thread(target=webbrowser.open, args=(APP_AUTHOR_DONATION_LINK,)).start()
+
+def bindRefreshScreenFunction():
+	THE_VISUAL_LIST_OF_GAMES.refresh()
+
+Binding(key="t", code="bindGoDown", description="Aller en haut", instructions=bindGoDownFunction)
+Binding(key="s", code="bindGoUp", description="Aller en bas", instructions=bindGoUpFunction)
+Binding(key="\n", code="bindRunGame", description="Lancer le jeu", instructions=bindRunGameFunction)
 
 Binding(key="b", code="bindSortByName", description="Trier par nom", instructions=bindSortByNameFunction)
 Binding(key="é", code="bindSortByLicence", description="Trire par licence", instructions=bindSortByLicenceFunction)
@@ -186,13 +215,16 @@ Binding(key="è", code="bindSortByLastOpening", description="Trier par date de d
 Binding(key="^", code="bindSortByPlayingDuration", description="Trier par heure cumulé")
 Binding(key="!", code="bindSortByPlatform", description="Trier par plateforme")
 
-Binding(key="A", code="bindOpenWesite", description="Ouvrir le site web associé")
+Binding(key="A", code="bindOpenLink", description="Ouvrir le site web associé", instructions=bindOpenLinkFunction)
 Binding(key="e", code="bindEditData", description="Éditer les données")
 Binding(key="i", code="bindComment", description="Commenter")
-Binding(key="u", code="bindDonate", description="Faire un don")
+Binding(key="u", code="bindMakeDonation", description="Faire un don", instructions=bindMakeDonationFunction)
 Binding(key="w", code="bindShowFullLicence", description="Afficher le texte de la licence")
 Binding(key="/", code="bindFilter", description="Filtrer")
 Binding(key="h", code="bindSeeBindingHelp", description="Montrer l’aide")
+Binding(key="y", code="bindCopyLink", description="Montrer l’aide", instructions=bindCopyLinkFunction)
+Binding(key="l", code="bindRefreshScreen", description="Rafraichir l’écran", instructions=bindRefreshScreenFunction)
+Binding(key="q", code="bindQuit", description=f"Quitter {APP_FANCY_NAME}")
 
 ########################################################################
 # classe des plateformes
@@ -767,8 +799,38 @@ class VisualListOfGames:
 
 	def goDown(self):
 		self.selected_row = min(len(self.list) - 1, self.selected_row + 1)
+
 	def goUp(self):
 		self.selected_row = max(0, self.selected_row - 1)
+
+	def openCurrent(self):
+		# Exécuter la commande de lancement du jeu associée à la ligne sélectionnée
+		global HIDED_DATA_COLUMN
+		setBottomBarContent(f"Ouverture de « {self.list[self.selected_row][HIDED_DATA_COLUMN].name} ».")
+		game = self.list[self.selected_row][HIDED_DATA_COLUMN]
+		threading.Thread(target=run_command_and_write_on_history, args=(game,)).start()
+
+	def copyLinkToClipBoard(self):
+		url = self.list[self.selected_row][self.hiden_data_column_number()].url
+		if url != None:
+			setBottomBarContent(f"Copie de « {self.list[self.selected_row][HIDED_DATA_COLUMN].url} » dans le presse-papier.")
+			pyperclip.copy(url)
+		else:
+			setBottomBarContent(f"Aucun lien associé à « {self.list[self.selected_row][HIDED_DATA_COLUMN].name} », rien à copier.")
+
+	def refresh(self):
+		retrive_datas()
+		makeItemsList()
+
+	def openLink(self):
+		global HIDED_DATA_COLUMN
+		url = self.list[self.selected_row][HIDED_DATA_COLUMN].url  # Supposons que l'URL est stockée à l'indice 5
+		if url != None:
+			setBottomBarContent(f"Ouverture de « {self.list[self.selected_row][HIDED_DATA_COLUMN].url} »")
+			self.refresh()
+			threading.Thread(target=webbrowser.open, args=(url,)).start()
+		else:
+			setBottomBarContent(f"Pas de lien associé à « {self.list[self.selected_row][HIDED_DATA_COLUMN].name} »")
 
 	def hiden_data_column_number(self):
 		return len(self.list[0])-1
@@ -1084,52 +1146,13 @@ def main(stdscr):
 		# Lecture de la touche pressée
 		key = stdscr.getch()
 
-		# Gestion de la navigation entre les lignes
-		if key == ord('t'):
-			THE_VISUAL_LIST_OF_GAMES.goDown()
-		elif key == ord('s'):
-			THE_VISUAL_LIST_OF_GAMES.goUp()
-
-		elif key == curses.KEY_ENTER or key in [10, 13]:  # Touche "Entrée"
-			# Exécuter la commande de lancement du jeu associée à la ligne sélectionnée
-			setBottomBarContent(f"Ouverture de « {THE_VISUAL_LIST_OF_GAMES.list[THE_VISUAL_LIST_OF_GAMES.selected_row][HIDED_DATA_COLUMN].name} »")
-			game = THE_VISUAL_LIST_OF_GAMES.list[THE_VISUAL_LIST_OF_GAMES.selected_row][HIDED_DATA_COLUMN]
-			threading.Thread(target=run_command_and_write_on_history, args=(game,)).start()
-		elif key == ord('A'):  # Ouvrir le lien associé au jeu si la touche 'a' est pressée
-			url = THE_VISUAL_LIST_OF_GAMES.list[THE_VISUAL_LIST_OF_GAMES.selected_row][HIDED_DATA_COLUMN].url  # Supposons que l'URL est stockée à l'indice 5
-			if url != None:
-				setBottomBarContent(f"Ouverture de « {THE_VISUAL_LIST_OF_GAMES.list[THE_VISUAL_LIST_OF_GAMES.selected_row][HIDED_DATA_COLUMN].url} »")
-				THE_VISUAL_LIST_OF_GAMES.refresh()
-				threading.Thread(target=webbrowser.open, args=(url,)).start()
-			else:
-				setBottomBarContent(f"Pas de lien associé à « {THE_VISUAL_LIST_OF_GAMES.list[THE_VISUAL_LIST_OF_GAMES.selected_row][HIDED_DATA_COLUMN].name} »")
-		elif key == ord('b'):  # Trier par titre si la touche 'b' est pressée
-			bindSortByName.executeInstructions()
-		elif key == ord('u'):  # Trier par licence si la touche 'é' est pressée
-			bindSortByLicence.executeInstructions()
-		elif key == ord('p'):  # Trier par type si la touche 'p' est pressée
-			bindSortByType.executeInstructions()
-		elif key == ord('o'):  # Trier par date si la touche 'o' est pressée
-			bindSortByDate.executeInstructions()
-		elif key == ord('i'):  # Trier par date de dernière ouverture 
-			bindSortByLastOpening.executeInstructions()
-		elif key == ord('y'):  # Copier le
-			url = THE_VISUAL_LIST_OF_GAMES.list[THE_VISUAL_LIST_OF_GAMES.selected_row][THE_VISUAL_LIST_OF_GAMES.hiden_data_column_number()].url
-			if url != None:
-				setBottomBarContent(f"Copie de « {THE_VISUAL_LIST_OF_GAMES.list[THE_VISUAL_LIST_OF_GAMES.selected_row][HIDED_DATA_COLUMN].url} » dans le presse-papier.")
-				pyperclip.copy(url)
-			else:
-				setBottomBarContent(f"Aucun lien associé à « {THE_VISUAL_LIST_OF_GAMES.list[THE_VISUAL_LIST_OF_GAMES.selected_row][HIDED_DATA_COLUMN].name} », rien à copier.")
-		elif key == ord('l'):  # Rafraichir
-			retrive_datas()
-			makeItemsList()
-		elif key == ord('x'):  # Faire un don
-			setBottomBarContent(f"Merci de me faire un don sur « {APP_AUTHOR_DONATION_LINK} » (^.^)")
-			webbrowser.open(APP_AUTHOR_DONATION_LINK)
-		elif key == ord('q'):  # Quitter si la touche 'q' est pressée
+		writeInTmp(getListOfKeyBindingsCodes())
+		if key == ord('q'):  # Quitter si la touche 'q' est pressée
 			break
-
-		# Rafraichissement des donées
+		elif key in getListOfKeyBindingsCodes():
+			writeInTmp("Entrée")
+			setBottomBarContent(f"Entrée.")
+			returnBindingAfterKeyStroke(key).executeInstructions()
 
 ########################################################################
 # Fonctions de la ligne de commande
