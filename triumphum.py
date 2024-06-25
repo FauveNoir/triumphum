@@ -16,6 +16,7 @@ import locale
 import time
 import argparse
 import configparser
+import tkinter as tk
 
 
 ########################################################################
