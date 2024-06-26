@@ -16,7 +16,8 @@ import locale
 import time
 import argparse
 import configparser
-import tkinter as tk
+from Xlib import XK
+from Xlib.display import Display
 
 
 ########################################################################
@@ -82,13 +83,11 @@ CUMULATEDTIME_VOID_SYMBOL=GENERAL_VOID_SYMBOL
 AUTHOR_VOID_SYMBOL=GENERAL_VOID_SYMBOL
 STUDIO_VOID_SYMBOL=GENERAL_VOID_SYMBOL
 
-
 CUMULATED_TIME_PLAYED_PER_DAY="J"
 CUMULATED_TIME_PLAYED_PER_WEEK="S"
 CUMULATED_TIME_PLAYED_PER_MONTH="M"
 CUMULATED_TIME_PLAYED_PER_YEAR="Y"
 CUMULATED_TIME_PLAYED_SEPARATOR="│"
-
 
 ########################################################################
 # Options de la ligne de commande
@@ -96,7 +95,6 @@ CUMULATED_TIME_PLAYED_SEPARATOR="│"
 
 parser = argparse.ArgumentParser(description=APP_FANCY_NAME + " " + APP_VERSION + " " + APP_DESCRIPTION,
                                  formatter_class=argparse.ArgumentDefaultsHelpFormatter)
-
 
 parser.add_argument("--tui", action="store_true", default = True, help = "Run the game selection interface (default).")
 parser.add_argument("-r", "--run", help = "Run a given game and track playing time.")
@@ -129,12 +127,12 @@ def getListOfKeyBindingsCodes():
 	global listOfBindings
 	listOfKeyBindingsStrokes=[]
 	for aBinding in listOfBindings:
-		listOfKeyBindingsStrokes.append(ord(aBinding.key))
+		listOfKeyBindingsStrokes.append(aBinding.key)
 	return listOfKeyBindingsStrokes
 
 def returnBindingAfterKeyStroke(key):
 	for aBinding in listOfBindings:
-		if key == ord(aBinding.key):
+		if key == aBinding.key:
 			return aBinding
 	return None
 
@@ -1173,10 +1171,10 @@ def main(stdscr):
 		stdscr.refresh()
 
 		# Lecture de la touche pressée
-		key = stdscr.getch()
+		key = stdscr.get_wch()
+		setBottomBarContent(f"Touche préssée : {key}")
 
-		writeInTmp(getListOfKeyBindingsCodes())
-		if key == ord('q'):  # Quitter si la touche 'q' est pressée
+		if key == 'q':  # Quitter si la touche 'q' est pressée
 			break
 		elif key in getListOfKeyBindingsCodes():
 			returnBindingAfterKeyStroke(key).executeInstructions()
