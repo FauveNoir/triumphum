@@ -480,13 +480,13 @@ def get_platform_object_after_code(code):
 # Classe des types de jeux
 ########################################################################
 
-def formatDataListToLitteralList(list_):
+def formatDataListToLitteralList(list_, voidSymbol):
 	try:
 		n = len(list_)
 	except:
 		n = 0
 	if n == 0:
-		return "-" # TODO
+		return voidSymbol # TODO
 	elif n == 1:
 		return list_[0]
 	elif n == 2:
@@ -912,10 +912,10 @@ class Game:
 		return "-"
 
 	def listOfAuthors(self):
-		return formatDataListToLitteralList(self.authors)
+		return formatDataListToLitteralList(self.authors, AUTHOR_VOID_SYMBOL.value)
 
 	def listOfStudios(self):
-		return formatDataListToLitteralList(self.studios)
+		return formatDataListToLitteralList(self.studios, STUDIO_VOID_SYMBOL.value)
 
 def create_game_objects():
 	# Création de la liste des jeux
