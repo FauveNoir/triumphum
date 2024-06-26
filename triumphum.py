@@ -123,11 +123,20 @@ args = parser.parse_args()
 # Classe des racoucris dactyliques
 ########################################################################
 
+def getKeycode(key_name):
+	display = Display()
+	keysym = XK.string_to_keysym(key_name)
+	keycode = display.keysym_to_keycode(keysym)
+	display.close()
+	return keycode
+
+########################################################################
+
 def getListOfKeyBindingsCodes():
 	global listOfBindings
 	listOfKeyBindingsStrokes=[]
 	for aBinding in listOfBindings:
-		listOfKeyBindingsStrokes.append(aBinding.key)
+		listOfKeyBindingsStrokes.append((aBinding.key))
 	return listOfKeyBindingsStrokes
 
 def returnBindingAfterKeyStroke(key):
@@ -156,7 +165,7 @@ def returnBindingAfterConfigKeyCode(configKeyCode):
 listOfBindings=[]
 class Binding:
 	def __init__(self, key=None, code=None, description=None, configFileName=None, instructions=None):
-		self.key = key
+		self.key = getKeycode(key)
 		self.description = description
 		self.code = code
 		if configFileName == None:
@@ -168,6 +177,9 @@ class Binding:
 			setattr(self, 'executeInstructions', instructions)
 
 		listOfBindings.append(self) # Adjonction à la liste des types de jeux
+
+	def setKeyCode(self, key):
+		self.key = getKeycode(key)
 
 def bindGoDownFunction():
 	THE_VISUAL_LIST_OF_GAMES.goDown()
@@ -231,6 +243,7 @@ Binding(key="!", code="bindSortByPlatform", description="Trier par plateforme", 
 
 Binding(key="A", code="bindOpenLink", description="Ouvrir le site web associé", instructions=bindOpenLinkFunction, configFileName="bind_open_link")
 Binding(key="e", code="bindEditData", description="Éditer les données", configFileName="bind_edit")
+#Binding(key="d", code="bindDelete", description="Suprimer le jeu de la liste", configFileName="bind_delete")
 Binding(key="i", code="bindComment", description="Commenter", configFileName="bind_comment")
 Binding(key="u", code="bindMakeDonation", description="Faire un don", instructions=bindMakeDonationFunction, configFileName="bind_donate")
 Binding(key="w", code="bindShowFullLicence", description="Afficher le texte de la licence", configFileName="bind_show_licence")
@@ -249,8 +262,9 @@ config.read('triumphumrc')
 configValues={}
 
 for aConfigKey in getListOfConfigKeyCodes():
+	# TODO chercher la clé si elle existe
 	configValues[aConfigKey]=config.get("General", aConfigKey)
-	returnBindingAfterConfigKeyCode(aConfigKey).key=configValues[aConfigKey]
+	returnBindingAfterConfigKeyCode(aConfigKey).setKeyCode(configValues[aConfigKey])
 print(configValues)
 
 ########################################################################
@@ -782,7 +796,6 @@ def retrive_datas():
 	# Déploiement des objets de jeux
 	create_game_objects()
 
-
 ########################################################################
 # Classe de la liste visuelle
 ########################################################################
@@ -809,7 +822,6 @@ def getNextSortingOrder(currentSortingOrder):
 	
 	return nextSortingOrder
 
-
 HIDED_DATA_COLUMN=9
 class VisualListOfGames:
 	def __init__(self):
@@ -822,7 +834,6 @@ class VisualListOfGames:
 
 		self.refresh()
 		globals()["THE_VISUAL_LIST_OF_GAMES"] = self # Le seul objet de cette classe est TheVisualListOfGames
-		writeInTmp(self.allHistoryEntries().cumulatedPlayingTimeFromNDays(7))
 
 	def goDown(self):
 		self.selected_row = min(len(self.list) - 1, self.selected_row + 1)
@@ -893,7 +904,6 @@ class VisualListOfGames:
 			else:
 				endOfNewList.append(item)
 		newList= beginingOfNewList + endOfNewList
-		writeInTmp(newList)
 		return newList
 
 	def softSortBy(self, property_):
@@ -904,7 +914,6 @@ class VisualListOfGames:
 			tmpList2=self.putVoidAtEnd(tmpList1, property_)
 			# Déplacer les entrées avec property_ == "-" à la fin
 			self.list=tmpList2
-		#writeInTmp([anItem[1] for anItem in self.list])
 
 	def sortBy(self, property_):
 		self.shiftSortingState(property_)
@@ -930,13 +939,10 @@ class VisualListOfGames:
 		pass
 
 VisualListOfGames()
-print(THE_VISUAL_LIST_OF_GAMES.hiden_data_column_number())
-
 
 ########################################################################
 # Fonctions foncitonnelles de l’interface interactive
 ########################################################################
-
 
 # Fonction pour trier les jeux par titre
 def sort_by_title(items):
@@ -1000,8 +1006,6 @@ def run_command_and_write_on_history(game):
 
 	# Inscription de l’évenement dans l’historique
 	write_opening_date_on_history(game, start_time=start_time, end_time=end_time, duration=duration)
-
-
 
 ########################################################################
 # Fonctions ésthétiques de l’interface interactive
@@ -1171,12 +1175,13 @@ def main(stdscr):
 		stdscr.refresh()
 
 		# Lecture de la touche pressée
-		key = stdscr.get_wch()
-		setBottomBarContent(f"Touche préssée : {key}")
+		key = getKeycode(stdscr.get_wch())
+		setBottomBarContent(f"Touche préssée {key}")
+		writeInTmp(getListOfKeyBindingsCodes())
 
-		if key == 'q':  # Quitter si la touche 'q' est pressée
+		if (key) == getKeycode('q'):  # Quitter si la touche 'q' est pressée
 			break
-		elif key in getListOfKeyBindingsCodes():
+		elif (key) in getListOfKeyBindingsCodes():
 			returnBindingAfterKeyStroke(key).executeInstructions()
 
 ########################################################################
