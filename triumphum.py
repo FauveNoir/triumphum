@@ -436,7 +436,6 @@ def applyFileConfigurationsGraphicalSymbols():
 	config.read('triumphumrc')
 	#config.read(CONFIG_FILE)
 
-	writeInTmp("ici")
 	for aConfigiGrahpicalSymbol in listOfGraphicalSymbols:
 		if config.has_option("General", aConfigiGrahpicalSymbol.fileConfigName):
 			aConfigiGrahpicalSymbol.value=config.get("General", aConfigiGrahpicalSymbol.fileConfigName)
@@ -1085,7 +1084,6 @@ class VisualListOfGames:
 		if property_:
 			self.sortByProperty=property_
 			tmpList0=self.list
-		#	tmpList1=sorted(tmpList0, reverse=self.sortingState, key=lambda x: getattr(x[self.hiden_data_column_number()], property_))
 			tmpList1 = sorted(tmpList0, 
 							 reverse=self.sortingState, 
 							 key=lambda x: (getattr(x[self.hiden_data_column_number()], property_) is None, 
@@ -1121,7 +1119,6 @@ class VisualListOfGames:
 		pass
 
 VisualListOfGames()
-print(THE_VISUAL_LIST_OF_GAMES.list)
 
 ########################################################################
 # Fonctions foncitonnelles de l’interface interactive
@@ -1385,8 +1382,10 @@ def getGameObjectByItCodeName(codeName):
 
 if args.config_file != None:
 	CONFIG_FILE=args.config_file
-	applyFileConfigurationsBindings()
-	applyFileConfigurationsGraphicalSymbols()
+applyFileConfigurationsBindings()
+applyFileConfigurationsGraphicalSymbols()
+writeInTmp(listOfGraphicalSymbols)
+
 if args.games != None:
 	GAME_FILE=args.games
 if args.game_types != None:
