@@ -421,8 +421,9 @@ def applyFileConfigurationsBindings():
 
 	for aConfigKey in getListOfConfigKeyCodes():
 		# TODO chercher la clé si elle existe
-		configValues[aConfigKey]=config.get("General", aConfigKey)
-		returnBindingAfterConfigKeyCode(aConfigKey).setKey(configValues[aConfigKey])
+		if config.has_option("General", aConfigKey):
+			configValues[aConfigKey]=config.get("General", aConfigKey)
+			returnBindingAfterConfigKeyCode(aConfigKey).setKey(configValues[aConfigKey])
 
 
 def applyFileConfigurationsGraphicalSymbols():
