@@ -1085,7 +1085,12 @@ class VisualListOfGames:
 		if property_:
 			self.sortByProperty=property_
 			tmpList0=self.list
-			tmpList1=sorted(tmpList0, reverse=self.sortingState, key=lambda x: getattr(x[self.hiden_data_column_number()], property_))
+		#	tmpList1=sorted(tmpList0, reverse=self.sortingState, key=lambda x: getattr(x[self.hiden_data_column_number()], property_))
+			tmpList1 = sorted(tmpList0, 
+							 reverse=self.sortingState, 
+							 key=lambda x: (getattr(x[self.hiden_data_column_number()], property_) is None, 
+											getattr(x[self.hiden_data_column_number()], property_)))
+
 			tmpList2=self.putVoidAtEnd(tmpList1, property_)
 			# Déplacer les entrées avec property_ == "-" à la fin
 			self.list=tmpList2
@@ -1116,6 +1121,7 @@ class VisualListOfGames:
 		pass
 
 VisualListOfGames()
+print(THE_VISUAL_LIST_OF_GAMES.list)
 
 ########################################################################
 # Fonctions foncitonnelles de l’interface interactive
@@ -1220,7 +1226,7 @@ def makeItemsList():
 
 SPACE_COLUMN_SEPARATION_NUMBER=2
 
-BOTTOM_BAR_TEXT="+=={:::::::::::::::::>"
+BOTTOM_BAR_TEXT="+--{=================>"
 def setBottomBarContent(newBottomBarText):
 	global BOTTOM_BAR_TEXT
 	BOTTOM_BAR_TEXT = newBottomBarText
@@ -1381,7 +1387,6 @@ if args.config_file != None:
 	CONFIG_FILE=args.config_file
 	applyFileConfigurationsBindings()
 	applyFileConfigurationsGraphicalSymbols()
-	#writeInTmp(listOfGraphicalSymbols)
 if args.games != None:
 	GAME_FILE=args.games
 if args.game_types != None:
