@@ -870,10 +870,10 @@ class Game:
 		sheet_data=[
 			["Nom", self.name],
 			["code", self.codeName],
-			["Licence", self.licence],
+			["Licence", self.licence.name],
 			["URL", self.url],
-			["Type", self.type_],
-			["Auteur", self.author],
+			["Type", self.type_.name],
+			["Auteur", self.listOfAuthors()],
 			["Commande", self.command],
 			["Dernière ouverture", self.latest_opening_date()],
 		]
@@ -1402,6 +1402,7 @@ if args.run not in [None, False]:
 	theGame=getGameObjectByItCodeName(args.run)
 	if theGame != None:
 		print(f"Ouverture de « {theGame.name} »")
+		theGame.sheet()
 		threading.Thread(target=run_command_and_write_on_history, args=(theGame,)).start()
 	else:
 		print(f"Aucun jeu ne correspond à l’identifiant « {args.run} »")
