@@ -130,14 +130,16 @@ class GraphicalSymbol:
 
 GraphicalSymbol(localName="GENERAL_VOID_SYMBOL", value="-")
 
+GraphicalSymbol(localName="NAME_VOID_SYMBOL", value=GENERAL_VOID_SYMBOL)
 GraphicalSymbol(localName="TITLE_VOID_SYMBOL", value=GENERAL_VOID_SYMBOL)
 GraphicalSymbol(localName="LICENCE_VOID_SYMBOL", value=GENERAL_VOID_SYMBOL)
-GraphicalSymbol(localName="TYPE__VOID_SYMBOL", value=GENERAL_VOID_SYMBOL)
+GraphicalSymbol(localName="TYPE_VOID_SYMBOL", value=GENERAL_VOID_SYMBOL)
 GraphicalSymbol(localName="DATE_VOID_SYMBOL", value=GENERAL_VOID_SYMBOL)
 GraphicalSymbol(localName="LASTOPENING_VOID_SYMBOL", value=GENERAL_VOID_SYMBOL)
-GraphicalSymbol(localName="CUMULATEDTIME_VOID_SYMBOL", value=GENERAL_VOID_SYMBOL)
+GraphicalSymbol(localName="CUMULATEDTIME_VOID_SYMBOL", value="0")
 GraphicalSymbol(localName="AUTHOR_VOID_SYMBOL", value=GENERAL_VOID_SYMBOL)
 GraphicalSymbol(localName="STUDIO_VOID_SYMBOL", value=GENERAL_VOID_SYMBOL)
+GraphicalSymbol(localName="PLATFORM_VOID_SYMBOL", value=" ")
 
 GraphicalSymbol(localName="CUMULATED_TIME_PLAYED_PER_DAY", value="D")
 GraphicalSymbol(localName="CUMULATED_TIME_PLAYED_PER_WEEK", value="W")
@@ -481,7 +483,7 @@ def formatDataListToLitteralList(list_):
 	except:
 		n = 0
 	if n == 0:
-		return "-"
+		return "-" # TODO
 	elif n == 1:
 		return list_[0]
 	elif n == 2:
@@ -542,7 +544,7 @@ def create_game_type_objects():
 			abbr=aGameType.get("abbr")
 		)
 
-GameType(name="Type inconu", abbr="-", code="unknowntype", includeInSorting=False)
+GameType(name="Type inconu", abbr=TYPE_VOID_SYMBOL, code="unknowntype", includeInSorting=False)
 
 def get_type_object_after_code(code):
 	if code in globals():
@@ -611,7 +613,7 @@ def create_licence_objects():
 			freedomCoefficient=aLicence.get("freedomCoefficient") or 0
 		)
 
-Licence(name="Licence inconue", abbr="-", code="unknownlicence", includeInSorting=False)
+Licence(name="Licence inconue", abbr=LICENCE_VOID_SYMBOL, code="unknownlicence", includeInSorting=False)
 
 def get_licence_object_after_code(code):
 	if code in globals():
@@ -783,7 +785,7 @@ class Year:
 
 	def __str__(self):
 		if self._year is None:
-			return "-"
+			return DATE_VOID_SYMBOL
 		return str(self._year)
 
 	def __eq__(self, other):
@@ -843,15 +845,15 @@ class Game:
 
 		# Vérifier chaque clé pour une éventuelle valeur vide et remplacer par "-"
 		ncurseLine = [
-			self.platform.abbr or " ",
-			self.name or "-",
-			self.licence.abbr or "-",
-			self.type_.abbr or "-",
-			self.year or "-",
-			self.human_latest_opening_duration() or "-",
-			self.human_cumulate_time() or "0",
-			self.listOfAuthors(),
-			self.listOfStudios(),
+			self.platform.abbr or PLATFORM_VOID_SYMBOL,
+			self.name or NAME_VOID_SYMBOL,
+			self.licence.abbr or LICENCE_VOID_SYMBOL,
+			self.type_.abbr or TYPE_VOID_SYMBOL,
+			self.year or DATE_VOID_SYMBOL,
+			self.human_latest_opening_duration() or LASTOPENING_VOID_SYMBOL,
+			self.human_cumulate_time() or CUMULATEDTIME_VOID_SYMBOL,
+			self.listOfAuthors() or AUTHOR_VOID_SYMBOL,
+			self.listOfStudios() or STUDIO_VOID_SYMBOL,
 			self
 		]
 		return ncurseLine
