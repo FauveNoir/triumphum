@@ -42,6 +42,7 @@ APP_VERSION="0.1"
 APP_AUTHOR="Fauve"
 APP_AUTHOR_MAIL="fauve.ordinator@taniere.info"
 APP_AUTHOR_DONATION_LINK="https://paypal.me/ihidev"
+APP_SYMBOL="⚔"
 APP_URL=""
 
 # Définir la locale dans Pendulum
@@ -1216,7 +1217,7 @@ def makeItemsList():
 
 SPACE_COLUMN_SEPARATION_NUMBER=2
 
-BOTTOM_BAR_TEXT=""
+BOTTOM_BAR_TEXT="+=={:::::::::::::::::>"
 def setBottomBarContent(newBottomBarText):
 	global BOTTOM_BAR_TEXT
 	BOTTOM_BAR_TEXT = newBottomBarText
@@ -1298,7 +1299,7 @@ def main(stdscr):
 	curses.init_pair(1, -1, -1)  # Utilise la couleur par défaut du terminal
 
 	# Nom de l'application
-	app_name = APP_FANCY_NAME + " | " + APP_DESCRIPTION
+	app_name = APP_SYMBOL + " " + APP_FANCY_NAME + " | " + APP_DESCRIPTION
 
 
 	global THE_VISUAL_LIST_OF_GAMES
