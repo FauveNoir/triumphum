@@ -162,10 +162,25 @@ def returnBindingAfterConfigKeyCode(configKeyCode):
 
 ########################################################################
 
+def transform_key_to_character(key_name):
+	key_mapping = {
+		"Enter": "\n",
+		"Return": "\r",
+		"Space": " ",
+	}
+
+	# Return the mapped character if it exists in the dictionary,
+	# otherwise return the original key_name (which might be a letter or unknown key)
+	return key_mapping.get(key_name, key_name)
+
+
+########################################################################
+
 listOfBindings=[]
 class Binding:
 	def __init__(self, key=None, code=None, description=None, configFileName=None, instructions=None):
-		self.key = getKeycode(key)
+		self.key = None
+		self.setKey(key)
 		self.description = description
 		self.code = code
 		if configFileName == None:
@@ -177,9 +192,8 @@ class Binding:
 			setattr(self, 'executeInstructions', instructions)
 
 		listOfBindings.append(self) # Adjonction à la liste des types de jeux
-
-	def setKeyCode(self, key):
-		self.key = getKeycode(key)
+	def setKey(self, key):
+		self.key = transform_key_to_character(key)
 
 def bindGoDownFunction():
 	THE_VISUAL_LIST_OF_GAMES.goDown()
@@ -264,8 +278,8 @@ configValues={}
 for aConfigKey in getListOfConfigKeyCodes():
 	# TODO chercher la clé si elle existe
 	configValues[aConfigKey]=config.get("General", aConfigKey)
-	returnBindingAfterConfigKeyCode(aConfigKey).setKeyCode(configValues[aConfigKey])
-print(configValues)
+	returnBindingAfterConfigKeyCode(aConfigKey).setKey(configValues[aConfigKey])
+#print(getListOfConfigKeyCodes())
 
 ########################################################################
 # classe des plateformes
@@ -1175,11 +1189,12 @@ def main(stdscr):
 		stdscr.refresh()
 
 		# Lecture de la touche pressée
-		key = getKeycode(stdscr.get_wch())
-		setBottomBarContent(f"Touche préssée {key}")
-		writeInTmp(getListOfKeyBindingsCodes())
+		key = transform_key_to_character(stdscr.get_wch())
+#		setBottomBarContent(f"Touche préssée {key}")
 
-		if (key) == getKeycode('q'):  # Quitter si la touche 'q' est pressée
+		writeInTmp(key)
+
+		if (key) == transform_key_to_character('q'):  # Quitter si la touche 'q' est pressée
 			break
 		elif (key) in getListOfKeyBindingsCodes():
 			returnBindingAfterKeyStroke(key).executeInstructions()
