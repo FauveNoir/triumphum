@@ -130,14 +130,14 @@ class GraphicalSymbol:
 
 GraphicalSymbol(localName="GENERAL_VOID_SYMBOL", value="-")
 
-GraphicalSymbol(localName="TITLE_VOID_SYMBOL", value="-")
-GraphicalSymbol(localName="LICENCE_VOID_SYMBOL", value="-")
-GraphicalSymbol(localName="TYPE__VOID_SYMBOL", value="-")
-GraphicalSymbol(localName="DATE_VOID_SYMBOL", value="-")
-GraphicalSymbol(localName="LASTOPENING_VOID_SYMBOL", value="-")
-GraphicalSymbol(localName="CUMULATEDTIME_VOID_SYMBOL", value="-")
-GraphicalSymbol(localName="AUTHOR_VOID_SYMBOL", value="-")
-GraphicalSymbol(localName="STUDIO_VOID_SYMBOL", value="-")
+GraphicalSymbol(localName="TITLE_VOID_SYMBOL", value=GENERAL_VOID_SYMBOL)
+GraphicalSymbol(localName="LICENCE_VOID_SYMBOL", value=GENERAL_VOID_SYMBOL)
+GraphicalSymbol(localName="TYPE__VOID_SYMBOL", value=GENERAL_VOID_SYMBOL)
+GraphicalSymbol(localName="DATE_VOID_SYMBOL", value=GENERAL_VOID_SYMBOL)
+GraphicalSymbol(localName="LASTOPENING_VOID_SYMBOL", value=GENERAL_VOID_SYMBOL)
+GraphicalSymbol(localName="CUMULATEDTIME_VOID_SYMBOL", value=GENERAL_VOID_SYMBOL)
+GraphicalSymbol(localName="AUTHOR_VOID_SYMBOL", value=GENERAL_VOID_SYMBOL)
+GraphicalSymbol(localName="STUDIO_VOID_SYMBOL", value=GENERAL_VOID_SYMBOL)
 
 GraphicalSymbol(localName="CUMULATED_TIME_PLAYED_PER_DAY", value="D")
 GraphicalSymbol(localName="CUMULATED_TIME_PLAYED_PER_WEEK", value="W")
