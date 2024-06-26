@@ -775,52 +775,6 @@ def retrive_history_of_a_game(game):
 	return prepared_history
 
 ########################################################################
-# Classe année permetant la comparaison avec les années non renseignées, donc none
-########################################################################
-
-class Year:
-	def __init__(self, year=None):
-		if year is None:
-			self._year = None
-			self.includeInSorting=False
-		else:
-			self._year = int(year)
-			self.includeInSorting=True
-
-	def __str__(self):
-		if self._year is None:
-			return DATE_VOID_SYMBOL.value
-		return str(self._year)
-
-	def __eq__(self, other):
-		if isinstance(other, Year):
-			if self._year is None:
-				return other._year is None
-			else:
-				return self._year == other._year
-		return NotImplemented
-
-	def __lt__(self, other):
-		if isinstance(other, Year):
-			if self._year is None:
-				return True
-			elif other._year is None:
-				return False
-			else:
-				return self._year < other._year
-		return NotImplemented
-
-	def __gt__(self, other):
-		if isinstance(other, Year):
-			if self._year is None:
-				return False
-			elif other._year is None:
-				return True
-			else:
-				return self._year > other._year
-		return NotImplemented
-
-########################################################################
 # Classe des jeux
 ########################################################################
 
@@ -832,7 +786,7 @@ class Game:
 		self.codeName = codeName
 		self.licence = licence
 		self.url = url
-		self.year = Year(year)
+		self.year = year
 		self.type_ = type_
 		self.authors = authors
 		self.studios = studios
@@ -1384,7 +1338,6 @@ if args.config_file != None:
 	CONFIG_FILE=args.config_file
 applyFileConfigurationsBindings()
 applyFileConfigurationsGraphicalSymbols()
-writeInTmp(listOfGraphicalSymbols)
 
 if args.games != None:
 	GAME_FILE=args.games
