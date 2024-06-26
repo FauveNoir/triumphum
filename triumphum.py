@@ -131,15 +131,15 @@ class GraphicalSymbol:
 
 GraphicalSymbol(localName="GENERAL_VOID_SYMBOL", value="-")
 
-GraphicalSymbol(localName="NAME_VOID_SYMBOL", value=GENERAL_VOID_SYMBOL)
-GraphicalSymbol(localName="TITLE_VOID_SYMBOL", value=GENERAL_VOID_SYMBOL)
-GraphicalSymbol(localName="LICENCE_VOID_SYMBOL", value=GENERAL_VOID_SYMBOL)
-GraphicalSymbol(localName="TYPE_VOID_SYMBOL", value=GENERAL_VOID_SYMBOL)
-GraphicalSymbol(localName="DATE_VOID_SYMBOL", value=GENERAL_VOID_SYMBOL)
-GraphicalSymbol(localName="LASTOPENING_VOID_SYMBOL", value=GENERAL_VOID_SYMBOL)
+GraphicalSymbol(localName="NAME_VOID_SYMBOL", value=GENERAL_VOID_SYMBOL.value)
+GraphicalSymbol(localName="TITLE_VOID_SYMBOL", value=GENERAL_VOID_SYMBOL.value)
+GraphicalSymbol(localName="LICENCE_VOID_SYMBOL", value=GENERAL_VOID_SYMBOL.value)
+GraphicalSymbol(localName="TYPE_VOID_SYMBOL", value=GENERAL_VOID_SYMBOL.value)
+GraphicalSymbol(localName="DATE_VOID_SYMBOL", value=GENERAL_VOID_SYMBOL.value)
+GraphicalSymbol(localName="LASTOPENING_VOID_SYMBOL", value=GENERAL_VOID_SYMBOL.value)
 GraphicalSymbol(localName="CUMULATEDTIME_VOID_SYMBOL", value="0")
-GraphicalSymbol(localName="AUTHOR_VOID_SYMBOL", value=GENERAL_VOID_SYMBOL)
-GraphicalSymbol(localName="STUDIO_VOID_SYMBOL", value=GENERAL_VOID_SYMBOL)
+GraphicalSymbol(localName="AUTHOR_VOID_SYMBOL", value=GENERAL_VOID_SYMBOL.value)
+GraphicalSymbol(localName="STUDIO_VOID_SYMBOL", value=GENERAL_VOID_SYMBOL.value)
 GraphicalSymbol(localName="PLATFORM_VOID_SYMBOL", value=" ")
 
 GraphicalSymbol(localName="CUMULATED_TIME_PLAYED_PER_DAY", value="D")
@@ -436,13 +436,11 @@ def applyFileConfigurationsGraphicalSymbols():
 	config.read('triumphumrc')
 	#config.read(CONFIG_FILE)
 
+	writeInTmp("ici")
 	for aConfigiGrahpicalSymbol in listOfGraphicalSymbols:
 		if config.has_option("General", aConfigiGrahpicalSymbol.fileConfigName):
 			aConfigiGrahpicalSymbol.value=config.get("General", aConfigiGrahpicalSymbol.fileConfigName)
-
-applyFileConfigurationsGraphicalSymbols()
-for element in listOfGraphicalSymbols:
-	print(element.value)
+	writeInTmp(listOfGraphicalSymbols)
 
 ########################################################################
 # classe des plateformes
@@ -1382,6 +1380,8 @@ def getGameObjectByItCodeName(codeName):
 if args.config_file != None:
 	CONFIG_FILE=args.config_file
 	applyFileConfigurationsBindings()
+	applyFileConfigurationsGraphicalSymbols()
+	#writeInTmp(listOfGraphicalSymbols)
 if args.games != None:
 	GAME_FILE=args.games
 if args.game_types != None:
