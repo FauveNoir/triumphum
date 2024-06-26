@@ -433,7 +433,8 @@ def applyFileConfigurationsGraphicalSymbols():
 	configValues={}
 
 	for aConfigiGrahpicalSymbol in listOfGraphicalSymbols:
-		globals()[aConfigiGrahpicalSymbol.localName]=config.get("General", aConfigiGrahpicalSymbol.fileConfigName)
+		if config.has_option("General", aConfigiGrahpicalSymbol.fileConfigName):
+			globals()[aConfigiGrahpicalSymbol.localName]=config.get("General", aConfigiGrahpicalSymbol.fileConfigName)
 
 applyFileConfigurationsGraphicalSymbols()
 
