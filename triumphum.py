@@ -224,6 +224,9 @@ class Binding:
 	def setKey(self, key):
 		self.key = transform_key_to_character(key)
 
+	def executeInstructions(self):
+		setBottomBarContent(f"{self.key} : Aucune action associée.")
+
 def bindGoDownFunction():
 	THE_VISUAL_LIST_OF_GAMES.goDown()
 def bindGoUpFunction():
@@ -1092,6 +1095,8 @@ class VisualListOfGames:
 	def sortBy(self, property_):
 		self.shiftSortingState(property_)
 		self.softSortBy(property_)
+		# Cas particuliers 
+		#  "latest_opening_date_value"
 
 	def columnsWidth(self):
 		itemsMergedWithTitle = self.items[:]
