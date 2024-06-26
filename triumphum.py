@@ -431,13 +431,14 @@ def applyFileConfigurationsGraphicalSymbols():
 
 	config.read('triumphumrc')
 	#config.read(CONFIG_FILE)
-	configValues={}
 
 	for aConfigiGrahpicalSymbol in listOfGraphicalSymbols:
 		if config.has_option("General", aConfigiGrahpicalSymbol.fileConfigName):
-			globals()[aConfigiGrahpicalSymbol.localName]=config.get("General", aConfigiGrahpicalSymbol.fileConfigName)
+			aConfigiGrahpicalSymbol.value=config.get("General", aConfigiGrahpicalSymbol.fileConfigName)
 
 applyFileConfigurationsGraphicalSymbols()
+for element in listOfGraphicalSymbols:
+	print(element.value)
 
 ########################################################################
 # classe des plateformes
@@ -546,7 +547,7 @@ def create_game_type_objects():
 			abbr=aGameType.get("abbr")
 		)
 
-GameType(name="Type inconu", abbr=TYPE_VOID_SYMBOL, code="unknowntype", includeInSorting=False)
+GameType(name="Type inconu", abbr=TYPE_VOID_SYMBOL.value, code="unknowntype", includeInSorting=False)
 
 def get_type_object_after_code(code):
 	if code in globals():
@@ -615,7 +616,7 @@ def create_licence_objects():
 			freedomCoefficient=aLicence.get("freedomCoefficient") or 0
 		)
 
-Licence(name="Licence inconue", abbr=LICENCE_VOID_SYMBOL, code="unknownlicence", includeInSorting=False)
+Licence(name="Licence inconue", abbr=LICENCE_VOID_SYMBOL.value, code="unknownlicence", includeInSorting=False)
 
 def get_licence_object_after_code(code):
 	if code in globals():
@@ -787,7 +788,7 @@ class Year:
 
 	def __str__(self):
 		if self._year is None:
-			return DATE_VOID_SYMBOL
+			return DATE_VOID_SYMBOL.value
 		return str(self._year)
 
 	def __eq__(self, other):
@@ -847,15 +848,15 @@ class Game:
 
 		# Vérifier chaque clé pour une éventuelle valeur vide et remplacer par "-"
 		ncurseLine = [
-			self.platform.abbr or PLATFORM_VOID_SYMBOL,
-			self.name or NAME_VOID_SYMBOL,
-			self.licence.abbr or LICENCE_VOID_SYMBOL,
-			self.type_.abbr or TYPE_VOID_SYMBOL,
-			self.year or DATE_VOID_SYMBOL,
-			self.human_latest_opening_duration() or LASTOPENING_VOID_SYMBOL,
-			self.human_cumulate_time() or CUMULATEDTIME_VOID_SYMBOL,
-			self.listOfAuthors() or AUTHOR_VOID_SYMBOL,
-			self.listOfStudios() or STUDIO_VOID_SYMBOL,
+			self.platform.abbr or PLATFORM_VOID_SYMBOL.value,
+			self.name or NAME_VOID_SYMBOL.value,
+			self.licence.abbr or LICENCE_VOID_SYMBOL.value,
+			self.type_.abbr or TYPE_VOID_SYMBOL.value,
+			self.year or DATE_VOID_SYMBOL.value,
+			self.human_latest_opening_duration() or LASTOPENING_VOID_SYMBOL.value,
+			self.human_cumulate_time() or CUMULATEDTIME_VOID_SYMBOL.value,
+			self.listOfAuthors() or AUTHOR_VOID_SYMBOL.value,
+			self.listOfStudios() or STUDIO_VOID_SYMBOL.value,
 			self
 		]
 		return ncurseLine
