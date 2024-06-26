@@ -56,7 +56,7 @@ _t = humanize.i18n.activate("fr_FR")
 # Obtenez le répertoire de configuration de l'application
 CONFIG_DIR = appdirs.user_config_dir(APP_CODE_NAME)
 
-CONFIG_FILE=CONFIG_DIR + "triumphumrc"
+CONFIG_FILE= appdirs.user_config_dir("triumphumrc")
 
 BASE_NAME_GAME_FILE="games.json"
 BASE_NAME_TYPE_FILE="listOfGameTypes.json"
@@ -93,31 +93,32 @@ CUMULATED_TIME_PLAYED_SEPARATOR="│"
 # Options de la ligne de commande
 ########################################################################
 
-parser = argparse.ArgumentParser(description=APP_FANCY_NAME + " " + APP_VERSION + " " + APP_DESCRIPTION,
-                                 formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+parser = argparse.ArgumentParser(description=APP_FANCY_NAME + " " + APP_VERSION + " " + APP_DESCRIPTION)
 
-parser.add_argument("--tui", action="store_true", default = True, help = "Run the game selection interface (default).")
-parser.add_argument("-r", "--run", help = "Run a given game and track playing time.")
-parser.add_argument("-a", "--about", action="store_true", help = "Show about message.")
-parser.add_argument("-d", "--donate", action="store_true", help = "Open link to give a tip.")
-#parser.add_argument("-h", "--help ", help = "Print help message (this one).")
-parser.add_argument("-c", "--config-file", help = "Select different config file from default one.")
-parser.add_argument("-g", "--games", help = "Select different game file from default one.")
-parser.add_argument("-p", "--platforms", help = "Select different platform file from default one.")
-parser.add_argument("-l", "--licences", help = "Select different licence file from default one.")
-parser.add_argument("-t", "--game-types", help = "Select different game type file from default one.")
+interfaceBehaviour = parser.add_argument_group('Interface behaviour')
 
-parser.add_argument("--add-game", help = "Ajouter un nouveau jeu.")
-parser.add_argument("--add-licence", help = "Ajouter une nouvelle licence.")
-parser.add_argument("--add-type", help = "Ajouter un nouveau type de jeu.")
-parser.add_argument("--add-platform", help = "Ajouter une nouvelle plateforme.")
+interfaceBehaviour.add_argument("--tui", action="store_true", default = True, help = "Run the game selection interface (default).")
+interfaceBehaviour.add_argument("-r", "--run", metavar="game", help = "Run a given game and track playing time.")
 
-parser.add_argument("--qwerty", help = "Lancer l’interface avec une carte de touches adaptée à la disposition QWERTY.")
-parser.add_argument("--azerty", help = "Lancer l’interface avec une carte de touches adaptée à la disposition AZERTY.")
-parser.add_argument("--bepo", help = "Lancer l’interface avec une carte de touches adaptée à la disposition BÉPO.")
-parser.add_argument("--list-games", help = "Afficher la liste des jeux.")
+generalArgument = parser.add_argument_group('General arguments')
+generalArgument.add_argument("-a", "--about", action="store_true", help = "Show about message.")
+generalArgument.add_argument("-d", "--donate", action="store_true", help = "Open link to give a tip.")
+generalArgument.add_argument("--list-games", action="store_true", help = "Afficher la liste des jeux.")
 
-args = parser.parse_args()
+configurationFile = parser.add_argument_group('Configuration file')
+configurationFile.add_argument("-c", "--config-file", help = "Select different config file from default one.")
+configurationFile.add_argument("-g", "--games", metavar="file", help = "Select different game file from default one.")
+configurationFile.add_argument("-p", "--platforms", metavar="file", help = "Select different platform file from default one.")
+configurationFile.add_argument("-l", "--licences", metavar="file", help = "Select different licence file from default one.")
+configurationFile.add_argument("-t", "--game-types", metavar="file", help = "Select different game type file from default one.")
+
+addingData = parser.add_argument_group('Adding data')
+addingData.add_argument("--add-game", metavar="game", help = "Ajouter un nouveau jeu.")
+addingData.add_argument("--add-licence", metavar="licence", help = "Ajouter une nouvelle licence.")
+addingData.add_argument("--add-type", metavar="type", help = "Ajouter un nouveau type de jeu.")
+addingData.add_argument("--add-platform", metavar="platform", help = "Ajouter une nouvelle plateforme.")
+
+layoutArguments = parser.add_argument_group('Layout and keybinding')
 
 ########################################################################
 # Classe des racoucris dactyliques
@@ -268,18 +269,133 @@ Binding(key="l", code="bindRefreshScreen", description="Rafraichir l’écran", 
 Binding(key="q", code="bindQuit", description=f"Quitter {APP_FANCY_NAME}", configFileName="bind_quit")
 
 ########################################################################
+# Dispositions de clavier
+########################################################################
+
+def getListOfBindingsCode():
+	listOfBindingsCode=[]
+	for aBinding in listOfBindings:
+		listOfBindingsCode.append(aBinding.code)
+	return listOfBindingsCode
+
+
+def returnBindingAfterCode(code):
+	for aBinding in listOfBindings:
+		if code == aBinding.code:
+			return aBinding
+	return None
+
+########################################################################
+
+listOfBindingsCode=getListOfBindingsCode()
+attributs = {attr: None for attr in listOfBindingsCode}
+class Layout:
+	def __init__(self, fancyName=None, codeName=None, **attributs):
+		self.fancyName=fancyName
+		self.codeName=codeName
+
+		layoutArguments.add_argument(f"--{codeName}", action="store_true", help = f"Lancer l’interface avec une carte de touches adaptée à la disposition {fancyName}.")
+
+		globals()[codeName] = self # Déclaration de la variable globale pérmétant d’atteindre directement le type voulu
+
+	def apply(self):
+		for aKey in getListOfBindingsCode():
+			if hasattr(self, aKey):
+				value = getattr(self, aKey)
+				returnBindingAfterCode(aKey).setKey(value)
+
+Layout(fancyName="BÉPO", codeName="bepo",
+	bindGoDown="t",
+	bindGoUp="s",
+	bindRunGame="\n",
+	bindSortByName="b",
+	bindSortByLicence="é",
+	bindSortByType="p",
+	bindSortByDate="o",
+	bindSortByLastOpening="è",
+	bindSortByPlayingDuration="^",
+	bindSortByPlatform="!",
+	bindOpenLink="A",
+	bindEditData="e",
+#	bindDelete="d",
+	bindComment="i",
+	bindMakeDonation="x",
+	bindShowFullLicence="w",
+	bindFilter="/",
+	bindSeeBindingHelp="h",
+	bindCopyLink="y",
+	bindRefreshScreen="l",
+	bindQuit="q"
+	)
+
+Layout(fancyName="AZERTY", codeName="azerty",
+	bindGoDown="j",
+	bindGoUp="k",
+	bindRunGame="\n",
+	bindSortByName="a",
+	bindSortByLicence="z",
+	bindSortByType="e",
+	bindSortByDate="r",
+	bindSortByLastOpening="t",
+	bindSortByPlayingDuration="y",
+	bindSortByPlatform="o",
+	bindOpenLink="A",
+	bindEditData="f",
+#	bindDelete="d",
+	bindComment="s",
+	bindMakeDonation="c",
+	bindShowFullLicence="p",
+	bindFilter="/",
+	bindSeeBindingHelp="h",
+	bindCopyLink="y",
+	bindRefreshScreen="l",
+	bindQuit="q"
+	)
+
+Layout(fancyName="QWERTY", codeName="qwerty",
+	bindGoDown="j",
+	bindGoUp="k",
+	bindRunGame="\n",
+	bindSortByName="q",
+	bindSortByLicence="w",
+	bindSortByType="e",
+	bindSortByDate="r",
+	bindSortByLastOpening="t",
+	bindSortByPlayingDuration="y",
+	bindSortByPlatform="u",
+	bindOpenLink="A",
+	bindEditData="f",
+#	bindDelete="d",
+	bindComment="s",
+	bindMakeDonation="c",
+	bindShowFullLicence="p",
+	bindFilter="/",
+	bindSeeBindingHelp="h",
+	bindCopyLink="y",
+	bindRefreshScreen="l",
+	bindQuit="x"
+	)
+
+for aBinding in listOfBindings:
+	print(f"{aBinding.key}	{aBinding.code}")
+
+args = parser.parse_args()
+
+########################################################################
 # Traitement du fichier de configuration
 ########################################################################
 
-config = configparser.ConfigParser()
-config.read('triumphumrc')
-configValues={}
+def applyFileConfigurationsBindings():
+	config = configparser.ConfigParser()
 
-for aConfigKey in getListOfConfigKeyCodes():
-	# TODO chercher la clé si elle existe
-	configValues[aConfigKey]=config.get("General", aConfigKey)
-	returnBindingAfterConfigKeyCode(aConfigKey).setKey(configValues[aConfigKey])
-#print(getListOfConfigKeyCodes())
+	config.read('triumphumrc')
+	config.read(CONFIG_FILE)
+	configValues={}
+
+	for aConfigKey in getListOfConfigKeyCodes():
+		# TODO chercher la clé si elle existe
+		configValues[aConfigKey]=config.get("General", aConfigKey)
+		returnBindingAfterConfigKeyCode(aConfigKey).setKey(configValues[aConfigKey])
 
 ########################################################################
 # classe des plateformes
@@ -1215,7 +1331,8 @@ def getGameObjectByItCodeName(codeName):
 ########################################################################
 
 if args.config_file != None:
-	GAME_FILE=args.config_file
+	CONFIG_FILE=args.config_file
+	applyFileConfigurationsBindings()
 if args.games != None:
 	GAME_FILE=args.games
 if args.game_types != None:
