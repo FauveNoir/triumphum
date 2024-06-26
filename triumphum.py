@@ -68,26 +68,6 @@ TYPE_FILE=CONFIG_DIR + "/" + BASE_NAME_TYPE_FILE
 LICENCE_FILE=CONFIG_DIR + "/" + BASE_NAME_LICENCE_FILE
 PLATFORM_FILE=CONFIG_DIR + "/" + BASE_NAME_PLATFORM_FILE
 
-########################################################################
-# Configurations
-########################################################################
-
-GENERAL_VOID_SYMBOL="-"
-
-TITLE_VOID_SYMBOL=GENERAL_VOID_SYMBOL
-LICENCE_VOID_SYMBOL=GENERAL_VOID_SYMBOL
-TYPE__VOID_SYMBOL=GENERAL_VOID_SYMBOL
-DATE_VOID_SYMBOL=GENERAL_VOID_SYMBOL
-LASTOPENING_VOID_SYMBOL=GENERAL_VOID_SYMBOL
-CUMULATEDTIME_VOID_SYMBOL=GENERAL_VOID_SYMBOL
-AUTHOR_VOID_SYMBOL=GENERAL_VOID_SYMBOL
-STUDIO_VOID_SYMBOL=GENERAL_VOID_SYMBOL
-
-CUMULATED_TIME_PLAYED_PER_DAY="J"
-CUMULATED_TIME_PLAYED_PER_WEEK="S"
-CUMULATED_TIME_PLAYED_PER_MONTH="M"
-CUMULATED_TIME_PLAYED_PER_YEAR="Y"
-CUMULATED_TIME_PLAYED_SEPARATOR="│"
 
 ########################################################################
 # Options de la ligne de commande
@@ -119,6 +99,51 @@ addingData.add_argument("--add-type", metavar="type", help = "Ajouter un nouveau
 addingData.add_argument("--add-platform", metavar="platform", help = "Ajouter une nouvelle plateforme.")
 
 layoutArguments = parser.add_argument_group('Layout and keybinding')
+
+########################################################################
+# Classe des symbols graphiques
+########################################################################
+
+listOfGraphicalSymbols=[]
+class GraphicalSymbol:
+	def __init__(self, localName=None, fileConfigName=None, description=None, value=None):
+		self.localName=localName
+		if fileConfigName == None:
+			self.fileConfigName=self.localName.lower()
+		else:
+			self.fileConfigName=fileConfigName
+		self.description=description
+		self.value=value
+
+		listOfGraphicalSymbols.append(self)
+		globals()[localName] = self # Déclaration de la variable globale pérmétant d’atteindre directement le type voulu
+
+	def __str__(self):
+		return self.value
+
+	def __add__(self, other):
+		if isinstance(other, str):
+			return str(self) + other
+		else:
+			return NotImplemented
+
+
+GraphicalSymbol(localName="GENERAL_VOID_SYMBOL", value="-")
+
+GraphicalSymbol(localName="TITLE_VOID_SYMBOL", value="-")
+GraphicalSymbol(localName="LICENCE_VOID_SYMBOL", value="-")
+GraphicalSymbol(localName="TYPE__VOID_SYMBOL", value="-")
+GraphicalSymbol(localName="DATE_VOID_SYMBOL", value="-")
+GraphicalSymbol(localName="LASTOPENING_VOID_SYMBOL", value="-")
+GraphicalSymbol(localName="CUMULATEDTIME_VOID_SYMBOL", value="-")
+GraphicalSymbol(localName="AUTHOR_VOID_SYMBOL", value="-")
+GraphicalSymbol(localName="STUDIO_VOID_SYMBOL", value="-")
+
+GraphicalSymbol(localName="CUMULATED_TIME_PLAYED_PER_DAY", value="D")
+GraphicalSymbol(localName="CUMULATED_TIME_PLAYED_PER_WEEK", value="W")
+GraphicalSymbol(localName="CUMULATED_TIME_PLAYED_PER_MONTH", value="M")
+GraphicalSymbol(localName="CUMULATED_TIME_PLAYED_PER_YEAR", value="Y")
+GraphicalSymbol(localName="CUMULATED_TIME_PLAYED_SEPARATOR", value="│")
 
 ########################################################################
 # Classe des racoucris dactyliques
@@ -376,8 +401,8 @@ Layout(fancyName="QWERTY", codeName="qwerty",
 	bindQuit="x"
 	)
 
-for aBinding in listOfBindings:
-	print(f"{aBinding.key}	{aBinding.code}")
+#for aBinding in listOfBindings:
+#	print(f"{aBinding.key}	{aBinding.code}")
 
 args = parser.parse_args()
 
@@ -389,13 +414,26 @@ def applyFileConfigurationsBindings():
 	config = configparser.ConfigParser()
 
 	config.read('triumphumrc')
-	config.read(CONFIG_FILE)
+#	config.read(CONFIG_FILE)
 	configValues={}
 
 	for aConfigKey in getListOfConfigKeyCodes():
 		# TODO chercher la clé si elle existe
 		configValues[aConfigKey]=config.get("General", aConfigKey)
 		returnBindingAfterConfigKeyCode(aConfigKey).setKey(configValues[aConfigKey])
+
+
+def applyFileConfigurationsGraphicalSymbols():
+	config = configparser.ConfigParser()
+
+	config.read('triumphumrc')
+	#config.read(CONFIG_FILE)
+	configValues={}
+
+	for aConfigiGrahpicalSymbol in listOfGraphicalSymbols:
+		globals()[aConfigiGrahpicalSymbol.localName]=config.get("General", aConfigiGrahpicalSymbol.fileConfigName)
+
+applyFileConfigurationsGraphicalSymbols()
 
 ########################################################################
 # classe des plateformes
@@ -1201,17 +1239,17 @@ def prepareTextForRightIndicator(visualListOfGames):
 	rightIndicatorText=  CUMULATED_TIME_PLAYED_PER_DAY + ": "
 	rightIndicatorText+= humanize.naturaldelta(visualListOfGames.allHistoryEntries().cumulatedPlayingTimeFromNDays(1))
 
-	rightIndicatorText+= "" + CUMULATED_TIME_PLAYED_SEPARATOR + ""
+	rightIndicatorText+= "" + str(CUMULATED_TIME_PLAYED_SEPARATOR) + ""
 
 	rightIndicatorText+= CUMULATED_TIME_PLAYED_PER_WEEK + ": "
 	rightIndicatorText+= humanize.naturaldelta(visualListOfGames.allHistoryEntries().cumulatedPlayingTimeFromNDays(7))
 
-	rightIndicatorText+= "" + CUMULATED_TIME_PLAYED_SEPARATOR + ""
+	rightIndicatorText+= "" + str(CUMULATED_TIME_PLAYED_SEPARATOR) + ""
 
 	rightIndicatorText+= CUMULATED_TIME_PLAYED_PER_MONTH + ": "
 	rightIndicatorText+= humanize.naturaldelta(visualListOfGames.allHistoryEntries().cumulatedPlayingTimeFromNDays(30))
 
-	rightIndicatorText+= "" + CUMULATED_TIME_PLAYED_SEPARATOR + ""
+	rightIndicatorText+= "" + str(CUMULATED_TIME_PLAYED_SEPARATOR) + ""
 
 	rightIndicatorText+= CUMULATED_TIME_PLAYED_PER_YEAR + ": "
 	rightIndicatorText+= humanize.naturaldelta(visualListOfGames.allHistoryEntries().cumulatedPlayingTimeFromNDays(365))
