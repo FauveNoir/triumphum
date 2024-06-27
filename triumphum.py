@@ -270,6 +270,9 @@ def bindSortByPlatformFunction():
 def bindRunGameFunction():
 	THE_VISUAL_LIST_OF_GAMES.openCurrent()
 
+def bindDeleteGameFunction():
+	THE_VISUAL_LIST_OF_GAMES.deleteCurrent()
+
 def bindOpenLinkFunction():
 	THE_VISUAL_LIST_OF_GAMES.openLink()
 
@@ -299,7 +302,7 @@ Binding(key="!", code="bindSortByPlatform",instructions=bindSortByPlatformFuncti
 
 Binding(key="A", code="bindOpenLink", description="Ouvrir le site web associé", instructions=bindOpenLinkFunction, configFileName="bind_open_link")
 Binding(key="e", code="bindEditData", description="Éditer les données", configFileName="bind_edit")
-#Binding(key="d", code="bindDelete", description="Suprimer le jeu de la liste", configFileName="bind_delete")
+Binding(key="d", code="bindDelete", description="Suprimer le jeu de la liste", instructions=bindDeleteGameFunction, configFileName="bind_delete")
 Binding(key="i", code="bindComment", description="Commenter", configFileName="bind_comment")
 Binding(key="u", code="bindMakeDonation", description="Faire un don", instructions=bindMakeDonationFunction, configFileName="bind_donate")
 Binding(key="w", code="bindShowFullLicence", description="Afficher le texte de la licence", configFileName="bind_show_licence")
@@ -449,7 +452,6 @@ def applyFileConfigurationsGraphicalSymbols():
 	for aConfigiGrahpicalSymbol in listOfGraphicalSymbols:
 		if config.has_option("General", aConfigiGrahpicalSymbol.fileConfigName):
 			aConfigiGrahpicalSymbol.value=config.get("General", aConfigiGrahpicalSymbol.fileConfigName)
-	writeInTmp(listOfGraphicalSymbols)
 
 ########################################################################
 # classe des plateformes
@@ -897,6 +899,9 @@ class Game:
 	def listOfStudios(self):
 		return formatDataListToLitteralList(self.studios, STUDIO_VOID_SYMBOL.value)
 
+	def delete(self):
+		listOfGames.remove(self)
+
 def create_game_objects():
 	# Création de la liste des jeux
 
@@ -922,6 +927,55 @@ def create_game_objects():
 			studios=aGame.get("studios"),
 			platform=get_platform_object_after_code(aGame.get("platform")),
 		)
+
+########################################################################
+# Éidition des bases de données
+########################################################################
+
+def isGameCodeExist(gameCode):
+	# Charger le contenu JSON depuis le fichier
+	for aGame in listOfGames:
+		if gameCode == aGame.codeName:
+			return True
+	return False
+
+def isNewGadeCodeAllowded(gameCode):
+	if not isGameCodeExist(gameCode) and gameCode != None:
+		return True
+	return False
+
+def rellayAddGameToDataBase(name=None, licence=None, year=None, type_=None, command=None, codeName=None, url=None, platform=None, studios=None, authors=None, shortDesc=None):
+	gameObject={
+		"name": name,
+		"licence": licence,
+		"year": year,
+		"type": type_,
+		"command": command,
+		"codeName": codeName,
+		"url": url,
+		"platform": platform,
+		"studios": studios,
+		"authors": authors,
+		"shortDesc": shortDesc
+	}
+
+	# Charger le contenu JSON depuis le fichier
+	with open(GAME_FILE, 'r') as jsonFile:
+		jsonContent = json.load(jsonFile)
+
+	jsonContent['games'].append(gameObject)
+
+	# Réécrire le fichier JSON avec le contenu mis à jour
+	with open(GAME_FILE, 'w') as jsonFile:
+		json.dump(jsonContent, jsonFile, indent="\t")
+
+def addGameToDataBase(name=None, licence=None, year=None, type_=None, command=None, codeName=None, url=None, platform=None, studios=None, authors=None, shortDesc=None):
+	if isNewGadeCodeAllowded(codeName) :
+		rellayAddGameToDataBase(name, licence, year, type_, command, codeName, url, platform, studios, authors, shortDesc)
+	elif isGameCodeExist(codeName):
+		print(f"Le code « {codeName} » éxiste déjà.")
+	elif codeName == None:
+		print(f"Veuillez déffinir un code d’entification pour le jeu.")
 
 ########################################################################
 # Classe des colones de la liste visuelle
@@ -1001,6 +1055,15 @@ class VisualListOfGames:
 		game = self.list[self.selected_row][HIDED_DATA_COLUMN]
 		threading.Thread(target=run_command_and_write_on_history, args=(game,)).start()
 
+	def deleteCurrent(self):
+		# Exécuter la commande de lancement du jeu associée à la ligne sélectionnée
+		global HIDED_DATA_COLUMN
+		setBottomBarContent(f"Supression du jeu « {self.list[self.selected_row][HIDED_DATA_COLUMN].name} ».")
+		game = self.list[self.selected_row][HIDED_DATA_COLUMN]
+		game.delete()
+		self.refresh()
+#		writeInTmp(listOfGames[0].name)
+
 	def copyLinkToClipBoard(self):
 		url = self.list[self.selected_row][self.hiden_data_column_number()].url
 		if url != None:
@@ -1008,10 +1071,6 @@ class VisualListOfGames:
 			pyperclip.copy(url)
 		else:
 			setBottomBarContent(f"Aucun lien associé à « {self.list[self.selected_row][HIDED_DATA_COLUMN].name} », rien à copier.")
-
-	def refresh(self):
-		retrive_datas()
-		makeItemsList()
 
 	def openLink(self):
 		global HIDED_DATA_COLUMN
@@ -1026,6 +1085,10 @@ class VisualListOfGames:
 	def hiden_data_column_number(self):
 		return len(self.list[0])-1
 
+
+#	def refresh(self):
+#		retrive_datas()
+#		makeItemsList()
 	def refresh(self):
 		retrive_datas()
 		global listOfGames
@@ -1337,7 +1400,6 @@ def main(stdscr):
 		key = transform_key_to_character(stdscr.get_wch())
 #		setBottomBarContent(f"Touche préssée {key}")
 
-		writeInTmp(key)
 
 		if (key) == transform_key_to_character('q'):  # Quitter si la touche 'q' est pressée
 			break
@@ -1358,6 +1420,9 @@ def getGameObjectByItCodeName(codeName):
 ########################################################################
 # Que faire
 ########################################################################
+
+
+addGameToDataBase(name="Test")
 
 if args.config_file != None:
 	CONFIG_FILE=args.config_file
