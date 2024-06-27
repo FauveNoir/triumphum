@@ -262,6 +262,11 @@ def bindSortByPlayingDurationFunction():
 	THE_VISUAL_LIST_OF_GAMES.sortBy("playing_duration")
 	setBottomBarContent(f"Tri par durée de jeu cumulée.")
 
+def bindSortByPlatformFunction():
+	global THE_VISUAL_LIST_OF_GAMES
+	THE_VISUAL_LIST_OF_GAMES.sortBy("platform")
+	setBottomBarContent(f"Tri par plateforme.")
+
 def bindRunGameFunction():
 	THE_VISUAL_LIST_OF_GAMES.openCurrent()
 
@@ -290,7 +295,7 @@ Binding(key="è", code="bindSortByLastOpening", description="Trier par date de d
 
 
 Binding(key="v", code="bindSortByPlayingDuration", description="Trier par heure cumulé", instructions=bindSortByPlayingDurationFunction, configFileName="bind_sort_playing_duration")
-Binding(key="!", code="bindSortByPlatform", description="Trier par plateforme", configFileName="bind_sort_playing_platform")
+Binding(key="!", code="bindSortByPlatform",instructions=bindSortByPlatformFunction, description="Trier par plateforme", configFileName="bind_sort_playing_platform")
 
 Binding(key="A", code="bindOpenLink", description="Ouvrir le site web associé", instructions=bindOpenLinkFunction, configFileName="bind_open_link")
 Binding(key="e", code="bindEditData", description="Éditer les données", configFileName="bind_edit")
@@ -459,6 +464,20 @@ class Platform:
 		self.abbr = abbr
 		self.includeInSorting = includeInSorting
 		globals()[code] = self # Déclaration de la variable globale pérmétant d’atteindre directement le type voulu
+	def __eq__(self, other):
+		if isinstance(other, Platform):
+			return self.abbr == other.abbr
+		return NotImplemented
+
+	def __lt__(self, other):
+		if isinstance(other, Platform):
+			return self.abbr <  other.abbr
+		return NotImplemented
+
+	def __gt__(self, other):
+		if isinstance(other, Platform):
+			return self.abbr > other.abbr
+		return NotImplemented
 
 def create_platform_objects():
 	# Création de la liste des plateformes disponibles
