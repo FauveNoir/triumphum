@@ -900,7 +900,8 @@ class Game:
 		return formatDataListToLitteralList(self.studios, STUDIO_VOID_SYMBOL.value)
 
 	def delete(self):
-		listOfGames.remove(self)
+		deleteGameFromDatabase(self.codeName)
+		#listOfGames.remove(self)
 
 def create_game_objects():
 	# Création de la liste des jeux
@@ -976,6 +977,26 @@ def addGameToDataBase(name=None, licence=None, year=None, type_=None, command=No
 		print(f"Le code « {codeName} » éxiste déjà.")
 	elif codeName == None:
 		print(f"Veuillez déffinir un code d’entification pour le jeu.")
+
+def deleteGameFromDatabase(codeName):
+	with open(GAME_FILE, 'r') as f:
+		jsonContent = json.load(f)  # Charger le JSON dans une structure de données Python
+
+	founded=False
+	# Vérifier si la clé "games" existe et qu'elle est une liste
+	if 'games' in jsonContent and isinstance(jsonContent['games'], list):
+		games = jsonContent['games']
+		# Parcourir la liste des jeux
+		for game in games:
+			# Vérifier si l'objet a pour valeur "codeName": "abc"
+			if isinstance(game, dict) and game.get('codeName') == codeName:
+				founded=True
+				games.remove(game)  # Supprimer l'élément de la liste
+	
+	if founded:
+		# Réécrire le fichier JSON avec les modifications
+		with open(GAME_FILE, 'w') as f:
+			json.dump(jsonContent, f, indent='\t')  # Réécrire le JSON avec indentation pour la lisibilité
 
 ########################################################################
 # Classe des colones de la liste visuelle
@@ -1060,8 +1081,12 @@ class VisualListOfGames:
 		global HIDED_DATA_COLUMN
 		setBottomBarContent(f"Supression du jeu « {self.list[self.selected_row][HIDED_DATA_COLUMN].name} ».")
 		game = self.list[self.selected_row][HIDED_DATA_COLUMN]
+		if self.selected_row == len(self.list)-1:
+			
+			self.goUp() # TODO work on
+			game = self.list[self.selected_row+1][HIDED_DATA_COLUMN]
 		game.delete()
-		self.refresh()
+		#self.refresh()
 #		writeInTmp(listOfGames[0].name)
 
 	def copyLinkToClipBoard(self):
@@ -1085,10 +1110,6 @@ class VisualListOfGames:
 	def hiden_data_column_number(self):
 		return len(self.list[0])-1
 
-
-#	def refresh(self):
-#		retrive_datas()
-#		makeItemsList()
 	def refresh(self):
 		retrive_datas()
 		global listOfGames
@@ -1422,7 +1443,7 @@ def getGameObjectByItCodeName(codeName):
 ########################################################################
 
 
-addGameToDataBase(name="Test")
+addGameToDataBase(name="Test", codeName="test")
 
 if args.config_file != None:
 	CONFIG_FILE=args.config_file
