@@ -259,7 +259,7 @@ def bindSortByLastOpeningFunction():
 
 def bindSortByPlayingDurationFunction():
 	global THE_VISUAL_LIST_OF_GAMES
-#	THE_VISUAL_LIST_OF_GAMES.sortBy("")
+	THE_VISUAL_LIST_OF_GAMES.sortBy("playing_duration")
 	setBottomBarContent(f"Tri par durée de jeu cumulée.")
 
 def bindRunGameFunction():
@@ -289,7 +289,7 @@ Binding(key="o", code="bindSortByDate", description="Trier par date", instructio
 Binding(key="è", code="bindSortByLastOpening", description="Trier par date de dernière ouverture", instructions=bindSortByLastOpeningFunction, configFileName="bind_sort_last_opening")
 
 
-Binding(key="^", code="bindSortByPlayingDuration", description="Trier par heure cumulé", instructions=bindSortByPlayingDurationFunction, configFileName="bind_sort_playing_duration")
+Binding(key="v", code="bindSortByPlayingDuration", description="Trier par heure cumulé", instructions=bindSortByPlayingDurationFunction, configFileName="bind_sort_playing_duration")
 Binding(key="!", code="bindSortByPlatform", description="Trier par plateforme", configFileName="bind_sort_playing_platform")
 
 Binding(key="A", code="bindOpenLink", description="Ouvrir le site web associé", instructions=bindOpenLinkFunction, configFileName="bind_open_link")
@@ -349,7 +349,7 @@ Layout(fancyName="BÉPO", codeName="bepo",
 	bindSortByType="p",
 	bindSortByDate="o",
 	bindSortByLastOpening="è",
-	bindSortByPlayingDuration="^",
+	bindSortByPlayingDuration="v",
 	bindSortByPlatform="!",
 	bindOpenLink="A",
 	bindEditData="e",
@@ -800,7 +800,7 @@ class Game:
 		self.platform = platform
 		self.history = self.get_history()
 		self.latest_opening_date_value = self.latest_opening_date()
-		self.playing_duration = None
+		self.playing_duration = self.cumulate_time()
 
 		listOfGames.append(self) # Adjonction à la liste des jeux
 
