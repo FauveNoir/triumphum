@@ -257,6 +257,11 @@ def bindSortByLastOpeningFunction():
 	THE_VISUAL_LIST_OF_GAMES.sortBy("latest_opening_date_value")
 	setBottomBarContent(f"Tri par date de dernière ouverture.")
 
+def bindSortByPlayingDurationFunction():
+	global THE_VISUAL_LIST_OF_GAMES
+#	THE_VISUAL_LIST_OF_GAMES.sortBy("")
+	setBottomBarContent(f"Tri par durée de jeu cumulée.")
+
 def bindRunGameFunction():
 	THE_VISUAL_LIST_OF_GAMES.openCurrent()
 
@@ -284,7 +289,7 @@ Binding(key="o", code="bindSortByDate", description="Trier par date", instructio
 Binding(key="è", code="bindSortByLastOpening", description="Trier par date de dernière ouverture", instructions=bindSortByLastOpeningFunction, configFileName="bind_sort_last_opening")
 
 
-Binding(key="^", code="bindSortByPlayingDuration", description="Trier par heure cumulé", configFileName="bind_sort_playing_duration")
+Binding(key="^", code="bindSortByPlayingDuration", description="Trier par heure cumulé", instructions=bindSortByPlayingDurationFunction, configFileName="bind_sort_playing_duration")
 Binding(key="!", code="bindSortByPlatform", description="Trier par plateforme", configFileName="bind_sort_playing_platform")
 
 Binding(key="A", code="bindOpenLink", description="Ouvrir le site web associé", instructions=bindOpenLinkFunction, configFileName="bind_open_link")
@@ -795,6 +800,7 @@ class Game:
 		self.platform = platform
 		self.history = self.get_history()
 		self.latest_opening_date_value = self.latest_opening_date()
+		self.playing_duration = None
 
 		listOfGames.append(self) # Adjonction à la liste des jeux
 
@@ -1338,6 +1344,11 @@ if args.config_file != None:
 	CONFIG_FILE=args.config_file
 applyFileConfigurationsBindings()
 applyFileConfigurationsGraphicalSymbols()
+
+for aBinding in listOfBindings:
+	print(f"{aBinding.key}	{aBinding.code}")
+
+
 
 if args.games != None:
 	GAME_FILE=args.games
