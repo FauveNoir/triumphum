@@ -557,6 +557,10 @@ ADD_TYPE_STATEMENTS=[
 	}
 ]
 
+def addNewTypeAfterInteractiveDescriptor(newTypeDescriptor):
+	params=prepareParamsForAddingObjectAfterInteractiveDescriptor(newTypeDescriptor, ADD_TYPE_STATEMENTS)
+	addTypeToDataBase(**params)
+
 ########################################################################
 # classe des plateformes
 ########################################################################
@@ -1038,6 +1042,71 @@ def create_game_objects():
 # Éidition des bases de données
 ########################################################################
 
+# SEction en TODO
+
+def isElementCodeExist(elementCode, listToSearchOn):
+	# Charger le contenu JSON depuis le fichier
+	for anElement in listToSearchOn:
+		if elementCode == anElement.codeName:
+			return True
+	return False
+
+def isNewElementCodeAllowded(elementCode):
+	if not isElementCodeExist(elementCode, listToSearchOn) and elementCode != None:
+		return True
+	return False
+
+gameArguments=["name", "licence", "type", "command", "codeName", "url", "platfrom", "studios", "authors", "shortDesc"]
+typeArguments=["name", "codeName", "abbr"]
+licenceArguments=["name", "abbr", "code", "url", "shortText", "freedomCoefficient"]
+platformArguments=["name", "code", "abbr"]
+
+def selectArgumentsList(type_):
+	if type_ == Game:
+		return gameArguments
+	if type_ == GameType:
+		return typeArguments
+	if type_ == Licence:
+		return licenceArguments
+	if Platform == Licence:
+		return platformArguments
+
+def rellayAddElementToDataBase(type_=None, elementsFile=None, listName=None, **kwargs):
+	# TODO adapter 
+	object_={
+		"name": name,
+		"licence": licence,
+		"year": year,
+		"type": type_,
+		"command": command,
+		"codeName": codeName,
+		"url": url,
+		"platform": platform,
+		"studios": studios,
+		"authors": authors,
+		"shortDesc": shortDesc
+	}
+
+	# Charger le contenu JSON depuis le fichier
+	with open(elementsFile, 'r') as jsonFile:
+		jsonContent = json.load(jsonFile)
+
+	jsonContent[listName].append(object_)
+
+	# Réécrire le fichier JSON avec le contenu mis à jour
+	with open(elementsFile, 'w') as jsonFile:
+		json.dump(jsonContent, jsonFile, indent="\t")
+
+def addElementsToDataBase(type_=None, elementsFile=None, listName=None, codeName=None, **kwargs):
+	if isNewObjectCodeAllowded(codeName) :
+		rellayAddElementToDataBase(type_=None, elementsFile=None, listName=None)
+	elif isElementCodeExist(codeName):
+		print(f"Le code « {codeName} » éxiste déjà.")
+	elif codeName == None:
+		print(f"Veuillez déffinir un code d’identification pour le nouvel objet.")
+
+# Jeux #################################################################
+
 def isGameCodeExist(gameCode):
 	# Charger le contenu JSON depuis le fichier
 	for aGame in listOfGames:
@@ -1102,6 +1171,18 @@ def deleteGameFromDatabase(codeName):
 		# Réécrire le fichier JSON avec les modifications
 		with open(GAME_FILE, 'w') as f:
 			json.dump(jsonContent, f, indent='\t')  # Réécrire le JSON avec indentation pour la lisibilité
+
+# Licence ##############################################################
+
+# TODO
+
+# Type #################################################################
+
+# TODO
+
+# Plateforme ###########################################################
+
+# TODO
 
 ########################################################################
 # Classe des colones de la liste visuelle
