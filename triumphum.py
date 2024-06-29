@@ -74,12 +74,14 @@ PLATFORM_FILE=CONFIG_DIR + "/" + BASE_NAME_PLATFORM_FILE
 # Options de la ligne de commande
 ########################################################################
 
-parser = argparse.ArgumentParser(description=APP_FANCY_NAME + " " + APP_VERSION + " " + APP_DESCRIPTION)
+parser = argparse.ArgumentParser(prog=APP_CODE_NAME, description=APP_FANCY_NAME + " " + APP_VERSION + " " + APP_DESCRIPTION)
 
 interfaceBehaviour = parser.add_argument_group('Interface behaviour')
 
-interfaceBehaviour.add_argument("--tui", action="store_true", default = True, help = "Run the game selection interface (default).")
-interfaceBehaviour.add_argument("-r", "--run", metavar="game", help = "Run a given game and track playing time.")
+interfaceBehaviourGroup = interfaceBehaviour.add_mutually_exclusive_group()
+
+interfaceBehaviourGroup.add_argument("--tui", action="store_true", default = True, help = "Run the game selection interface (default).")
+interfaceBehaviourGroup.add_argument("-r", "--run", metavar="game", help = "Run a given game and track playing time.")
 
 generalArgument = parser.add_argument_group('General arguments')
 generalArgument.add_argument("-a", "--about", action="store_true", help = "Show about message.")
@@ -88,18 +90,52 @@ generalArgument.add_argument("--list-games", action="store_true", help = "Affich
 
 configurationFile = parser.add_argument_group('Configuration file')
 configurationFile.add_argument("-c", "--config-file", help = "Select different config file from default one.")
-configurationFile.add_argument("-g", "--games", metavar="file", help = "Select different game file from default one.")
-configurationFile.add_argument("-p", "--platforms", metavar="file", help = "Select different platform file from default one.")
-configurationFile.add_argument("-l", "--licences", metavar="file", help = "Select different licence file from default one.")
-configurationFile.add_argument("-t", "--game-types", metavar="file", help = "Select different game type file from default one.")
+configurationFile.add_argument("-g", "--games", dest="games_file", metavar="file", help = "Select different game file from default one.")
+configurationFile.add_argument("-p", "--platforms", dest="platforms_file", metavar="file", help = "Select different platform file from default one.")
+configurationFile.add_argument("-l", "--licences", dest="licences_file", metavar="file", help = "Select different licence file from default one.")
+configurationFile.add_argument("-t", "--game-types", dest="types_file", metavar="file", help = "Select different game type file from default one.")
 
 addingData = parser.add_argument_group('Adding data')
-addingData.add_argument("--add-game", metavar="game", help = "Ajouter un nouveau jeu.")
-addingData.add_argument("--add-licence", metavar="licence", help = "Ajouter une nouvelle licence.")
-addingData.add_argument("--add-type", metavar="type", help = "Ajouter un nouveau type de jeu.")
-addingData.add_argument("--add-platform", metavar="platform", help = "Ajouter une nouvelle plateforme.")
+addingDataGroup = addingData.add_mutually_exclusive_group()
+addingDataGroup.add_argument("--add-game", metavar="game", help = "Ajouter un nouveau jeu.")
+
+addingDataGroup.add_argument("--add-licence", metavar="licence", help = "Ajouter une nouvelle licence.")
+addingDataGroup.add_argument("--add-type", metavar="type", help = "Ajouter un nouveau type de jeu.")
+addingDataGroup.add_argument("--add-platform", metavar="platform", help = "Ajouter une nouvelle plateforme.")
 
 layoutArguments = parser.add_argument_group('Layout and keybinding')
+layoutArgumentsGroup = layoutArguments.add_mutually_exclusive_group()
+
+########################################################################
+# Fonctions des options de la ligne de commande
+########################################################################
+
+# Manipulation de donnée
+# Exemple d’entrée de la ligne de commande
+# --add-game "0 A. D." --code=0ad  --licence=gpl  --type=rts --command="0ad --run" --url="http://0ad.com" --studios="WRT,Wirefield" --autors="Sid Meyers,machin"
+
+#inputNewGame='--add-new-game "0 A. D." code=0ad  licence=gpl  type=rts command="0ad --run" url="http://0ad.com" studios="WRT,Wirefield" authors="Sid Meyers,machin"'
+#ADD_GAME_PATERN=r'(?P<name>(?:"[^"]*"|\'[^\']*\'|[^"\']*))\s+' \
+#	r'code=(?P<code>[a-z0-9]*)\s+' \
+#	r'licence=(?P<licence>[a-z0-9]*)\s+' \
+#	r'type=(?P<typeCode>[a-z0-9]*)\s+' \
+#	r'command=(?P<command>(?:"[^"]*"|\'[^\']*\'|[^"\']*))\s+' \
+#	r'url=(?P<url>\S+)\s+' \
+#	r'studios=(?P<studios>.*)\s+' \
+#	r'authors=(?P<authors>.*)\s+'
+#
+#match = re.match(ADD_GAME_PATERN, inputNewGame)
+#print("here")
+#print(match.group("name"))
+#print(match.group("code"))
+#print(match.group("licence"))
+#print(match.group("typeCode"))
+#print(match.group("command"))
+#print(match.group("url"))
+#print(match.group("studios"))
+#print(match.group("authors"))
+
+
 
 ########################################################################
 # Classe des symbols graphiques
@@ -338,7 +374,7 @@ class Layout:
 		self.fancyName=fancyName
 		self.codeName=codeName
 
-		layoutArguments.add_argument(f"--{codeName}", action="store_true", help = f"Lancer l’interface avec une carte de touches adaptée à la disposition {fancyName}.")
+		layoutArgumentsGroup.add_argument(f"--{codeName}", action="store_true", help = f"Lancer l’interface avec une carte de touches adaptée à la disposition {fancyName}.")
 
 		globals()[codeName] = self # Déclaration de la variable globale pérmétant d’atteindre directement le type voulu
 
@@ -900,7 +936,8 @@ class Game:
 		return formatDataListToLitteralList(self.studios, STUDIO_VOID_SYMBOL.value)
 
 	def delete(self):
-		deleteGameFromDatabase(self.codeName)
+		#deleteGameFromDatabase(self.codeName)
+		pass
 		#listOfGames.remove(self)
 
 def create_game_objects():
@@ -1455,14 +1492,14 @@ for aBinding in listOfBindings:
 
 
 
-if args.games != None:
-	GAME_FILE=args.games
-if args.game_types != None:
-	TYPE_FILE=args.game_types
-if args.licences != None:
-	LICENCE_FILE=args.licences
-if args.platforms != None:
-	PLATFORM_FILE=args.platforms
+if args.games_file != None:
+	GAME_FILE=args.games_file
+if args.types_file != None:
+	TYPE_FILE=args.types_file
+if args.licences_file != None:
+	LICENCE_FILE=args.licences_file
+if args.platforms_file != None:
+	PLATFORM_FILE=args.platforms_file
 
 elif  args.about != True:
 	print(f"Fichier de configuration principal : {CONFIG_FILE}")
