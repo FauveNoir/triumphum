@@ -40,6 +40,7 @@ APP_FANCY_NAME="Triumphum"
 APP_DESCRIPTION="Gestionnaire de ludothèque en Python et NCurses pour GNU/Linux"
 APP_VERSION="0.1"
 APP_AUTHOR="Fauve"
+APP_MOTO="LACRIMOSA·GAVDIVM·EST"
 APP_AUTHOR_MAIL="fauve.ordinator@taniere.info"
 APP_AUTHOR_DONATION_LINK="https://paypal.me/ihidev"
 APP_SYMBOL="⚔"
@@ -87,6 +88,9 @@ generalArgument = parser.add_argument_group('General arguments')
 generalArgument.add_argument("-a", "--about", action="store_true", help = "Show about message.")
 generalArgument.add_argument("-d", "--donate", action="store_true", help = "Open link to give a tip.")
 generalArgument.add_argument("--list-games", action="store_true", help = "Afficher la liste des jeux.")
+generalArgument.add_argument("--list-licences", action="store_true", help = "Afficher la liste des licences.")
+generalArgument.add_argument("--list-types", action="store_true", help = "Afficher la liste des types de jeu.")
+generalArgument.add_argument("--list-platforms", action="store_true", help = "Afficher la liste des types des plateformes.")
 
 configurationFile = parser.add_argument_group('Configuration file')
 configurationFile.add_argument("-c", "--config-file", help = "Select different config file from default one.")
@@ -97,7 +101,7 @@ configurationFile.add_argument("-t", "--game-types", dest="types_file", metavar=
 
 addingData = parser.add_argument_group('Adding data')
 addingDataGroup = addingData.add_mutually_exclusive_group()
-addingDataGroup.add_argument("--add-game", metavar="game", help = "Ajouter un nouveau jeu.")
+addingDataGroup.add_argument("--add-game", dest="newGameDescriptor", metavar="game descriptor", nargs='*', help = "Ajouter un nouveau jeu.")
 
 addingDataGroup.add_argument("--add-licence", metavar="licence", help = "Ajouter une nouvelle licence.")
 addingDataGroup.add_argument("--add-type", metavar="type", help = "Ajouter un nouveau type de jeu.")
@@ -105,37 +109,6 @@ addingDataGroup.add_argument("--add-platform", metavar="platform", help = "Ajout
 
 layoutArguments = parser.add_argument_group('Layout and keybinding')
 layoutArgumentsGroup = layoutArguments.add_mutually_exclusive_group()
-
-########################################################################
-# Fonctions des options de la ligne de commande
-########################################################################
-
-# Manipulation de donnée
-# Exemple d’entrée de la ligne de commande
-# --add-game "0 A. D." --code=0ad  --licence=gpl  --type=rts --command="0ad --run" --url="http://0ad.com" --studios="WRT,Wirefield" --autors="Sid Meyers,machin"
-
-#inputNewGame='--add-new-game "0 A. D." code=0ad  licence=gpl  type=rts command="0ad --run" url="http://0ad.com" studios="WRT,Wirefield" authors="Sid Meyers,machin"'
-#ADD_GAME_PATERN=r'(?P<name>(?:"[^"]*"|\'[^\']*\'|[^"\']*))\s+' \
-#	r'code=(?P<code>[a-z0-9]*)\s+' \
-#	r'licence=(?P<licence>[a-z0-9]*)\s+' \
-#	r'type=(?P<typeCode>[a-z0-9]*)\s+' \
-#	r'command=(?P<command>(?:"[^"]*"|\'[^\']*\'|[^"\']*))\s+' \
-#	r'url=(?P<url>\S+)\s+' \
-#	r'studios=(?P<studios>.*)\s+' \
-#	r'authors=(?P<authors>.*)\s+'
-#
-#match = re.match(ADD_GAME_PATERN, inputNewGame)
-#print("here")
-#print(match.group("name"))
-#print(match.group("code"))
-#print(match.group("licence"))
-#print(match.group("typeCode"))
-#print(match.group("command"))
-#print(match.group("url"))
-#print(match.group("studios"))
-#print(match.group("authors"))
-
-
 
 ########################################################################
 # Classe des symbols graphiques
@@ -489,6 +462,73 @@ def applyFileConfigurationsGraphicalSymbols():
 		if config.has_option("General", aConfigiGrahpicalSymbol.fileConfigName):
 			aConfigiGrahpicalSymbol.value=config.get("General", aConfigiGrahpicalSymbol.fileConfigName)
 
+
+########################################################################
+# Fonctions des options de la ligne de commande
+########################################################################
+
+def multipleStatementCommandProcess(inputObjectDescriptor, objectStatementsModel):
+	validStatements=[]
+	for anInputStatement in inputObjectDescriptor:
+		for aStatement in objectStatementsModel:
+			match = re.match(aStatement["patern"], anInputStatement)
+			if match:
+				if aStatement["name"] in ["authors", "studios"]:
+					value=match.group("relevant").split(',')
+				else:
+					value=match.group("relevant")
+				validStatements.append({"name": aStatement["name"], "value": value})
+
+	return validStatements
+########################################################################
+
+# Manipulation de donnée
+# Exemple d’entrée de la ligne de commande
+# --add-game "0 A. D." --code=0ad  --licence=gpl  --type=rts --command="0ad --run" --url="http://0ad.com" --studios="WRT,Wirefield" --autors="Sid Meyers,machin"
+
+ADD_GAME_STATEMENTS=[
+	{
+		"name":"name",
+		"patern":'name=(?P<relevant>(?:"[^"]*"|\'[^\']*\'|[^"\']*))'
+	},
+	{
+		"name":"codeName",
+		"patern":'code=(?P<relevant>[a-z0-9]*)'
+	},
+	{
+		"name":"type_",
+		"patern":'type=(?P<relevant>[a-z0-9]*)'
+	},
+	{
+		"name":"licence",
+		"patern":'licence=(?P<relevant>[a-z0-9]*)'
+	},
+	{
+		"name":"command",
+		"patern":'command=(?P<relevant>(?:"[^"]*"|\'[^\']*\'|[^"\']*))'
+	},
+	{
+		"name":"url",
+		"patern":'url=(?P<relevant>\S+)'
+	},
+	{
+		"name":"studios",
+		"patern":'studios=(?P<relevant>.*)'
+	},
+	{
+		"name":"authors",
+		"patern":'authors=(?P<relevant>.*)'
+	},
+	{
+		"name":"shortDesc",
+		"patern":'shortdesc=(?P<relevant>.*)'
+	},
+]
+
+def addNewGameAfterInteractiveDescriptor(newGameDescriptor):
+	validStatements=multipleStatementCommandProcess(args.newGameDescriptor, ADD_GAME_STATEMENTS)
+	params = {item['name']: item['value'] for item in validStatements}
+	addGameToDataBase(**params)
 ########################################################################
 # classe des plateformes
 ########################################################################
@@ -977,7 +1017,7 @@ def isGameCodeExist(gameCode):
 			return True
 	return False
 
-def isNewGadeCodeAllowded(gameCode):
+def isNewGameCodeAllowded(gameCode):
 	if not isGameCodeExist(gameCode) and gameCode != None:
 		return True
 	return False
@@ -1008,7 +1048,7 @@ def rellayAddGameToDataBase(name=None, licence=None, year=None, type_=None, comm
 		json.dump(jsonContent, jsonFile, indent="\t")
 
 def addGameToDataBase(name=None, licence=None, year=None, type_=None, command=None, codeName=None, url=None, platform=None, studios=None, authors=None, shortDesc=None):
-	if isNewGadeCodeAllowded(codeName) :
+	if isNewGameCodeAllowded(codeName) :
 		rellayAddGameToDataBase(name, licence, year, type_, command, codeName, url, platform, studios, authors, shortDesc)
 	elif isGameCodeExist(codeName):
 		print(f"Le code « {codeName} » éxiste déjà.")
@@ -1492,14 +1532,16 @@ for aBinding in listOfBindings:
 
 
 
-if args.games_file != None:
+if args.games_file:
 	GAME_FILE=args.games_file
-if args.types_file != None:
+if args.types_file:
 	TYPE_FILE=args.types_file
-if args.licences_file != None:
+if args.licences_file:
 	LICENCE_FILE=args.licences_file
-if args.platforms_file != None:
+if args.platforms_file:
 	PLATFORM_FILE=args.platforms_file
+if args.newGameDescriptor :
+	addNewGameAfterInteractiveDescriptor(args.newGameDescriptor)
 
 elif  args.about != True:
 	print(f"Fichier de configuration principal : {CONFIG_FILE}")
