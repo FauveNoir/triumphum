@@ -480,10 +480,16 @@ def multipleStatementCommandProcess(inputObjectDescriptor, objectStatementsModel
 				validStatements.append({"name": aStatement["name"], "value": value})
 
 	return validStatements
+
+def prepareParamsForAddingObjectAfterInteractiveDescriptor(newGameDescriptor, elementStatement):
+	validStatements=multipleStatementCommandProcess(newGameDescriptor, elementStatement)
+	params = {item['name']: item['value'] for item in validStatements}
+	return params
+
 ########################################################################
 
-# Manipulation de donnée
-# Exemple d’entrée de la ligne de commande
+# Nouveau jeu
+
 # --add-game "0 A. D." --code=0ad  --licence=gpl  --type=rts --command="0ad --run" --url="http://0ad.com" --studios="WRT,Wirefield" --autors="Sid Meyers,machin"
 
 ADD_GAME_STATEMENTS=[
@@ -525,10 +531,32 @@ ADD_GAME_STATEMENTS=[
 	},
 ]
 
+
 def addNewGameAfterInteractiveDescriptor(newGameDescriptor):
-	validStatements=multipleStatementCommandProcess(args.newGameDescriptor, ADD_GAME_STATEMENTS)
-	params = {item['name']: item['value'] for item in validStatements}
+	params=prepareParamsForAddingObjectAfterInteractiveDescriptor(newGameDescriptor, ADD_GAME_STATEMENTS)
 	addGameToDataBase(**params)
+
+########################################################################
+
+# Ajout de type
+
+# Exemple --add-type name="Jeu de rôle" code=rpg  abbr=RPG
+
+ADD_TYPE_STATEMENTS=[
+	{
+		"name":"name",
+		"patern":'name=(?P<relevant>(?:"[^"]*"|\'[^\']*\'|[^"\']*))'
+	},
+	{
+		"name":"codeName",
+		"patern":'code=(?P<relevant>[a-z0-9]*)'
+	},
+	{
+		"name":"abbr",
+		"patern":'type=(?P<relevant>[a-z0-9]*)'
+	}
+]
+
 ########################################################################
 # classe des plateformes
 ########################################################################
