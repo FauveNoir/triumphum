@@ -343,13 +343,13 @@ def returnBindingAfterCode(code):
 listOfBindingsCode=getListOfBindingsCode()
 attributs = {attr: None for attr in listOfBindingsCode}
 class Layout:
-	def __init__(self, fancyName=None, codeName=None, **attributs):
+	def __init__(self, fancyName=None, code=None, **attributs):
 		self.fancyName=fancyName
-		self.codeName=codeName
+		self.code=code
 
-		layoutArgumentsGroup.add_argument(f"--{codeName}", action="store_true", help = f"Lancer l’interface avec une carte de touches adaptée à la disposition {fancyName}.")
+		layoutArgumentsGroup.add_argument(f"--{code}", action="store_true", help = f"Lancer l’interface avec une carte de touches adaptée à la disposition {fancyName}.")
 
-		globals()[codeName] = self # Déclaration de la variable globale pérmétant d’atteindre directement le type voulu
+		globals()[code] = self # Déclaration de la variable globale pérmétant d’atteindre directement le type voulu
 
 	def apply(self):
 		for aKey in getListOfBindingsCode():
@@ -357,7 +357,7 @@ class Layout:
 				value = getattr(self, aKey)
 				returnBindingAfterCode(aKey).setKey(value)
 
-Layout(fancyName="BÉPO", codeName="bepo",
+Layout(fancyName="BÉPO", code="bepo",
 	bindGoDown="t",
 	bindGoUp="s",
 	bindRunGame="\n",
@@ -381,7 +381,7 @@ Layout(fancyName="BÉPO", codeName="bepo",
 	bindQuit="q"
 	)
 
-Layout(fancyName="AZERTY", codeName="azerty",
+Layout(fancyName="AZERTY", code="azerty",
 	bindGoDown="j",
 	bindGoUp="k",
 	bindRunGame="\n",
@@ -405,7 +405,7 @@ Layout(fancyName="AZERTY", codeName="azerty",
 	bindQuit="q"
 	)
 
-Layout(fancyName="QWERTY", codeName="qwerty",
+Layout(fancyName="QWERTY", code="qwerty",
 	bindGoDown="j",
 	bindGoUp="k",
 	bindRunGame="\n",
@@ -498,7 +498,7 @@ ADD_GAME_STATEMENTS=[
 		"patern":'name=(?P<relevant>(?:"[^"]*"|\'[^\']*\'|[^"\']*))'
 	},
 	{
-		"name":"codeName",
+		"name":"code",
 		"patern":'code=(?P<relevant>[a-z0-9]*)'
 	},
 	{
@@ -548,7 +548,7 @@ ADD_TYPE_STATEMENTS=[
 		"patern":'name=(?P<relevant>(?:"[^"]*"|\'[^\']*\'|[^"\']*))'
 	},
 	{
-		"name":"codeName",
+		"name":"code",
 		"patern":'code=(?P<relevant>[a-z0-9]*)'
 	},
 	{
@@ -899,9 +899,9 @@ def retrive_history_of_a_game(game):
 	with open(CONFIG_DIR + '/history.json') as f:
 		data = json.load(f)
 
-	if 'history' in data and game.codeName in data['history']:
+	if 'history' in data and game.code in data['history']:
 		# Récupération de l’historique du jeu en cours
-		game_history = data['history'][game.codeName]
+		game_history = data['history'][game.code]
 		for history_entry in game_history:
 			if is_history_entry_relevant(history_entry):
 				prepared_history.append(HistoryEntry(dictionnary=history_entry))
@@ -915,9 +915,9 @@ def retrive_history_of_a_game(game):
 # Défffinition de classe
 listOfGames=[]
 class Game:
-	def __init__(self, name=None, codeName=None, licence=None, url=None, year=None, type_=None, authors=None, studios=[], command=None, comments=None, platform=None):
+	def __init__(self, name=None, code=None, licence=None, url=None, year=None, type_=None, authors=None, studios=[], command=None, comments=None, platform=None):
 		self.name = name
-		self.codeName = codeName
+		self.code = code
 		self.licence = licence
 		self.url = url
 		self.year = year
@@ -955,7 +955,7 @@ class Game:
 		# Fiche rapide de description de jeu
 		sheet_data=[
 			["Nom", self.name],
-			["code", self.codeName],
+			["code", self.code],
 			["Licence", self.licence.name],
 			["URL", self.url],
 			["Type", self.type_.name],
@@ -1008,7 +1008,7 @@ class Game:
 		return formatDataListToLitteralList(self.studios, STUDIO_VOID_SYMBOL.value)
 
 	def delete(self):
-		#deleteGameFromDatabase(self.codeName)
+		#deleteGameFromDatabase(self.code)
 		pass
 		#listOfGames.remove(self)
 
@@ -1027,7 +1027,7 @@ def create_game_objects():
 	for aGame in listOfGamesData:
 		Game(
 			name=aGame.get("name"),
-			codeName=aGame.get("codeName"),
+			code=aGame.get("code"),
 			licence=get_licence_object_after_code(aGame.get("licence")),
 			url=aGame.get("url"),
 			year=aGame.get("year"),
@@ -1047,7 +1047,7 @@ def create_game_objects():
 def isElementCodeExist(elementCode, listToSearchOn):
 	# Charger le contenu JSON depuis le fichier
 	for anElement in listToSearchOn:
-		if elementCode == anElement.codeName:
+		if elementCode == anElement.code:
 			return True
 	return False
 
@@ -1056,8 +1056,8 @@ def isNewElementCodeAllowded(elementCode):
 		return True
 	return False
 
-gameArguments=["name", "licence", "type", "command", "codeName", "url", "platfrom", "studios", "authors", "shortDesc"]
-typeArguments=["name", "codeName", "abbr"]
+gameArguments=["name", "licence", "type", "command", "code", "url", "platfrom", "studios", "authors", "shortDesc"]
+typeArguments=["name", "code", "abbr"]
 licenceArguments=["name", "abbr", "code", "url", "shortText", "freedomCoefficient"]
 platformArguments=["name", "code", "abbr"]
 
@@ -1079,7 +1079,7 @@ def rellayAddElementToDataBase(type_=None, elementsFile=None, listName=None, **k
 		"year": year,
 		"type": type_,
 		"command": command,
-		"codeName": codeName,
+		"code": code,
 		"url": url,
 		"platform": platform,
 		"studios": studios,
@@ -1097,12 +1097,12 @@ def rellayAddElementToDataBase(type_=None, elementsFile=None, listName=None, **k
 	with open(elementsFile, 'w') as jsonFile:
 		json.dump(jsonContent, jsonFile, indent="\t")
 
-def addElementsToDataBase(type_=None, elementsFile=None, listName=None, codeName=None, **kwargs):
-	if isNewObjectCodeAllowded(codeName) :
+def addElementsToDataBase(type_=None, elementsFile=None, listName=None, code=None, **kwargs):
+	if isNewObjectCodeAllowded(code) :
 		rellayAddElementToDataBase(type_=None, elementsFile=None, listName=None)
-	elif isElementCodeExist(codeName):
-		print(f"Le code « {codeName} » éxiste déjà.")
-	elif codeName == None:
+	elif isElementCodeExist(code):
+		print(f"Le code « {code} » éxiste déjà.")
+	elif code == None:
 		print(f"Veuillez déffinir un code d’identification pour le nouvel objet.")
 
 # Jeux #################################################################
@@ -1110,7 +1110,7 @@ def addElementsToDataBase(type_=None, elementsFile=None, listName=None, codeName
 def isGameCodeExist(gameCode):
 	# Charger le contenu JSON depuis le fichier
 	for aGame in listOfGames:
-		if gameCode == aGame.codeName:
+		if gameCode == aGame.code:
 			return True
 	return False
 
@@ -1119,14 +1119,14 @@ def isNewGameCodeAllowded(gameCode):
 		return True
 	return False
 
-def rellayAddGameToDataBase(name=None, licence=None, year=None, type_=None, command=None, codeName=None, url=None, platform=None, studios=None, authors=None, shortDesc=None):
+def rellayAddGameToDataBase(name=None, licence=None, year=None, type_=None, command=None, code=None, url=None, platform=None, studios=None, authors=None, shortDesc=None):
 	gameObject={
 		"name": name,
 		"licence": licence,
 		"year": year,
 		"type": type_,
 		"command": command,
-		"codeName": codeName,
+		"code": code,
 		"url": url,
 		"platform": platform,
 		"studios": studios,
@@ -1144,15 +1144,15 @@ def rellayAddGameToDataBase(name=None, licence=None, year=None, type_=None, comm
 	with open(GAME_FILE, 'w') as jsonFile:
 		json.dump(jsonContent, jsonFile, indent="\t")
 
-def addGameToDataBase(name=None, licence=None, year=None, type_=None, command=None, codeName=None, url=None, platform=None, studios=None, authors=None, shortDesc=None):
-	if isNewGameCodeAllowded(codeName) :
-		rellayAddGameToDataBase(name, licence, year, type_, command, codeName, url, platform, studios, authors, shortDesc)
-	elif isGameCodeExist(codeName):
-		print(f"Le code « {codeName} » éxiste déjà.")
-	elif codeName == None:
+def addGameToDataBase(name=None, licence=None, year=None, type_=None, command=None, code=None, url=None, platform=None, studios=None, authors=None, shortDesc=None):
+	if isNewGameCodeAllowded(code) :
+		rellayAddGameToDataBase(name, licence, year, type_, command, code, url, platform, studios, authors, shortDesc)
+	elif isGameCodeExist(code):
+		print(f"Le code « {code} » éxiste déjà.")
+	elif code == None:
 		print(f"Veuillez déffinir un code d’entification pour le jeu.")
 
-def deleteGameFromDatabase(codeName):
+def deleteGameFromDatabase(code):
 	with open(GAME_FILE, 'r') as f:
 		jsonContent = json.load(f)  # Charger le JSON dans une structure de données Python
 
@@ -1162,8 +1162,8 @@ def deleteGameFromDatabase(codeName):
 		games = jsonContent['games']
 		# Parcourir la liste des jeux
 		for game in games:
-			# Vérifier si l'objet a pour valeur "codeName": "abc"
-			if isinstance(game, dict) and game.get('codeName') == codeName:
+			# Vérifier si l'objet a pour valeur "code": "abc"
+			if isinstance(game, dict) and game.get('code') == code:
 				founded=True
 				games.remove(game)  # Supprimer l'élément de la liste
 	
@@ -1397,8 +1397,8 @@ def history_data_with_current_game(game):
 	if 'history' not in data:
 		data['history'] = {}
 
-	if game.codeName not in data['history']:
-		data['history'][game.codeName] = []
+	if game.code not in data['history']:
+		data['history'][game.code] = []
 
 	return data
 
@@ -1410,7 +1410,7 @@ def write_opening_date_on_history(game=None, start_time=None, end_time=None, dur
 
 		data = history_data_with_current_game(game)
 		history_entry=HistoryEntry(start_time=start_time, end_time=end_time, duration=duration)
-		data['history'][game.codeName].append(history_entry.make_data())
+		data['history'][game.code].append(history_entry.make_data())
 
 		# Enregistrer la structure de données modifiée en tant que JSON
 		with open(CONFIG_DIR + '/history.json', 'w') as f:
@@ -1617,10 +1617,10 @@ def main(stdscr):
 # Fonctions de la ligne de commande
 ########################################################################
 
-def getGameObjectByItCodeName(codeName):
+def getGameObjectByItCodeName(code):
 	global listOfGames
 	for aGame in listOfGames:
-		if aGame.codeName == codeName:
+		if aGame.code == code:
 			return aGame
 	return None
 
@@ -1629,7 +1629,7 @@ def getGameObjectByItCodeName(codeName):
 ########################################################################
 
 
-addGameToDataBase(name="Test", codeName="test")
+#addGameToDataBase(name="Test", code="test")
 
 if args.config_file != None:
 	CONFIG_FILE=args.config_file
