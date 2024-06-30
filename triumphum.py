@@ -18,6 +18,8 @@ import argparse
 import configparser
 from Xlib import XK
 from Xlib.display import Display
+import curses.textpad
+
 
 
 ########################################################################
@@ -294,32 +296,6 @@ def bindMakeDonationFunction():
 
 def bindRefreshScreenFunction():
 	THE_VISUAL_LIST_OF_GAMES.refresh()
-
-Binding(key="t", code="bindGoDown", description="Aller en haut", instructions=bindGoDownFunction, configFileName="bind_down")
-Binding(key="s", code="bindGoUp", description="Aller en bas", instructions=bindGoUpFunction, configFileName="bind_up")
-Binding(key="\n", code="bindRunGame", description="Lancer le jeu", instructions=bindRunGameFunction, configFileName="bind_play")
-
-Binding(key="b", code="bindSortByName", description="Trier par nom", instructions=bindSortByNameFunction, configFileName="bind_sort_title")
-Binding(key="é", code="bindSortByLicence", description="Trire par licence", instructions=bindSortByLicenceFunction, configFileName="bind_sort_licence")
-Binding(key="p", code="bindSortByType", description="Trier par type", instructions=bindSortByTypeFunction, configFileName="bind_sort_game_type")
-Binding(key="o", code="bindSortByDate", description="Trier par date", instructions=bindSortByDateFunction, configFileName="bind_sort_year")
-Binding(key="è", code="bindSortByLastOpening", description="Trier par date de dernière ouverture", instructions=bindSortByLastOpeningFunction, configFileName="bind_sort_last_opening")
-
-
-Binding(key="v", code="bindSortByPlayingDuration", description="Trier par heure cumulé", instructions=bindSortByPlayingDurationFunction, configFileName="bind_sort_playing_duration")
-Binding(key="!", code="bindSortByPlatform",instructions=bindSortByPlatformFunction, description="Trier par plateforme", configFileName="bind_sort_playing_platform")
-
-Binding(key="A", code="bindOpenLink", description="Ouvrir le site web associé", instructions=bindOpenLinkFunction, configFileName="bind_open_link")
-Binding(key="e", code="bindEditData", description="Éditer les données", configFileName="bind_edit")
-Binding(key="d", code="bindDelete", description="Suprimer le jeu de la liste", instructions=bindDeleteGameFunction, configFileName="bind_delete")
-Binding(key="i", code="bindComment", description="Commenter", configFileName="bind_comment")
-Binding(key="u", code="bindMakeDonation", description="Faire un don", instructions=bindMakeDonationFunction, configFileName="bind_donate")
-Binding(key="w", code="bindShowFullLicence", description="Afficher le texte de la licence", configFileName="bind_show_licence")
-Binding(key="/", code="bindFilter", description="Filtrer", configFileName="bind_filter")
-Binding(key="h", code="bindSeeBindingHelp", description="Montrer l’aide", configFileName="bind_help")
-Binding(key="y", code="bindCopyLink", description="Copier le lien dans le presse-papier", instructions=bindCopyLinkFunction, configFileName="bind_copy_link")
-Binding(key="l", code="bindRefreshScreen", description="Rafraichir l’écran", instructions=bindRefreshScreenFunction, configFileName="bind_refresh")
-Binding(key="q", code="bindQuit", description=f"Quitter {APP_FANCY_NAME}", configFileName="bind_quit")
 
 ########################################################################
 # Dispositions de clavier
@@ -1472,22 +1448,43 @@ def makeItemsList():
 
 SPACE_COLUMN_SEPARATION_NUMBER=2
 
-BOTTOM_BAR_TEXT="+--{=================>"
+BOTTOM_BAR_TEXT=APP_MOTO
 def setBottomBarContent(newBottomBarText):
 	global BOTTOM_BAR_TEXT
 	BOTTOM_BAR_TEXT = newBottomBarText
+
+
+def bottomBarCoordinate(stdscr):
+	return stdscr.getmaxyx()
 
 # Barre inférieure
 def draw_bottom_bar(stdscr):
 	# Récupère les dimensions de l'écran
 	global BOTTOM_BAR_TEXT
-	h, w = stdscr.getmaxyx()
+	h, w = bottomBarCoordinate(stdscr)
 
 	# Dessine la barre au bas de l'écran
 	bar_text = f" {BOTTOM_BAR_TEXT} "
-#	stdscr.addstr(h-1, 0, bar_text.ljust(w), curses.A_REVERSE)
 	stdscr.addstr(h-1, 0, bar_text, curses.A_REVERSE)
 	stdscr.chgat(h-1, 0, w, curses.A_REVERSE)
+
+def enteringExMode(stdscr):
+	h, w = bottomBarCoordinate(stdscr)
+	curses.curs_set(1)  # Afficher le curseur 
+
+	editwin = curses.newwin(0, 0, h-1, 0)
+	editwin.clear()
+
+	# Activer l'édition dans la zone de texte
+	tb = curses.textpad.Textbox(editwin)
+	tb.edit()
+
+	# Récupérer le texte saisi
+	user_text = tb.gather()
+
+def enteringExModeByBinding():
+	global STDSCR
+	enteringExMode(STDSCR)
 
 
 def prepareTextForRightIndicator(visualListOfGames):
@@ -1517,12 +1514,15 @@ def prepareTextForRightIndicator(visualListOfGames):
 
 	return rightIndicatorText
 
+STDSCR=""
 # Barre inférieure
 def draw_bottom_right(stdscr, visualListOfGames):
+	global STDSCR
 	# Récupère les dimensions de l'écran
 
 	rightIndicatorText=prepareTextForRightIndicator(visualListOfGames)
 	h, w = stdscr.getmaxyx()
+	STDSCR=stdscr
 
 	# Définir le texte de la barre inférieure
 
@@ -1537,6 +1537,41 @@ def draw_bottom_right(stdscr, visualListOfGames):
 
 	# Rafraîchir l'écran
 	stdscr.refresh()
+
+########################################################################
+# Ex mode
+########################################################################
+
+########################################################################
+# Déclaration des racoucis dactiliques
+########################################################################
+
+Binding(key="t", code="bindGoDown", description="Aller en haut", instructions=bindGoDownFunction, configFileName="bind_down")
+Binding(key="s", code="bindGoUp", description="Aller en bas", instructions=bindGoUpFunction, configFileName="bind_up")
+Binding(key="\n", code="bindRunGame", description="Lancer le jeu", instructions=bindRunGameFunction, configFileName="bind_play")
+
+Binding(key="b", code="bindSortByName", description="Trier par nom", instructions=bindSortByNameFunction, configFileName="bind_sort_title")
+Binding(key="é", code="bindSortByLicence", description="Trire par licence", instructions=bindSortByLicenceFunction, configFileName="bind_sort_licence")
+Binding(key="p", code="bindSortByType", description="Trier par type", instructions=bindSortByTypeFunction, configFileName="bind_sort_game_type")
+Binding(key="o", code="bindSortByDate", description="Trier par date", instructions=bindSortByDateFunction, configFileName="bind_sort_year")
+Binding(key="è", code="bindSortByLastOpening", description="Trier par date de dernière ouverture", instructions=bindSortByLastOpeningFunction, configFileName="bind_sort_last_opening")
+
+
+Binding(key="v", code="bindSortByPlayingDuration", description="Trier par heure cumulé", instructions=bindSortByPlayingDurationFunction, configFileName="bind_sort_playing_duration")
+Binding(key="!", code="bindSortByPlatform",instructions=bindSortByPlatformFunction, description="Trier par plateforme", configFileName="bind_sort_playing_platform")
+
+Binding(key="A", code="bindOpenLink", description="Ouvrir le site web associé", instructions=bindOpenLinkFunction, configFileName="bind_open_link")
+Binding(key="e", code="bindEditData", description="Éditer les données", configFileName="bind_edit")
+Binding(key="d", code="bindDelete", description="Suprimer le jeu de la liste", instructions=bindDeleteGameFunction, configFileName="bind_delete")
+Binding(key="i", code="bindComment", description="Commenter", configFileName="bind_comment")
+Binding(key="u", code="bindMakeDonation", description="Faire un don", instructions=bindMakeDonationFunction, configFileName="bind_donate")
+Binding(key="w", code="bindShowFullLicence", description="Afficher le texte de la licence", configFileName="bind_show_licence")
+Binding(key="/", code="bindFilter", description="Filtrer", configFileName="bind_filter")
+Binding(key="h", code="bindSeeBindingHelp", description="Montrer l’aide", configFileName="bind_help")
+Binding(key="y", code="bindCopyLink", description="Copier le lien dans le presse-papier", instructions=bindCopyLinkFunction, configFileName="bind_copy_link")
+Binding(key="l", code="bindRefreshScreen", description="Rafraichir l’écran", instructions=bindRefreshScreenFunction, configFileName="bind_refresh")
+Binding(key="q", code="bindQuit", description=f"Quitter {APP_FANCY_NAME}", configFileName="bind_quit")
+Binding(key=":", code="bindExMode", description=f"Mode Ex", configFileName="bind_exMode", instructions=enteringExModeByBinding)
 
 
 def main(stdscr):
@@ -1603,10 +1638,11 @@ def main(stdscr):
 		# Rafraîchir l'écran
 		stdscr.refresh()
 
+		#enteringExMode(stdscr)
+
 		# Lecture de la touche pressée
 		key = transform_key_to_character(stdscr.get_wch())
 #		setBottomBarContent(f"Touche préssée {key}")
-
 
 		if (key) == transform_key_to_character('q'):  # Quitter si la touche 'q' est pressée
 			break
