@@ -318,14 +318,16 @@ def returnBindingAfterCode(code):
 
 listOfBindingsCode=getListOfBindingsCode()
 attributs = {attr: None for attr in listOfBindingsCode}
+listOfLayouts={}
 class Layout:
 	def __init__(self, fancyName=None, code=None, **attributs):
 		self.fancyName=fancyName
 		self.code=code
 
 		layoutArgumentsGroup.add_argument(f"--{code}", action="store_true", help = f"Lancer l’interface avec une carte de touches adaptée à la disposition {fancyName}.")
+		listOfLayouts[self.code]=self
 
-		globals()[code] = self # Déclaration de la variable globale pérmétant d’atteindre directement le type voulu
+		globals()[code] = self # Déclaration de la variable globale pérmétant d’atteindre directement le type voulu # TODO suprimer des globals
 
 	def apply(self):
 		for aKey in getListOfBindingsCode():
@@ -415,6 +417,13 @@ args = parser.parse_args()
 ########################################################################
 
 def getPaternToMatchAllTypesCodes():
+	patern=""
+	for aGame in listOfGameTypes:
+		patern=patern+aGame.code+"|"
+	patern="("+patern[:-1]+")"
+	return patern
+
+def getPaternToMatchAllLayoutCodes():
 	patern=""
 	for aGame in listOfGameTypes:
 		patern=patern+aGame.code+"|"
@@ -1621,6 +1630,7 @@ InternalShellCommand(code="addNewGame", patern=addNewGamepatern, description="Aj
 InternalShellCommand(code="about", patern='(a|about)', description="À propos", synopsis=":a :about")
 
 InternalShellCommand(code="donate", patern='(d|don|donate)', description="Faire un don", synopsis=":d :don :donate")
+InternalShellCommand(code="layout", patern='(l|layout)', description="Changer de disposition de clavier", synopsis=":l :layout <layout>")
 
 print(ListOfInternalShellCommand)
 
