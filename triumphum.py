@@ -411,6 +411,56 @@ Layout(fancyName="QWERTY", code="qwerty",
 args = parser.parse_args()
 
 ########################################################################
+# Classe du shell interne
+########################################################################
+
+def getPaternToMatchAllTypesCodes():
+	patern=""
+	for aGame in listOfGameTypes:
+		patern=patern+aGame.code+"|"
+	patern="("+patern[:-1]+")"
+	return patern
+
+
+# TODO à factoriser avec en haut.
+
+def getPaternToMatchAllLicencesCodes():
+	patern=""
+	for aLicence in listOfLicences:
+		patern=patern+aLicence.code+"|"
+	patern="("+patern[:-1]+")"
+
+	return patern
+
+ListOfInternalShellCommand={}
+class InternalShellCommand:
+	def __init__(self, code=None, patern=None, description=None, options=None, synopsis=None, fulldesc=None, instructions=None):
+		self.code=code
+		self.patern="^"+patern+"\s*$"
+		self.description=description
+		self.options=options
+		self.synopsis=synopsis
+		self.fulldesc=fulldesc
+
+		if instructions:
+			setattr(self, 'executeInstructions', instructions)
+
+		ListOfInternalShellCommand[code]=self
+	def executeInstructions(self):
+		setBottomBarContent(self.description)
+
+
+
+def whatToDoWithShellInput(shellInput):
+	for anInternalCommand in ListOfInternalShellCommand:
+		writeInTmp("patern: "+ ListOfInternalShellCommand[anInternalCommand].patern)
+		writeInTmp("shellinput: "+ shellInput)
+		match = re.match(ListOfInternalShellCommand[anInternalCommand].patern, shellInput)
+		writeInTmp("Match: "+ str(match))
+		if match:
+			ListOfInternalShellCommand[anInternalCommand].executeInstructions()
+
+########################################################################
 # Traitement du fichier de configuration
 ########################################################################
 
@@ -1469,23 +1519,38 @@ def draw_bottom_bar(stdscr):
 	stdscr.chgat(h-1, 0, w, curses.A_REVERSE)
 
 def enteringExMode(stdscr):
+	# Activer la saisie de texte
 	h, w = bottomBarCoordinate(stdscr)
-	curses.curs_set(1)  # Afficher le curseur 
+	curses.curs_set(1)  # Afficher le curseur
 
-	editwin = curses.newwin(0, 0, h-1, 0)
-	editwin.clear()
+	curses.init_pair(h-2, curses.COLOR_BLUE, curses.COLOR_BLACK)
+	# Position de départ pour la saisie de texte
+	stdscr.move(h-1, 0)
 
-	# Activer l'édition dans la zone de texte
-	tb = curses.textpad.Textbox(editwin)
-	tb.edit()
+	# Initialiser une liste pour stocker les caractères saisis
+	input_text = ""
 
-	# Récupérer le texte saisi
-	user_text = tb.gather()
+	stdscr.addch(":")  # Afficher le caractère saisi à l'écran
+	while True:
+		# Capturer un caractère
+		ch = stdscr.getch()
+
+		if ch == 27:  # Si ESC est pressé
+			break
+
+		elif ch in [curses.KEY_ENTER, 10]:  # Si Entrée est pressé (curses.KEY_ENTER vaut 10)
+			whatToDoWithShellInput(input_text)
+			break  # Sortir de la boucle de saisie
+
+		else:
+			# Ajouter le caractère à la chaîne de texte
+			input_text += chr(ch)
+			stdscr.addch(ch)  # Afficher le caractère saisi à l'écran
+			stdscr.refresh()
 
 def enteringExModeByBinding():
 	global STDSCR
 	enteringExMode(STDSCR)
-
 
 def prepareTextForRightIndicator(visualListOfGames):
 	global CUMULATED_TIME_PLAYED_PER_DAY
@@ -1539,8 +1604,26 @@ def draw_bottom_right(stdscr, visualListOfGames):
 	stdscr.refresh()
 
 ########################################################################
-# Ex mode
+# Internal shell
 ########################################################################
+
+tmppatern='(n|new|newgame)\s+(?P<name>(?:"[^"]*"|\'[^\']*\'|[^"\']*)),\s+' \
+	'(?P<code>[a-zA-Z0-9]*)' \
+	'(|' \
+	f",\s+(?P<type>{getPaternToMatchAllTypesCodes()}),\s+" \
+	'(|' \
+	f"(?P<licence>{getPaternToMatchAllLicencesCodes()})" \
+	')' \
+	')' \
+	'\s*'
+
+InternalShellCommand(code="addNewGame", patern=tmppatern, description="Ajouter un nouveau jeu à la base de donnée", synopsis=":n :new :newgame <Game name>, <code>, <type>, <licence>")
+InternalShellCommand(code="about", patern='(a|about)', description="À propos", synopsis=":a :about")
+
+print(ListOfInternalShellCommand)
+
+
+
 
 ########################################################################
 # Déclaration des racoucis dactiliques
