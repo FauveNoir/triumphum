@@ -1607,7 +1607,7 @@ def draw_bottom_right(stdscr, visualListOfGames):
 # Internal shell
 ########################################################################
 
-tmppatern='(n|new|newgame)\s+(?P<name>(?:"[^"]*"|\'[^\']*\'|[^"\']*)),\s+' \
+addNewGamepatern='(n|new|newgame)\s+(?P<name>(?:"[^"]*"|\'[^\']*\'|[^"\']*)),\s+' \
 	'(?P<code>[a-zA-Z0-9]*)' \
 	'(|' \
 	f",\s+(?P<type>{getPaternToMatchAllTypesCodes()}),\s+" \
@@ -1617,8 +1617,10 @@ tmppatern='(n|new|newgame)\s+(?P<name>(?:"[^"]*"|\'[^\']*\'|[^"\']*)),\s+' \
 	')' \
 	'\s*'
 
-InternalShellCommand(code="addNewGame", patern=tmppatern, description="Ajouter un nouveau jeu à la base de donnée", synopsis=":n :new :newgame <Game name>, <code>, <type>, <licence>")
+InternalShellCommand(code="addNewGame", patern=addNewGamepatern, description="Ajouter un nouveau jeu à la base de donnée", synopsis=":n :new :newgame <Game name>, <code>, <type>, <licence>")
 InternalShellCommand(code="about", patern='(a|about)', description="À propos", synopsis=":a :about")
+
+InternalShellCommand(code="donate", patern='(d|don|donate)', description="Faire un don", synopsis=":d :don :donate")
 
 print(ListOfInternalShellCommand)
 
