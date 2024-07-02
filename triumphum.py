@@ -425,8 +425,8 @@ def getPaternToMatchAllTypesCodes():
 
 def getPaternToMatchAllLayoutCodes():
 	patern=""
-	for aGame in listOfGameTypes:
-		patern=patern+aGame.code+"|"
+	for aLayout in listOfLayouts:
+		patern=patern+aLayout+"|"
 	patern="("+patern[:-1]+")"
 	return patern
 
@@ -443,13 +443,14 @@ def getPaternToMatchAllLicencesCodes():
 
 ListOfInternalShellCommand={}
 class InternalShellCommand:
-	def __init__(self, code=None, patern=None, description=None, options=None, synopsis=None, fulldesc=None, instructions=None):
+	def __init__(self, code=None, patern=None, description=None, options=None, synopsis=None, fulldesc=None, wrongMatch=None, instructions=None):
 		self.code=code
 		self.patern="^"+patern+"\s*$"
 		self.description=description
 		self.options=options
 		self.synopsis=synopsis
 		self.fulldesc=fulldesc
+		self.wrongMatch=wrongMatch
 
 		if instructions:
 			setattr(self, 'executeInstructions', instructions)
@@ -1630,9 +1631,12 @@ InternalShellCommand(code="addNewGame", patern=addNewGamepatern, description="Aj
 InternalShellCommand(code="about", patern='(a|about)', description="À propos", synopsis=":a :about")
 
 InternalShellCommand(code="donate", patern='(d|don|donate)', description="Faire un don", synopsis=":d :don :donate")
-InternalShellCommand(code="layout", patern='(l|layout)', description="Changer de disposition de clavier", synopsis=":l :layout <layout>")
+InternalShellCommand(code="layout", patern=f'(l|layout)\s+{getPaternToMatchAllLayoutCodes()}', description="Changer de disposition de clavier", synopsis=":l :layout <layout>")
+InternalShellCommand(code="comment", patern='(c|comment)', description="Ajouter un commentaire", synopsis=":c :comment")
+InternalShellCommand(code="viewComment", patern='(v|view)', description="Voir les commentaires", synopsis=":v :vew")
 
 print(ListOfInternalShellCommand)
+print(ListOfInternalShellCommand["layout"].patern)
 
 
 
