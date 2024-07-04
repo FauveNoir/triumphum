@@ -47,7 +47,34 @@ APP_AUTHOR_MAIL="fauve.ordinator@taniere.info"
 APP_AUTHOR_DONATION_LINK="https://paypal.me/ihidev"
 APP_SYMBOL="⚔"
 APP_URL=""
+APP_SPLASH='''
+     /¯\\
+     \\8/
+      8
+      8
+ooooooooooooo
+8'   888   `8
+     888     .             o8o                                           oooo
+     888   .o8             `"'                                           `888
+     888 .o888oo oooo d8b oooo  oooo  oooo  ooo. .oo.  .oo.   oo.ooooo.   888 .oo.   oooo  oooo  ooo. .oo.  .oo.
+     888   888   `888""8P `888  `888  `888  `888P"Y88bP"Y88b   888' `88b  888P"Y88b  `888  `888  `888P"Y88bP"Y88b
+     888   888    888      888   888   888   888   888   888   888   888  888   888   888   888   888   888   888
+     888   888 .  888      888   888   888   888   888   888   888   888  888   888   888   888   888   888   888
+     888   "888" d888b    o888o  `V88V"V8P' o888o o888o o888o  888bod8P' o888o o888o  `V88V"V8P' o888o o888o o888o
+     888       ┓ ┏┓┏┓┳┓┳┳┳┓┏┓┏┓┏┓ ┏┓┏┓┓┏┳┓┳┓┏┳┳┓ ┏┓┏┓┏┳┓       888
+     888       ┃ ┣┫┃ ┣┫┃┃┃┃┃┃┗┓┣┫•┃┓┣┫┃┃┃┃┃┃┃┃┃┃•┣ ┗┓ ┃       o888o
+     888       ┗┛┛┗┗┛┛┗┻┛ ┗┗┛┗┛┛┗ ┗┛┛┗┗┛┻┛┻┗┛┛ ┗ ┗┛┗┛ ┻
+     888 
+     888
+     888
+     888
+     888
+     o8o
+     \8/
+      V
+'''
 
+APP_NAME = APP_SYMBOL + " " + APP_FANCY_NAME + " | " + APP_DESCRIPTION
 # Définir la locale dans Pendulum
 pendulum.set_locale('fr')
 _t = humanize.i18n.activate("fr_FR")
@@ -89,6 +116,7 @@ interfaceBehaviourGroup.add_argument("-r", "--run", metavar="game", help = "Run 
 generalArgument = parser.add_argument_group('General arguments')
 generalArgument.add_argument("-a", "--about", action="store_true", help = "Show about message.")
 generalArgument.add_argument("-d", "--donate", action="store_true", help = "Open link to give a tip.")
+generalArgument.add_argument("--no-splash", action="store_true", help = "Do not show splash at opening.")
 generalArgument.add_argument("--list-games", action="store_true", help = "Afficher la liste des jeux.")
 generalArgument.add_argument("--list-licences", action="store_true", help = "Afficher la liste des licences.")
 generalArgument.add_argument("--list-types", action="store_true", help = "Afficher la liste des types de jeu.")
@@ -724,6 +752,13 @@ def get_type_object_after_code(code):
 	if code in globals():
 		return globals()[code]
 	return unknowntype
+
+########################################################################
+# AUtres classes de la console interactive
+########################################################################
+
+def printSplash():
+	print(APP_SPLASH)
 
 ########################################################################
 # Classe des licences de jeux
@@ -1487,6 +1522,40 @@ def getColWidths():
 	return col_widths
 
 ########################################################################
+# Autres écrans
+########################################################################
+
+
+
+def centeredMessage(message):
+		stdscr.clear()       # Effacer l'écran
+		stdscr.refresh()     # Rafraîchir l'écran
+
+		# Récupérer la taille de l'écran
+		height, width = stdscr.getmaxyx()
+
+		# Calculer les coordonnées pour centrer le texte
+		x = (width // 2) - (len(message) // 2)
+		y = height // 2
+
+		# Afficher le message au centre de l'écran
+		stdscr.addstr(y, x, message)
+
+
+
+########################################################################
+# Écran About
+
+def showAboutScreen():
+	pass
+
+########################################################################
+# Écran d’aide
+
+def showHelpScreen():
+	pass
+
+########################################################################
 # Interface
 ########################################################################
 
@@ -1613,6 +1682,16 @@ def draw_bottom_right(stdscr, visualListOfGames):
 	# Rafraîchir l'écran
 	stdscr.refresh()
 
+def drawBothBars(stdscr):
+	# Dessiner la barre supérieure avec le nom de l'application
+	stdscr.attron(curses.color_pair(1))
+	stdscr.addstr(0, 0, APP_NAME.ljust(curses.COLS), curses.color_pair(2))
+	stdscr.attroff(curses.color_pair(1))
+
+	# Dessiner la barre Inférieure
+	draw_bottom_bar(stdscr)
+	draw_bottom_right(stdscr, THE_VISUAL_LIST_OF_GAMES)
+
 ########################################################################
 # Internal shell
 ########################################################################
@@ -1627,10 +1706,10 @@ addNewGamepatern='(n|new|newgame)\s+(?P<name>(?:"[^"]*"|\'[^\']*\'|[^"\']*)),\s+
 	')' \
 	'\s*'
 
-InternalShellCommand(code="addNewGame", patern=addNewGamepatern, description="Ajouter un nouveau jeu à la base de donnée", synopsis=":n :new :newgame <Game name>, <code>, <type>, <licence>")
+InternalShellCommand(code="addNewGame", patern=addNewGamepatern, description="Ajouter un nouveau jeu à la base de donnée", synopsis=":n :new :newgame <Game name>, <code>, <type>, <licence>", )
 InternalShellCommand(code="about", patern='(a|about)', description="À propos", synopsis=":a :about")
 
-InternalShellCommand(code="donate", patern='(d|don|donate)', description="Faire un don", synopsis=":d :don :donate")
+InternalShellCommand(code="donate", patern='(d|don|donate)', description="Faire un don", synopsis=":d :don :donate", instructions=bindMakeDonationFunction)
 InternalShellCommand(code="layout", patern=f'(l|layout)\s+{getPaternToMatchAllLayoutCodes()}', description="Changer de disposition de clavier", synopsis=":l :layout <layout>")
 InternalShellCommand(code="comment", patern='(c|comment)', description="Ajouter un commentaire", synopsis=":c :comment")
 InternalShellCommand(code="viewComment", patern='(v|view)', description="Voir les commentaires", synopsis=":v :vew")
@@ -1688,7 +1767,6 @@ def main(stdscr):
 	curses.init_pair(1, -1, -1)  # Utilise la couleur par défaut du terminal
 
 	# Nom de l'application
-	app_name = APP_SYMBOL + " " + APP_FANCY_NAME + " | " + APP_DESCRIPTION
 
 
 	global THE_VISUAL_LIST_OF_GAMES
@@ -1705,15 +1783,6 @@ def main(stdscr):
 
 		curses.noecho()  # Désactiver l'écho des touches # TODO à édcommenter avant prod
 		stdscr.clear()
-
-		# Dessiner la barre supérieure avec le nom de l'application
-		stdscr.attron(curses.color_pair(1))
-		stdscr.addstr(0, 0, app_name.ljust(curses.COLS), curses.color_pair(2))
-		stdscr.attroff(curses.color_pair(1))
-
-
-		draw_bottom_bar(stdscr)
-		draw_bottom_right(stdscr, THE_VISUAL_LIST_OF_GAMES)
 
 		# Calcul de la largeur des colones
 		col_widths = getColWidths()
@@ -1733,6 +1802,9 @@ def main(stdscr):
 		# Cas particulier de la ligne ayant le focus
 		for column_number, column in enumerate(THE_VISUAL_LIST_OF_GAMES.list[THE_VISUAL_LIST_OF_GAMES.selected_row][:HIDED_DATA_COLUMN]):  # Afficher seulement les 4 premières colonnes
 			stdscr.addstr(THE_VISUAL_LIST_OF_GAMES.selected_row + 2, sum(col_widths[:column_number]) + column_number * 2, str(column), curses.color_pair(2) | curses.A_BOLD)
+
+
+		drawBothBars(stdscr)
 
 		# Rafraîchir l'écran
 		stdscr.refresh()
@@ -1811,6 +1883,7 @@ elif args.donate == True:
 	webbrowser.open(APP_AUTHOR_DONATION_LINK)
 
 elif args.tui == True:
+	printSplash()
 	curses.wrapper(main)
 
 
