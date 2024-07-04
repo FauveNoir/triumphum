@@ -42,12 +42,16 @@ APP_FANCY_NAME="Triumphum"
 APP_DESCRIPTION="Gestionnaire de ludothèque en Python et NCurses pour GNU/Linux"
 APP_VERSION="0.1"
 APP_AUTHOR="Fauve"
+APP_LICENCE=""
 APP_MOTO="LACRIMOSA·GAVDIVM·EST"
 APP_AUTHOR_MAIL="fauve.ordinator@taniere.info"
 APP_AUTHOR_DONATION_LINK="https://paypal.me/ihidev"
 APP_SYMBOL="⚔"
 APP_URL=""
-APP_SPLASH='''
+SPLASH_MESSAGE=f"Ceci est {APP_FANCY_NAME} {APP_VERSION}\n" \
+	f"{APP_DESCRIPTION}\n" \
+	"Par Fauve alias Idriss al Idrissi <contact@taniere.info>"
+APP_SPLASH=f"""
      /¯\\
      \\8/
       8
@@ -66,13 +70,13 @@ ooooooooooooo
      888       ┗┛┛┗┗┛┛┗┻┛ ┗┗┛┗┛┛┗ ┗┛┛┗┗┛┻┛┻┗┛┛ ┗ ┗┛┗┛ ┻
      888 
      888
+     888       {SPLASH_MESSAGE.splitlines()[0]}
+     888       {SPLASH_MESSAGE.splitlines()[1]}
      888
-     888
-     888
-     o8o
+     o8o       {SPLASH_MESSAGE.splitlines()[2]}
      \8/
       V
-'''
+"""
 
 APP_NAME = APP_SYMBOL + " " + APP_FANCY_NAME + " | " + APP_DESCRIPTION
 # Définir la locale dans Pendulum
@@ -1527,27 +1531,31 @@ def getColWidths():
 
 
 
-def centeredMessage(message):
-		stdscr.clear()       # Effacer l'écran
-		stdscr.refresh()     # Rafraîchir l'écran
+def centeredMessage(stdscr, text):
+	# Permettre à ncurses d'utiliser les caractères Unicode correctement
+	locale.setlocale(locale.LC_ALL, '')
+	# Initialiser ncurses
+	stdscr.clear()
+	curses.curs_set(0)  # Masquer le curseur
 
-		# Récupérer la taille de l'écran
-		height, width = stdscr.getmaxyx()
+	# Récupérer la taille de l'écran
+	max_y, max_x = stdscr.getmaxyx()
 
-		# Calculer les coordonnées pour centrer le texte
-		x = (width // 2) - (len(message) // 2)
-		y = height // 2
+	# Diviser le texte en lignes
+	lines = text.splitlines()
+	num_lines = len(lines)
+	max_len = max(len(line) for line in lines)
 
-		# Afficher le message au centre de l'écran
-		stdscr.addstr(y, x, message)
+	# Calculer les positions pour centrer le texte
+	start_y = max_y // 2 - num_lines // 2
+	start_x = max_x // 2 - max_len // 2
 
+	# Afficher chaque ligne centrée
+	for i, line in enumerate(lines):
+		stdscr.addstr(start_y + i, start_x, line)
 
+	stdscr.refresh()
 
-########################################################################
-# Écran About
-
-def showAboutScreen():
-	pass
 
 ########################################################################
 # Écran d’aide
@@ -1714,6 +1722,14 @@ def drawListOfGames(stdscr):
 	for column_number, column in enumerate(THE_VISUAL_LIST_OF_GAMES.list[THE_VISUAL_LIST_OF_GAMES.selected_row][:HIDED_DATA_COLUMN]):  # Afficher seulement les 4 premières colonnes
 		stdscr.addstr(THE_VISUAL_LIST_OF_GAMES.selected_row + 2, sum(col_widths[:column_number]) + column_number * 2, str(column), curses.color_pair(2) | curses.A_BOLD)
 
+def drawAboutScreen():
+	centeredMessage(STDSCR,APP_SPLASH)
+	# Lecture de la touche pressée
+	key = transform_key_to_character(STDSCR.get_wch())
+
+def showAboutScreen():
+	pass
+
 ########################################################################
 # Internal shell
 ########################################################################
@@ -1729,7 +1745,7 @@ addNewGamepatern='(n|new|newgame)\s+(?P<name>(?:"[^"]*"|\'[^\']*\'|[^"\']*)),\s+
 	'\s*'
 
 InternalShellCommand(code="addNewGame", patern=addNewGamepatern, description="Ajouter un nouveau jeu à la base de donnée", synopsis=":n :new :newgame <Game name>, <code>, <type>, <licence>", )
-InternalShellCommand(code="about", patern='(a|about)', description="À propos", synopsis=":a :about")
+InternalShellCommand(code="about", patern='(a|about)', description="À propos", synopsis=":a :about", instructions=drawAboutScreen)
 
 InternalShellCommand(code="donate", patern='(d|don|donate)', description="Faire un don", synopsis=":d :don :donate", instructions=bindMakeDonationFunction)
 InternalShellCommand(code="layout", patern=f'(l|layout)\s+{getPaternToMatchAllLayoutCodes()}', description="Changer de disposition de clavier", synopsis=":l :layout <layout>")
@@ -1774,7 +1790,11 @@ Binding(key="q", code="bindQuit", description=f"Quitter {APP_FANCY_NAME}", confi
 Binding(key=":", code="bindExMode", description=f"Mode Ex", configFileName="bind_exMode", instructions=enteringExModeByBinding)
 
 
+
+STDSCR=None
 def main(stdscr):
+	global STDSCR
+	STDSCR=stdscr
 	# Initialisation de ncurses
 	curses.curs_set(0)  # Masquer le curseur
 
@@ -1805,7 +1825,6 @@ def main(stdscr):
 		stdscr.clear()
 
 		drawListOfGames(stdscr)
-
 
 		drawBothBars(stdscr)
 
