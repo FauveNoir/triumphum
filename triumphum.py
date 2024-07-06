@@ -148,7 +148,7 @@ layoutArgumentsGroup = layoutArguments.add_mutually_exclusive_group()
 # Classe des symbols graphiques
 ########################################################################
 
-listOfGraphicalSymbols={}
+listOfGraphicalSymbols=[]
 class GraphicalSymbol:
 	def __init__(self, localName=None, fileConfigName=None, description=None, value=None):
 		self.localName=localName
@@ -159,7 +159,7 @@ class GraphicalSymbol:
 		self.description=description
 		self.value=value
 
-		listOfGraphicalSymbols[localName]=self
+		listOfGraphicalSymbols.append(self)
 		globals()[localName] = self # Déclaration de la variable globale pérmétant d’atteindre directement le type voulu
 
 	def __str__(self):
@@ -359,6 +359,8 @@ class Layout:
 		layoutArgumentsGroup.add_argument(f"--{code}", action="store_true", help = f"Lancer l’interface avec une carte de touches adaptée à la disposition {fancyName}.")
 		listOfLayouts[self.code]=self
 
+		globals()[code] = self # Déclaration de la variable globale pérmétant d’atteindre directement le type voulu # TODO suprimer des globals
+
 	def apply(self):
 		for aKey in getListOfBindingsCode():
 			if hasattr(self, aKey):
@@ -505,6 +507,7 @@ def whatToDoWithShellInput(shellInput):
 		writeInTmp("shellinput: "+ shellInput)
 		match = re.match(ListOfInternalShellCommand[anInternalCommand].patern, shellInput)
 		if match:
+			setBottomBarContent("match")
 			ListOfInternalShellCommand[anInternalCommand].executeInstructions()
 
 ########################################################################
@@ -677,7 +680,7 @@ def create_platform_objects():
 			abbr=aPlatform.get("abbr")
 		)
 
-unknownplatform=Platform(name="Plateforme inconue", code="unknownplatform", abbr="", includeInSorting=False)
+Platform(name="Plateforme inconue", code="unknownplatform", abbr="", includeInSorting=False)
 
 def get_platform_object_after_code(code):
 	if code in globals():
@@ -1640,6 +1643,8 @@ def enteringExMode(stdscr):
 			stdscr.addch(ch)  # Afficher le caractère saisi à l'écran
 			stdscr.refresh()
 
+	curses.curs_set(0)  # Masquer le curseur
+
 def enteringExModeByBinding():
 	global STDSCR
 	enteringExMode(STDSCR)
@@ -1706,6 +1711,7 @@ def drawBothBars(stdscr):
 	draw_bottom_right(stdscr, THE_VISUAL_LIST_OF_GAMES)
 
 def drawListOfGames(stdscr):
+	#setBottomBarContent("Don:x  Quitter:q  Tri par nom:b  Par date:o  Par licence:é  Par type:p Par date:o  Par durée de jeu:!") # TODO rendre automatique
 	makeItemsList() # TODO : déglobaliser
 	THE_VISUAL_LIST_OF_GAMES.refresh()
 	# Calcul de la largeur des colones
@@ -1757,7 +1763,7 @@ addNewGamepatern='(n|new|newgame)\s+(?P<name>(?:"[^"]*"|\'[^\']*\'|[^"\']*)),\s+
 	')' \
 	'\s*'
 
-InternalShellCommand(code="addNewGame", patern=addNewGamepatern, description="Ajouter un nouveau jeu à la base de donnée", synopsis=":n :new :newgame <Game name>, <code>, <type>, <licence>", )
+InternalShellCommand(code="addNewGame", patern=addNewGamepatern, description="Ajouter un nouveau jeu à la base de donnée", synopsis=":n :new :newgame <Game name>, <code>, <type>, <licence>")
 InternalShellCommand(code="about", patern='(a|about)', description="À propos", synopsis=":a :about", instructions=drawAboutScreen)
 
 InternalShellCommand(code="donate", patern='(d|don|donate)', description="Faire un don", synopsis=":d :don :donate", instructions=bindMakeDonationFunction)
