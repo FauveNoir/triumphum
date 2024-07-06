@@ -148,7 +148,7 @@ layoutArgumentsGroup = layoutArguments.add_mutually_exclusive_group()
 # Classe des symbols graphiques
 ########################################################################
 
-listOfGraphicalSymbols=[]
+listOfGraphicalSymbols={}
 class GraphicalSymbol:
 	def __init__(self, localName=None, fileConfigName=None, description=None, value=None):
 		self.localName=localName
@@ -159,7 +159,7 @@ class GraphicalSymbol:
 		self.description=description
 		self.value=value
 
-		listOfGraphicalSymbols.append(self)
+		listOfGraphicalSymbols[localName]=self
 		globals()[localName] = self # Déclaration de la variable globale pérmétant d’atteindre directement le type voulu
 
 	def __str__(self):
