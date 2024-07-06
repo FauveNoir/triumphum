@@ -496,19 +496,16 @@ class InternalShellCommand:
 				setattr(self, 'executeInstructions', instructions)
 
 		ListOfInternalShellCommand[code]=self
-	def executeInstructions(self):
+	def executeInstructions(self, shellInput):
 		setBottomBarContent(self.description)
 
 
 
 def whatToDoWithShellInput(shellInput):
 	for anInternalCommand in ListOfInternalShellCommand:
-		writeInTmp("patern: "+ ListOfInternalShellCommand[anInternalCommand].patern)
-		writeInTmp("shellinput: "+ shellInput)
 		match = re.match(ListOfInternalShellCommand[anInternalCommand].patern, shellInput)
 		if match:
-			setBottomBarContent("match")
-			ListOfInternalShellCommand[anInternalCommand].executeInstructions()
+			ListOfInternalShellCommand[anInternalCommand].executeInstructions(shellInput)
 
 ########################################################################
 # Traitement du fichier de configuration
@@ -1356,7 +1353,6 @@ class VisualListOfGames:
 			game = self.list[self.selected_row+1][HIDED_DATA_COLUMN]
 		game.delete()
 		#self.refresh()
-#		writeInTmp(listOfGames[0].name)
 
 	def copyLinkToClipBoard(self):
 		url = self.list[self.selected_row][self.hiden_data_column_number()].url
@@ -1537,8 +1533,6 @@ def getColWidths():
 # Autres écrans
 ########################################################################
 
-
-
 def centeredMessage(stdscr, text):
 	# Permettre à ncurses d'utiliser les caractères Unicode correctement
 	locale.setlocale(locale.LC_ALL, '')
@@ -1564,6 +1558,18 @@ def centeredMessage(stdscr, text):
 
 	stdscr.refresh()
 
+def drawAboutScreen():
+	while True:
+		setBottomBarContent(f"Retour:q  Faire un don:x")
+		centeredMessage(STDSCR,APP_SPLASH)
+		drawBothBars(STDSCR)
+		# Lecture de la touche pressée
+		key = transform_key_to_character(STDSCR.get_wch())
+		if key == "x":
+			bindMakeDonationFunction()
+		else:
+			setBottomBarContent("")
+			break
 
 ########################################################################
 # Écran d’aide
@@ -1615,6 +1621,8 @@ def draw_bottom_bar(stdscr):
 
 def enteringExMode(stdscr):
 	# Activer la saisie de texte
+
+
 	h, w = bottomBarCoordinate(stdscr)
 	curses.curs_set(1)  # Afficher le curseur
 
@@ -1634,6 +1642,7 @@ def enteringExMode(stdscr):
 			break
 
 		elif ch in [curses.KEY_ENTER, 10]:  # Si Entrée est pressé (curses.KEY_ENTER vaut 10)
+
 			whatToDoWithShellInput(input_text)
 			break  # Sortir de la boucle de saisie
 
@@ -1733,21 +1742,9 @@ def drawListOfGames(stdscr):
 	for column_number, column in enumerate(THE_VISUAL_LIST_OF_GAMES.list[THE_VISUAL_LIST_OF_GAMES.selected_row][:HIDED_DATA_COLUMN]):  # Afficher seulement les 4 premières colonnes
 		stdscr.addstr(THE_VISUAL_LIST_OF_GAMES.selected_row + 2, sum(col_widths[:column_number]) + column_number * 2, str(column), curses.color_pair(2) | curses.A_BOLD)
 
-def drawAboutScreen():
-	while True:
-		setBottomBarContent(f"Retour:q  Faire un don:x")
-		centeredMessage(STDSCR,APP_SPLASH)
-		drawBothBars(STDSCR)
-		# Lecture de la touche pressée
-		key = transform_key_to_character(STDSCR.get_wch())
-		if key == "x":
-			bindMakeDonationFunction()
-		else:
-			setBottomBarContent("")
-			break
-
-def showAboutScreen():
-	pass
+########################################################################
+# Commands for internal
+########################################################################
 
 ########################################################################
 # Internal shell
@@ -1763,10 +1760,28 @@ addNewGamepatern='(n|new|newgame)\s+(?P<name>(?:"[^"]*"|\'[^\']*\'|[^"\']*)),\s+
 	')' \
 	'\s*'
 
-InternalShellCommand(code="addNewGame", patern=addNewGamepatern, description="Ajouter un nouveau jeu à la base de donnée", synopsis=":n :new :newgame <Game name>, <code>, <type>, <licence>")
-InternalShellCommand(code="about", patern='(a|about)', description="À propos", synopsis=":a :about", instructions=drawAboutScreen)
 
-InternalShellCommand(code="donate", patern='(d|don|donate)', description="Faire un don", synopsis=":d :don :donate", instructions=bindMakeDonationFunction)
+def internalShellAddNewGameFunction(shellInput):
+#	ListOfInternalShellCommand["addNewGame"]
+	match = re.match(ListOfInternalShellCommand["addNewGame"].patern, shellInput)
+	name=match.group("name")
+	code=match.group("code")
+	type_=match.group("type")
+	licence=match.group("licence")
+	writeInTmp(f"{name}, {code}, {type_}, {licence}")
+
+	addGameToDataBase(name=name, code=code, licence=licence, type_=type_)
+
+def internalShelldrawAboutScreen(shellInput):
+	drawAboutScreen()
+
+def internalShellbindMakeDonationFunction(shellInput):
+	bindMakeDonationFunction()
+
+InternalShellCommand(code="addNewGame", patern=addNewGamepatern, description="Ajouter un nouveau jeu à la base de donnée", synopsis=":n :new :newgame <Game name>, <code>, <type>, <licence>", instructions=internalShellAddNewGameFunction)
+InternalShellCommand(code="about", patern='(a|about)', description="À propos", synopsis=":a :about", instructions=internalShelldrawAboutScreen)
+
+InternalShellCommand(code="donate", patern='(d|don|donate)', description="Faire un don", synopsis=":d :don :donate", instructions=internalShellbindMakeDonationFunction)
 InternalShellCommand(code="layout", patern=f'(l|layout)\s+{getPaternToMatchAllLayoutCodes()}', description="Changer de disposition de clavier", synopsis=":l :layout <layout>")
 InternalShellCommand(code="comment", patern='(c|comment)', description="Ajouter un commentaire", synopsis=":c :comment", activated=False)
 InternalShellCommand(code="viewComment", patern='(v|view)', description="Voir les commentaires", synopsis=":v :vew", activated=False)
