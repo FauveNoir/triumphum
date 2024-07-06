@@ -677,7 +677,7 @@ def create_platform_objects():
 			abbr=aPlatform.get("abbr")
 		)
 
-Platform(name="Plateforme inconue", code="unknownplatform", abbr="", includeInSorting=False)
+unknownplatform=Platform(name="Plateforme inconue", code="unknownplatform", abbr="", includeInSorting=False)
 
 def get_platform_object_after_code(code):
 	if code in globals():
@@ -1141,15 +1141,6 @@ typeArguments=["name", "code", "abbr"]
 licenceArguments=["name", "abbr", "code", "url", "shortText", "freedomCoefficient"]
 platformArguments=["name", "code", "abbr"]
 
-def selectArgumentsList(type_):
-	if type_ == Game:
-		return gameArguments
-	if type_ == GameType:
-		return typeArguments
-	if type_ == Licence:
-		return licenceArguments
-	if Platform == Licence:
-		return platformArguments
 
 def rellayAddElementToDataBase(type_=None, elementsFile=None, listName=None, **kwargs):
 	# TODO adapter 
@@ -1706,7 +1697,6 @@ def drawBothBars(stdscr):
 	draw_bottom_right(stdscr, THE_VISUAL_LIST_OF_GAMES)
 
 def drawListOfGames(stdscr):
-	#setBottomBarContent("Don:x  Quitter:q  Tri par nom:b  Par date:o  Par licence:é  Par type:p Par date:o  Par durée de jeu:!") # TODO rendre automatique
 	makeItemsList() # TODO : déglobaliser
 	THE_VISUAL_LIST_OF_GAMES.refresh()
 	# Calcul de la largeur des colones
