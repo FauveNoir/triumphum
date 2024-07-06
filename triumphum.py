@@ -762,7 +762,7 @@ def get_type_object_after_code(code):
 ########################################################################
 
 def printSplash():
-	print(APP_SPLASH)
+	print(SPLASH_MESSAGE)
 
 ########################################################################
 # Classe des licences de jeux
@@ -1701,6 +1701,7 @@ def drawBothBars(stdscr):
 	draw_bottom_right(stdscr, THE_VISUAL_LIST_OF_GAMES)
 
 def drawListOfGames(stdscr):
+	setBottomBarContent("Don:x  Quitter:q  Tri par nom:b  Par date:o  Par licence:é  Par type:p Par date:o  Par durée de jeu:!")
 	makeItemsList() # TODO : déglobaliser
 	THE_VISUAL_LIST_OF_GAMES.refresh()
 	# Calcul de la largeur des colones
@@ -1723,9 +1724,16 @@ def drawListOfGames(stdscr):
 		stdscr.addstr(THE_VISUAL_LIST_OF_GAMES.selected_row + 2, sum(col_widths[:column_number]) + column_number * 2, str(column), curses.color_pair(2) | curses.A_BOLD)
 
 def drawAboutScreen():
-	centeredMessage(STDSCR,APP_SPLASH)
-	# Lecture de la touche pressée
-	key = transform_key_to_character(STDSCR.get_wch())
+	while True:
+		setBottomBarContent(f"Retour:q  Faire un don:x")
+		centeredMessage(STDSCR,APP_SPLASH)
+		drawBothBars(STDSCR)
+		# Lecture de la touche pressée
+		key = transform_key_to_character(STDSCR.get_wch())
+		if key == "x":
+			bindMakeDonationFunction()
+		else:
+			break
 
 def showAboutScreen():
 	pass
@@ -1752,8 +1760,6 @@ InternalShellCommand(code="layout", patern=f'(l|layout)\s+{getPaternToMatchAllLa
 InternalShellCommand(code="comment", patern='(c|comment)', description="Ajouter un commentaire", synopsis=":c :comment")
 InternalShellCommand(code="viewComment", patern='(v|view)', description="Voir les commentaires", synopsis=":v :vew")
 
-print(ListOfInternalShellCommand)
-print(ListOfInternalShellCommand["layout"].patern)
 
 
 
@@ -1865,8 +1871,6 @@ if args.config_file != None:
 applyFileConfigurationsBindings()
 applyFileConfigurationsGraphicalSymbols()
 
-for aBinding in listOfBindings:
-	print(f"{aBinding.key}	{aBinding.code}")
 
 
 
