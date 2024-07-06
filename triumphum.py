@@ -1141,6 +1141,15 @@ typeArguments=["name", "code", "abbr"]
 licenceArguments=["name", "abbr", "code", "url", "shortText", "freedomCoefficient"]
 platformArguments=["name", "code", "abbr"]
 
+def selectArgumentsList(type_):
+	if type_ == Game:
+		return gameArguments
+	if type_ == GameType:
+		return typeArguments
+	if type_ == Licence:
+		return licenceArguments
+	if Platform == Licence:
+		return platformArguments
 
 def rellayAddElementToDataBase(type_=None, elementsFile=None, listName=None, **kwargs):
 	# TODO adapter 
