@@ -359,8 +359,6 @@ class Layout:
 		layoutArgumentsGroup.add_argument(f"--{code}", action="store_true", help = f"Lancer l’interface avec une carte de touches adaptée à la disposition {fancyName}.")
 		listOfLayouts[self.code]=self
 
-		globals()[code] = self # Déclaration de la variable globale pérmétant d’atteindre directement le type voulu # TODO suprimer des globals
-
 	def apply(self):
 		for aKey in getListOfBindingsCode():
 			if hasattr(self, aKey):
@@ -473,9 +471,13 @@ def getPaternToMatchAllLicencesCodes():
 
 	return patern
 
+
+def unactivatedInternallShellInstruction():
+	setBottomBarContent("Fonction non implémentée dans la version actuelle")
+
 ListOfInternalShellCommand={}
 class InternalShellCommand:
-	def __init__(self, code=None, patern=None, description=None, options=None, synopsis=None, fulldesc=None, wrongMatch=None, instructions=None):
+	def __init__(self, code=None, patern=None, description=None, options=None, synopsis=None, fulldesc=None, wrongMatch=None, instructions=None, activated=True):
 		self.code=code
 		self.patern="^"+patern+"\s*$"
 		self.description=description
@@ -483,9 +485,13 @@ class InternalShellCommand:
 		self.synopsis=synopsis
 		self.fulldesc=fulldesc
 		self.wrongMatch=wrongMatch
+		self.activated=activated
 
 		if instructions:
-			setattr(self, 'executeInstructions', instructions)
+			if not self.activated:
+				setattr(self, 'executeInstructions', unactivatedInternallShellInstruction)
+			else:
+				setattr(self, 'executeInstructions', instructions)
 
 		ListOfInternalShellCommand[code]=self
 	def executeInstructions(self):
@@ -498,7 +504,6 @@ def whatToDoWithShellInput(shellInput):
 		writeInTmp("patern: "+ ListOfInternalShellCommand[anInternalCommand].patern)
 		writeInTmp("shellinput: "+ shellInput)
 		match = re.match(ListOfInternalShellCommand[anInternalCommand].patern, shellInput)
-		writeInTmp("Match: "+ str(match))
 		if match:
 			ListOfInternalShellCommand[anInternalCommand].executeInstructions()
 
@@ -1701,7 +1706,7 @@ def drawBothBars(stdscr):
 	draw_bottom_right(stdscr, THE_VISUAL_LIST_OF_GAMES)
 
 def drawListOfGames(stdscr):
-	setBottomBarContent("Don:x  Quitter:q  Tri par nom:b  Par date:o  Par licence:é  Par type:p Par date:o  Par durée de jeu:!")
+	#setBottomBarContent("Don:x  Quitter:q  Tri par nom:b  Par date:o  Par licence:é  Par type:p Par date:o  Par durée de jeu:!") # TODO rendre automatique
 	makeItemsList() # TODO : déglobaliser
 	THE_VISUAL_LIST_OF_GAMES.refresh()
 	# Calcul de la largeur des colones
@@ -1733,6 +1738,7 @@ def drawAboutScreen():
 		if key == "x":
 			bindMakeDonationFunction()
 		else:
+			setBottomBarContent("")
 			break
 
 def showAboutScreen():
@@ -1757,8 +1763,8 @@ InternalShellCommand(code="about", patern='(a|about)', description="À propos", 
 
 InternalShellCommand(code="donate", patern='(d|don|donate)', description="Faire un don", synopsis=":d :don :donate", instructions=bindMakeDonationFunction)
 InternalShellCommand(code="layout", patern=f'(l|layout)\s+{getPaternToMatchAllLayoutCodes()}', description="Changer de disposition de clavier", synopsis=":l :layout <layout>")
-InternalShellCommand(code="comment", patern='(c|comment)', description="Ajouter un commentaire", synopsis=":c :comment")
-InternalShellCommand(code="viewComment", patern='(v|view)', description="Voir les commentaires", synopsis=":v :vew")
+InternalShellCommand(code="comment", patern='(c|comment)', description="Ajouter un commentaire", synopsis=":c :comment", activated=False)
+InternalShellCommand(code="viewComment", patern='(v|view)', description="Voir les commentaires", synopsis=":v :vew", activated=False)
 
 
 
