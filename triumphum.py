@@ -1782,18 +1782,22 @@ def internalShelldrawAboutScreen(shellInput):
 def internalShellbindMakeDonationFunction(shellInput):
 	bindMakeDonationFunction()
 
-def internalShellLayout(shellInput):
+def internalShellLayoutFunction(shellInput):
 #	ListOfInternalShellCommand["addNewGame"]
 	match = re.match(ListOfInternalShellCommand["layout"].patern, shellInput)
+	sellectedLayout=match.group("layout")
+	writeInTmp(sellectedLayout)
+	listOfLayouts[sellectedLayout].apply()
 
 InternalShellCommand(code="addNewGame", patern=addNewGamepatern, description="Ajouter un nouveau jeu à la base de donnée", synopsis=":n :new :newgame <Game name>, <code>, <type>, <licence>", instructions=internalShellAddNewGameFunction)
 InternalShellCommand(code="about", patern='(a|about)', description="À propos", synopsis=":a :about", instructions=internalShelldrawAboutScreen)
 
 InternalShellCommand(code="donate", patern='(d|don|donate)', description="Faire un don", synopsis=":d :don :donate", instructions=internalShellbindMakeDonationFunction)
-InternalShellCommand(code="layout", patern=f'(l|layout)\s+{getPaternToMatchAllLayoutCodes()}', description="Changer de disposition de clavier", synopsis=":l :layout <layout>")
+InternalShellCommand(code="layout", patern=f'(l|layout)\s+(?P<layout>{getPaternToMatchAllLayoutCodes()})', description="Changer de disposition de clavier", synopsis=":l :layout <layout>", instructions=internalShellLayoutFunction)
 InternalShellCommand(code="comment", patern='(c|comment)', description="Ajouter un commentaire", synopsis=":c :comment", activated=False)
 InternalShellCommand(code="viewComment", patern='(v|view)', description="Voir les commentaires", synopsis=":v :vew", activated=False)
 
+print(ListOfInternalShellCommand["layout"].patern)
 
 
 
