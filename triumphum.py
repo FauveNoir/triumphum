@@ -356,7 +356,11 @@ class Layout:
 		self.fancyName=fancyName
 		self.code=code
 
-		layoutArgumentsGroup.add_argument(f"--{code}", action="store_true", help = f"Lancer l’interface avec une carte de touches adaptée à la disposition {fancyName}.")
+		# Enregistrer tous les attributs supplémentaires de **attributs
+		for attributName, value in attributs.items():
+			setattr(self, attributName, value)
+
+		layoutArgumentsGroup.add_argument(f"--{code}", dest="layout", action="store_const", const=self, help = f"Lancer l’interface avec une carte de touches adaptée à la disposition {fancyName}.")
 		listOfLayouts[self.code]=self
 
 		globals()[code] = self # Déclaration de la variable globale pérmétant d’atteindre directement le type voulu # TODO suprimer des globals
@@ -1778,6 +1782,10 @@ def internalShelldrawAboutScreen(shellInput):
 def internalShellbindMakeDonationFunction(shellInput):
 	bindMakeDonationFunction()
 
+def internalShellLayout(shellInput):
+#	ListOfInternalShellCommand["addNewGame"]
+	match = re.match(ListOfInternalShellCommand["layout"].patern, shellInput)
+
 InternalShellCommand(code="addNewGame", patern=addNewGamepatern, description="Ajouter un nouveau jeu à la base de donnée", synopsis=":n :new :newgame <Game name>, <code>, <type>, <licence>", instructions=internalShellAddNewGameFunction)
 InternalShellCommand(code="about", patern='(a|about)', description="À propos", synopsis=":a :about", instructions=internalShelldrawAboutScreen)
 
@@ -1900,6 +1908,7 @@ applyFileConfigurationsGraphicalSymbols()
 
 
 
+# Fichiers de configuration
 if args.games_file:
 	GAME_FILE=args.games_file
 if args.types_file:
@@ -1908,6 +1917,8 @@ if args.licences_file:
 	LICENCE_FILE=args.licences_file
 if args.platforms_file:
 	PLATFORM_FILE=args.platforms_file
+
+# Configuration
 if args.newGameDescriptor :
 	addNewGameAfterInteractiveDescriptor(args.newGameDescriptor)
 
@@ -1935,6 +1946,10 @@ elif args.donate == True:
 	webbrowser.open(APP_AUTHOR_DONATION_LINK)
 
 elif args.tui == True:
+	if args.layout:
+		print(args.layout.code)
+		print(args.layout.bindGoDown)
+		args.layout.apply()
 	printSplash()
 	curses.wrapper(main)
 
