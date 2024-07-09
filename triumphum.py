@@ -16,6 +16,7 @@ import locale
 import time
 import argparse
 import configparser
+import shlex
 from Xlib import XK
 from Xlib.display import Display
 import curses.textpad
@@ -65,9 +66,9 @@ ooooooooooooo
      888   888    888      888   888   888   888   888   888   888   888  888   888   888   888   888   888   888
      888   888 .  888      888   888   888   888   888   888   888   888  888   888   888   888   888   888   888
      888   "888" d888b    o888o  `V88V"V8P' o888o o888o o888o  888bod8P' o888o o888o  `V88V"V8P' o888o o888o o888o
-     888       ┓ ┏┓┏┓┳┓┳┳┳┓┏┓┏┓┏┓ ┏┓┏┓┓┏┳┓┳┓┏┳┳┓ ┏┓┏┓┏┳┓       888
+     888       ┓ ┏┓┏┓┳┓╻┳┳┓┏┓┏┓┏┓ ┏┓┏┓╻╻┳┓┳╻╻┳┳┓ ┏┓┏┓┏┳┓       888
      888       ┃ ┣┫┃ ┣┫┃┃┃┃┃┃┗┓┣┫•┃┓┣┫┃┃┃┃┃┃┃┃┃┃•┣ ┗┓ ┃       o888o
-     888       ┗┛┛┗┗┛┛┗┻┛ ┗┗┛┗┛┛┗ ┗┛┛┗┗┛┻┛┻┗┛┛ ┗ ┗┛┗┛ ┻
+     888       ┗┛┛┗┗┛┛╹╹┛ ┗┗┛┗┛┛┗ ┗┛┛┗┗┛┻┛┻┗┛┛ ┗ ┗┛┗┛ ┻
      888 
      888
      888       {SPLASH_MESSAGE.splitlines()[0]}
@@ -539,6 +540,69 @@ def applyFileConfigurationsGraphicalSymbols():
 		if config.has_option("General", aConfigiGrahpicalSymbol.fileConfigName):
 			aConfigiGrahpicalSymbol.value=config.get("General", aConfigiGrahpicalSymbol.fileConfigName)
 
+
+########################################################################
+# Fonctions des options de la ligne de commande bis
+########################################################################
+
+# Shémats
+
+ADD_GAME_STATEMENTS=[
+	{
+		"name":"name",
+		"patern":'name=(<relevant>.*)'
+	},
+	{
+		"name":"code",
+		"patern":'code=(?P<relevant>[a-z0-9]*)'
+	},
+	{
+		"name":"type_",
+		"patern":'type=(?P<relevant>[a-z0-9]*)'
+	},
+	{
+		"name":"licence",
+		"patern":'licence=(?P<relevant>[a-z0-9]*)'
+	},
+	{
+		"name":"command",
+		"patern":'command=(?P<relevant>.*)'
+	},
+	{
+		"name":"url",
+		"patern":'url=(?P<relevant>\S+)'
+	},
+	{
+		"name":"studios",
+		"patern":'studios=(?P<relevant>.*)'
+	},
+	{
+		"name":"authors",
+		"patern":'authors=(?P<relevant>.*)'
+	},
+	{
+		"name":"shortDesc",
+		"patern":'shortdesc=(?P<relevant>.*)'
+	},
+]
+
+ADD_TYPE_STATEMENTS=[
+	{
+		"name":"name",
+		"patern":'name=(?P.*)'
+	},
+	{
+		"name":"code",
+		"patern":'code=(?P<relevant>[a-z0-9]*)'
+	},
+	{
+		"name":"abbr",
+		"patern":'type=(?P<relevant>[a-z0-9]*)'
+	}
+]
+
+def addNewObjectAfterInterativeDescriptor(newObjectDescriptor, objectClass):
+	pass
 
 ########################################################################
 # Fonctions des options de la ligne de commande
@@ -1767,12 +1831,12 @@ addNewGamepatern='(n|new|newgame)\s+(?P<name>(?:"[^"]*"|\'[^\']*\'|[^"\']*)),\s+
 
 def internalShellAddNewGameFunction(shellInput):
 #	ListOfInternalShellCommand["addNewGame"]
+	splitedShellInput=shlex.split(shellInput)
 	match = re.match(ListOfInternalShellCommand["addNewGame"].patern, shellInput)
 	name=match.group("name")
 	code=match.group("code")
 	type_=match.group("type")
 	licence=match.group("licence")
-	writeInTmp(f"{name}, {code}, {type_}, {licence}")
 
 	addGameToDataBase(name=name, code=code, licence=licence, type_=type_)
 
@@ -1783,11 +1847,15 @@ def internalShellbindMakeDonationFunction(shellInput):
 	bindMakeDonationFunction()
 
 def internalShellLayoutFunction(shellInput):
-#	ListOfInternalShellCommand["addNewGame"]
-	match = re.match(ListOfInternalShellCommand["layout"].patern, shellInput)
-	sellectedLayout=match.group("layout")
-	writeInTmp(sellectedLayout)
-	listOfLayouts[sellectedLayout].apply()
+	matchedInput=re.match("(l|layout)\s+(?P<relevant>[a-z]+)", shellInput)
+	askedLayout=matchedInput.group("relevant")
+	writeInTmp('"' + askedLayout + '"' )
+	if askedLayout in listOfLayouts:
+		writeInTmp(listOfLayouts[askedLayout])
+		listOfLayouts[askedLayout].apply()
+		setBottomBarContent(f"{listOfLayouts[askedLayout].fancyName}")
+	else:
+		setBottomBarContent(f"Disposition « {askedLayout} » inconue")
 
 InternalShellCommand(code="addNewGame", patern=addNewGamepatern, description="Ajouter un nouveau jeu à la base de donnée", synopsis=":n :new :newgame <Game name>, <code>, <type>, <licence>", instructions=internalShellAddNewGameFunction)
 InternalShellCommand(code="about", patern='(a|about)', description="À propos", synopsis=":a :about", instructions=internalShelldrawAboutScreen)
@@ -1797,7 +1865,6 @@ InternalShellCommand(code="layout", patern=f'(l|layout)\s+(?P<layout>{getPaternT
 InternalShellCommand(code="comment", patern='(c|comment)', description="Ajouter un commentaire", synopsis=":c :comment", activated=False)
 InternalShellCommand(code="viewComment", patern='(v|view)', description="Voir les commentaires", synopsis=":v :vew", activated=False)
 
-print(ListOfInternalShellCommand["layout"].patern)
 
 
 
@@ -1924,6 +1991,7 @@ if args.platforms_file:
 
 # Configuration
 if args.newGameDescriptor :
+	print(args.newGameDescriptor)
 	addNewGameAfterInteractiveDescriptor(args.newGameDescriptor)
 
 elif  args.about != True:
