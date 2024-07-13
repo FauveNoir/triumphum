@@ -23,6 +23,7 @@ import curses.textpad
 
 
 
+
 ########################################################################
 # fonctions de test
 ########################################################################
@@ -601,8 +602,33 @@ ADD_TYPE_STATEMENTS=[
 	}
 ]
 
-def addNewObjectAfterInterativeDescriptor(newObjectDescriptor, objectClass):
-	pass
+def descriptorToDict(newObjectDescriptor):
+	objectDescriptorList=shlex.split(newObjectDescriptor)
+	objectDescriptorList.pop(0)
+	dictConfig={}
+	for aStatement in objectDescriptorList:
+		statementName, statementValue = aStatement.split("=")
+		dictConfig[statementName] = statementValue
+
+	return dictConfig
+
+
+def interactiveDescriptorIntoDictionnary(newObjectDescriptor, objectClass):
+	inputChain=descriptorToDict(newObjectDescriptor)
+	writeInTmp(inputChain)
+	outputChain={}
+	for aStatementName, aStatementValue in inputChain.items():
+		writeInTmp(aStatementName + "|" + aStatementValue)
+		if aStatementName in objectClass:
+			outputChain[aStatementName] = aStatementValue
+	return outputChain
+
+
+
+def addNewGameAfterInterativeDescriptor(newGameDescriptor):
+	dictionnaryDescriptor=interactiveDescriptorIntoDictionnary(newGameDescriptor, ADD_GAME_STATEMENTS)
+	addGameToDataBase(**dictionnaryDescriptor)
+
 
 ########################################################################
 # Fonctions des options de la ligne de commande
@@ -633,44 +659,17 @@ def prepareParamsForAddingObjectAfterInteractiveDescriptor(newGameDescriptor, el
 
 # --add-game "0 A. D." --code=0ad  --licence=gpl  --type=rts --command="0ad --run" --url="http://0ad.com" --studios="WRT,Wirefield" --autors="Sid Meyers,machin"
 
-ADD_GAME_STATEMENTS=[
-	{
-		"name":"name",
-		"patern":'name=(?P<relevant>(?:"[^"]*"|\'[^\']*\'|[^"\']*))'
-	},
-	{
-		"name":"code",
-		"patern":'code=(?P<relevant>[a-z0-9]*)'
-	},
-	{
-		"name":"type_",
-		"patern":'type=(?P<relevant>[a-z0-9]*)'
-	},
-	{
-		"name":"licence",
-		"patern":'licence=(?P<relevant>[a-z0-9]*)'
-	},
-	{
-		"name":"command",
-		"patern":'command=(?P<relevant>(?:"[^"]*"|\'[^\']*\'|[^"\']*))'
-	},
-	{
-		"name":"url",
-		"patern":'url=(?P<relevant>\S+)'
-	},
-	{
-		"name":"studios",
-		"patern":'studios=(?P<relevant>.*)'
-	},
-	{
-		"name":"authors",
-		"patern":'authors=(?P<relevant>.*)'
-	},
-	{
-		"name":"shortDesc",
-		"patern":'shortdesc=(?P<relevant>.*)'
-	},
-]
+ADD_GAME_STATEMENTS={
+	"name":'name=(?P<relevant>(?:"[^"]*"|\'[^\']*\'|[^"\']*))',
+	"code":'code=(?P<relevant>[a-z0-9]*)',
+	"type_":'type=(?P<relevant>[a-z0-9]*)',
+	"licence":'licence=(?P<relevant>[a-z0-9]*)',
+	"command":'command=(?P<relevant>(?:"[^"]*"|\'[^\']*\'|[^"\']*))',
+	"url":'url=(?P<relevant>\S+)',
+	"studios":'studios=(?P<relevant>.*)',
+	"authors":'authors=(?P<relevant>.*)',
+	"shortDesc":'shortdesc=(?P<relevant>.*)',
+}
 
 
 def addNewGameAfterInteractiveDescriptor(newGameDescriptor):
@@ -1818,15 +1817,7 @@ def drawListOfGames(stdscr):
 # Internal shell
 ########################################################################
 
-addNewGamepatern='(n|new|newgame)\s+(?P<name>(?:"[^"]*"|\'[^\']*\'|[^"\']*)),\s+' \
-	'(?P<code>[a-zA-Z0-9]*)' \
-	'(|' \
-	f",\s+(?P<type>{getPaternToMatchAllTypesCodes()}),\s+" \
-	'(|' \
-	f"(?P<licence>{getPaternToMatchAllLicencesCodes()})" \
-	')' \
-	')' \
-	'\s*'
+addNewGamepatern='(n|new|newgame)\s+.*'
 
 
 def internalShellAddNewGameFunction(shellInput):
@@ -1857,7 +1848,7 @@ def internalShellLayoutFunction(shellInput):
 	else:
 		setBottomBarContent(f"Disposition « {askedLayout} » inconue")
 
-InternalShellCommand(code="addNewGame", patern=addNewGamepatern, description="Ajouter un nouveau jeu à la base de donnée", synopsis=":n :new :newgame <Game name>, <code>, <type>, <licence>", instructions=internalShellAddNewGameFunction)
+InternalShellCommand(code="addNewGame", patern=addNewGamepatern, description="Ajouter un nouveau jeu à la base de donnée", synopsis=":n :new :newgame <Game name>, <code>, <type>, <licence>", instructions=addNewGameAfterInterativeDescriptor)
 InternalShellCommand(code="about", patern='(a|about)', description="À propos", synopsis=":a :about", instructions=internalShelldrawAboutScreen)
 
 InternalShellCommand(code="donate", patern='(d|don|donate)', description="Faire un don", synopsis=":d :don :donate", instructions=internalShellbindMakeDonationFunction)
