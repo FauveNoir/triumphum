@@ -21,9 +21,6 @@ from Xlib import XK
 from Xlib.display import Display
 import curses.textpad
 
-
-
-
 ########################################################################
 # fonctions de test
 ########################################################################
@@ -85,7 +82,6 @@ APP_NAME = APP_SYMBOL + " " + APP_FANCY_NAME + " | " + APP_DESCRIPTION
 pendulum.set_locale('fr')
 _t = humanize.i18n.activate("fr_FR")
 
-
 ########################################################################
 # Répertoire de configuration
 ########################################################################
@@ -104,7 +100,6 @@ GAME_FILE=CONFIG_DIR + "/" + BASE_NAME_GAME_FILE
 TYPE_FILE=CONFIG_DIR + "/" + BASE_NAME_TYPE_FILE
 LICENCE_FILE=CONFIG_DIR + "/" + BASE_NAME_LICENCE_FILE
 PLATFORM_FILE=CONFIG_DIR + "/" + BASE_NAME_PLATFORM_FILE
-
 
 ########################################################################
 # Options de la ligne de commande
@@ -247,7 +242,6 @@ def transform_key_to_character(key_name):
 	# otherwise return the original key_name (which might be a letter or unknown key)
 	return key_mapping.get(key_name, key_name)
 
-
 ########################################################################
 
 listOfBindings=[]
@@ -365,8 +359,6 @@ class Layout:
 		layoutArgumentsGroup.add_argument(f"--{code}", dest="layout", action="store_const", const=self, help = f"Lancer l’interface avec une carte de touches adaptée à la disposition {fancyName}.")
 		listOfLayouts[self.code]=self
 
-#		globals()[code] = self # Déclaration de la variable globale pérmétant d’atteindre directement le type voulu # TODO suprimer des globals
-
 	def apply(self):
 		for aKey in getListOfBindingsCode():
 			if hasattr(self, aKey):
@@ -445,8 +437,12 @@ Layout(fancyName="QWERTY", code="qwerty",
 	bindQuit="x"
 	)
 
-#for aBinding in listOfBindings:
-#	print(f"{aBinding.key}	{aBinding.code}")
+########################################################################
+########################################################################
+########################################################################
+
+# Déploiement du parseur des arguments de la ligne de commande.
+# Il est nécéssaire d’attendre la définition des dispositions de clavier avant de l’éxecuter
 
 args = parser.parse_args()
 
@@ -454,12 +450,6 @@ args = parser.parse_args()
 # Classe du shell interne
 ########################################################################
 
-def getPaternToMatchAllTypesCodes():
-	patern=""
-	for aGame in listOfGameTypes:
-		patern=patern+aGame.code+"|"
-	patern="("+patern[:-1]+")"
-	return patern
 
 def getPaternToMatchAllLayoutCodes():
 	patern=""
@@ -521,7 +511,6 @@ def applyFileConfigurationsBindings():
 	config = configparser.ConfigParser()
 
 	config.read('triumphumrc')
-#	config.read(CONFIG_FILE)
 	configValues={}
 
 	for aConfigKey in getListOfConfigKeyCodes():
@@ -529,7 +518,6 @@ def applyFileConfigurationsBindings():
 		if config.has_option("General", aConfigKey):
 			configValues[aConfigKey]=config.get("General", aConfigKey)
 			returnBindingAfterConfigKeyCode(aConfigKey).setKey(configValues[aConfigKey])
-
 
 def applyFileConfigurationsGraphicalSymbols():
 	config = configparser.ConfigParser()
@@ -541,51 +529,42 @@ def applyFileConfigurationsGraphicalSymbols():
 		if config.has_option("General", aConfigiGrahpicalSymbol.fileConfigName):
 			aConfigiGrahpicalSymbol.value=config.get("General", aConfigiGrahpicalSymbol.fileConfigName)
 
-
 ########################################################################
 # Fonctions des options de la ligne de commande bis
 ########################################################################
 
-# Shémats
+class promptStatement:
+	def __init__(self, name=None, patern=None, isNecessary=False, isLabelNecessary=True, multipleValues=False):
+		self.name=name
+		self.patern=f"{name}=(?P<relevant>{patern})"
+		if isNecessary:
+			self.patern=f"(?P<relevant>{patern})"
+		self.isNecessary=isNecessary
+		self.isLabelNecessary=isLabelNecessary
+		self.multipleValues=multipleValues
 
-ADD_GAME_STATEMENTS=[
-	{
-		"name":"name",
-		"patern":'name=(<relevant>.*)'
-	},
-	{
-		"name":"code",
-		"patern":'code=(?P<relevant>[a-z0-9]*)'
-	},
-	{
-		"name":"type_",
-		"patern":'type=(?P<relevant>[a-z0-9]*)'
-	},
-	{
-		"name":"licence",
-		"patern":'licence=(?P<relevant>[a-z0-9]*)'
-	},
-	{
-		"name":"command",
-		"patern":'command=(?P<relevant>.*)'
-	},
-	{
-		"name":"url",
-		"patern":'url=(?P<relevant>\S+)'
-	},
-	{
-		"name":"studios",
-		"patern":'studios=(?P<relevant>.*)'
-	},
-	{
-		"name":"authors",
-		"patern":'authors=(?P<relevant>.*)'
-	},
-	{
-		"name":"shortDesc",
-		"patern":'shortdesc=(?P<relevant>.*)'
-	},
-]
+	def add_to_dict(self, dictionary):
+		dictionary[self.name] = self
+
+	def getRelevant(self, inputStatement):
+		match = re.match(self.patern, anInputStatement)
+		if self.multipleValues:
+			return match.group("relevant").split(',')
+		return match.group("relevant")
+
+ADD_GAME_STATEMENTS2={
+	"name": promptStatement(name="name", patern=".*", isNecessary=True, isLabelNecessary=False),
+	"code": promptStatement(name="code", patern="[a-z0-9]*", isNecessary=True),
+	"type": promptStatement(name="type", patern="[a-z0-9]*"),
+	"licence": promptStatement(name="licence", patern="[a-z0-9]*"),
+	"command": promptStatement(name="command", patern='.*'),
+	"url": promptStatement(name="url", patern="\S+"),
+	"studios": promptStatement(name="studios", patern=".*"),
+	"authors": promptStatement(name="authors", patern=".*"),
+	"shortDesc":promptStatement(name="shortDesc", patern=".*"),
+}
+
+# Shémats
 
 ADD_TYPE_STATEMENTS=[
 	{
@@ -612,7 +591,6 @@ def descriptorToDict(newObjectDescriptor):
 
 	return dictConfig
 
-
 def interactiveDescriptorIntoDictionnary(newObjectDescriptor, objectClass):
 	inputChain=descriptorToDict(newObjectDescriptor)
 	writeInTmp(inputChain)
@@ -623,12 +601,9 @@ def interactiveDescriptorIntoDictionnary(newObjectDescriptor, objectClass):
 			outputChain[aStatementName] = aStatementValue
 	return outputChain
 
-
-
 def addNewGameAfterInterativeDescriptor(newGameDescriptor):
-	dictionnaryDescriptor=interactiveDescriptorIntoDictionnary(newGameDescriptor, ADD_GAME_STATEMENTS)
+	dictionnaryDescriptor=interactiveDescriptorIntoDictionnary(newGameDescriptor, ADD_GAME_STATEMENTS2)
 	addGameToDataBase(**dictionnaryDescriptor)
-
 
 ########################################################################
 # Fonctions des options de la ligne de commande
@@ -653,7 +628,7 @@ def prepareParamsForAddingObjectAfterInteractiveDescriptor(newGameDescriptor, el
 	params = {item['name']: item['value'] for item in validStatements}
 	return params
 
-########################################################################
+########################################################
 
 # Nouveau jeu
 
@@ -670,6 +645,7 @@ ADD_GAME_STATEMENTS={
 	"authors":'authors=(?P<relevant>.*)',
 	"shortDesc":'shortdesc=(?P<relevant>.*)',
 }
+
 
 
 def addNewGameAfterInteractiveDescriptor(newGameDescriptor):
