@@ -572,29 +572,6 @@ ADD_TYPE_STATEMENTS={
 	"abbr": promptStatement(name="abbr", patern="[a-z0-9]*")
 }
 
-def sanitizeUncompleatStatements(objectDescriptorList):
-	# Expurger le descripteur des clés n’étant associées à aucune valeur
-	sanitizedObjectDescriptorList=[]
-	wrongStatements=[]
-	for aStatement in objectDescriptorList:
-		if "=" in aStatement:
-			sanitizedObjectDescriptorList.append(aStatement)
-	return sanitizedObjectDescriptorList, wrongStatements
-
-def santizeUnknowenStatements(objectDescriptorList, objectSchema):
-	pass
-
-def descriptorToDict(newObjectDescriptor):
-	objectDescriptorList=shlex.split(newObjectDescriptor)
-	dictConfig={}
-	writeInTmp(objectDescriptorList)
-	for aStatement in objectDescriptorList:
-		statementName, statementValue = aStatement.split("=")
-		dictConfig[statementName] = statementValue
-
-	return dictConfig
-
-###
 
 def splitDescriptorIntoList(inputChain):
 	objectDescriptorList=shlex.split(inputChain)
