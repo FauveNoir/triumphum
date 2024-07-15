@@ -552,6 +552,8 @@ class promptStatement:
 			return match.group("relevant").split(',')
 		return match.group("relevant")
 
+# Shémats
+
 ADD_GAME_STATEMENTS2={
 	"name": promptStatement(name="name", patern=".*", isNecessary=True, isLabelNecessary=False),
 	"code": promptStatement(name="code", patern="[a-z0-9]*", isNecessary=True),
@@ -564,41 +566,71 @@ ADD_GAME_STATEMENTS2={
 	"shortDesc":promptStatement(name="shortDesc", patern=".*"),
 }
 
-# Shémats
+ADD_TYPE_STATEMENTS={
+	"name": promptStatement(name="name", patern=".*", isNecessary=True, isLabelNecessary=False),
+	"code": promptStatement(name="code", patern="[a-z0-9]*", isNecessary=True),
+	"abbr": promptStatement(name="abbr", patern="[a-z0-9]*")
+}
 
-ADD_TYPE_STATEMENTS=[
-	{
-		"name":"name",
-		"patern":'name=(?P.*)'
-	},
-	{
-		"name":"code",
-		"patern":'code=(?P<relevant>[a-z0-9]*)'
-	},
-	{
-		"name":"abbr",
-		"patern":'type=(?P<relevant>[a-z0-9]*)'
-	}
-]
+def sanitizeUncompleatStatements(objectDescriptorList):
+	# Expurger le descripteur des clés n’étant associées à aucune valeur
+	sanitizedObjectDescriptorList=[]
+	wrongStatements=[]
+	for aStatement in objectDescriptorList:
+		if "=" in aStatement:
+			sanitizedObjectDescriptorList.append(aStatement)
+	return sanitizedObjectDescriptorList, wrongStatements
+
+def santizeUnknowenStatements(objectDescriptorList, objectSchema):
+	pass
 
 def descriptorToDict(newObjectDescriptor):
 	objectDescriptorList=shlex.split(newObjectDescriptor)
-	objectDescriptorList.pop(0)
 	dictConfig={}
+	writeInTmp(objectDescriptorList)
 	for aStatement in objectDescriptorList:
 		statementName, statementValue = aStatement.split("=")
 		dictConfig[statementName] = statementValue
 
 	return dictConfig
 
-def interactiveDescriptorIntoDictionnary(newObjectDescriptor, objectClass):
-	inputChain=descriptorToDict(newObjectDescriptor)
-	writeInTmp(inputChain)
+###
+
+def splitDescriptorIntoList(inputChain):
+	objectDescriptorList=shlex.split(inputChain)
+	return objectDescriptorList
+
+def sanitizeDescriptorListFromKeysWithoutValues(inputChain):
+	# Expurger le descripteur des clés n’étant associées à aucune valeur
+	sanitizedObjectDescriptorList=[]
+	wrongStatements=[]
+	for aStatement in inputChain:
+		if "=" in aStatement:
+			sanitizedObjectDescriptorList.append(aStatement)
+		else:
+			wrongStatements.append(aStatement)
+	return sanitizedObjectDescriptorList, wrongStatements
+
+def descriptorIntoDict(inputChain):
+	dictConfig={}
+	for aStatement in inputChain:
+		statementName, statementValue = aStatement.split("=")
+		dictConfig[statementName] = statementValue
+
+	return dictConfig
+
+def sanitizeDescriptorChainFromUnexistingStatements(inputChain, objectSchema):
 	outputChain={}
 	for aStatementName, aStatementValue in inputChain.items():
-		writeInTmp(aStatementName + "|" + aStatementValue)
-		if aStatementName in objectClass:
+		if aStatementName in objectSchema:
 			outputChain[aStatementName] = aStatementValue
+	return outputChain
+
+def interactiveDescriptorIntoDictionnary(newObjectDescriptor, objectSchema):
+	outputChain=splitDescriptorIntoList(newObjectDescriptor)
+	outputChain, wrongStatements=sanitizeDescriptorListFromKeysWithoutValues(outputChain)
+	outputChain=descriptorIntoDict(outputChain)
+	outputChain=sanitizeDescriptorChainFromUnexistingStatements(outputChain, objectSchema)
 	return outputChain
 
 def addNewGameAfterInterativeDescriptor(newGameDescriptor):
