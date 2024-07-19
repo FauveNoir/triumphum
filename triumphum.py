@@ -1377,6 +1377,7 @@ class VisualListOfGames:
 		self.sortByProperty=None
 		self.sortingState=SORTING_ORDER[1]
 		self.selected_row = 0
+		self.firstRowOnVisibleList = 0
 
 		self.refresh()
 		globals()["THE_VISUAL_LIST_OF_GAMES"] = self # Le seul objet de cette classe est TheVisualListOfGames
@@ -1386,8 +1387,17 @@ class VisualListOfGames:
 		subList = self.list[lineRank:lineRank+numberOfLines]
 		return subList
 
+	# TODO intégéré screenHeight-3 dans la déffiniton de classe
+	def visualHighlightedLineNumber(self, screenHeight):
+		visualHighlightedLineNumber=self.selected_row-self.firstRowOnVisibleList
+		return visualHighlightedLineNumber
+
 	def getCurrentVisibleList(self, screenHeight):
-		visibleList=self.getNthNLines(self.selected_row, screenHeight-2) # TODO remplacer le 2 par une variable
+		if self.selected_row > self.firstRowOnVisibleList + screenHeight-3-3 :
+			self.firstRowOnVisibleList+=1
+
+		visibleList=self.getNthNLines(self.firstRowOnVisibleList, screenHeight-3) # TODO remplacer le 2 par une variable
+
 
 		return visibleList
 
@@ -1798,12 +1808,12 @@ def drawListOfGames(stdscr):
 			if column_number < HIDED_DATA_COLUMN:  # Masquer la colonne "commande"
 				stdscr.addstr(row_number + 2, sum(col_widths[:column_number]) + column_number * 2, str(column))
 
-	stdscr.addstr(THE_VISUAL_LIST_OF_GAMES.selected_row + 2, 0, " " * curses.COLS, curses.color_pair(2))  # Effacer toute la ligne avec la couleur de fond
+	stdscr.addstr(THE_VISUAL_LIST_OF_GAMES.visualHighlightedLineNumber(screenHeight) + 2, 0, " " * curses.COLS, curses.color_pair(2))  # Effacer toute la ligne avec la couleur de fond
 
 	# Affichage des données de la liste avec surbrillance pour la ligne sélectionnée
 	# Cas particulier de la ligne ayant le focus
-	for column_number, column in enumerate(THE_VISUAL_LIST_OF_GAMES.list[THE_VISUAL_LIST_OF_GAMES.selected_row][:HIDED_DATA_COLUMN]):  # Afficher seulement les 4 premières colonnes
-		stdscr.addstr(THE_VISUAL_LIST_OF_GAMES.selected_row + 2, sum(col_widths[:column_number]) + column_number * 2, str(column), curses.color_pair(2) | curses.A_BOLD)
+	for column_number, column in enumerate(THE_VISUAL_LIST_OF_GAMES.list[THE_VISUAL_LIST_OF_GAMES.visualHighlightedLineNumber(screenHeight)][:HIDED_DATA_COLUMN]):  # Afficher seulement les 4 premières colonnes
+		stdscr.addstr(THE_VISUAL_LIST_OF_GAMES.visualHighlightedLineNumber(screenHeight) + 2, sum(col_widths[:column_number]) + column_number * 2, str(column), curses.color_pair(2) | curses.A_BOLD)
 
 ########################################################################
 # Commands for internal
