@@ -1381,6 +1381,16 @@ class VisualListOfGames:
 		self.refresh()
 		globals()["THE_VISUAL_LIST_OF_GAMES"] = self # Le seul objet de cette classe est TheVisualListOfGames
 
+
+	def getNthNLines(self, lineRank, numberOfLines):
+		subList = self.list[lineRank:lineRank+numberOfLines]
+		return subList
+
+	def getCurrentVisibleList(self, screenHeight):
+		visibleList=self.getNthNLines(self.selected_row, screenHeight-2) # TODO remplacer le 2 par une variable
+
+		return visibleList
+
 	def goDown(self):
 		self.selected_row = min(len(self.list) - 1, self.selected_row + 1)
 
@@ -1781,8 +1791,9 @@ def drawListOfGames(stdscr):
 	for row_number, title in enumerate(titles):
 		stdscr.addstr(1, sum(col_widths[:row_number]) + row_number * 2, str(title), curses.color_pair(2) | curses.A_BOLD)
 
+	screenHeight, screenWidth = stdscr.getmaxyx()
 	# Affichage des données de la liste
-	for row_number, item in enumerate(THE_VISUAL_LIST_OF_GAMES.list):
+	for row_number, item in enumerate(THE_VISUAL_LIST_OF_GAMES.getCurrentVisibleList(screenHeight)):
 		for column_number, column in enumerate(item):
 			if column_number < HIDED_DATA_COLUMN:  # Masquer la colonne "commande"
 				stdscr.addstr(row_number + 2, sum(col_widths[:column_number]) + column_number * 2, str(column))
@@ -1881,9 +1892,12 @@ Binding(key=":", code="bindExMode", description=f"Mode Ex", configFileName="bind
 STDSCR=None
 def main(stdscr):
 	global STDSCR
+
+
 	STDSCR=stdscr
 	# Initialisation de ncurses
 	curses.curs_set(0)  # Masquer le curseur
+	screenHeight, screenWidth = stdscr.getmaxyx()
 
 	# Initialiser les couleurs
 	curses.start_color()
