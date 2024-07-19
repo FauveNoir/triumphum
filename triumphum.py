@@ -1345,6 +1345,18 @@ def retrive_datas():
 ########################################################################
 # Classe de la liste visuelle
 ########################################################################
+class ListMove:
+	def __init__(self, label=None, code=None):
+		self.label=label
+		self.code=code
+		globals()[self.code] = self # Le seul objet de cette classe est TheVisualListOfGames
+
+
+ListMove(label="Go up", code="goUp")
+ListMove(label="Go down", code="goDown")
+########################################################################
+# Classe de la liste visuelle
+########################################################################
 
 listOflistSorting=[]
 class Sort:
@@ -1377,13 +1389,16 @@ class VisualListOfGames:
 		self.sortByProperty=None
 		self.sortingState=SORTING_ORDER[1]
 		self.selected_row = 0
+		self.previus_selected_row = 0
 		self.firstRowOnVisibleList = 0
+		self.lastMove=None
 
 		self.refresh()
 		globals()["THE_VISUAL_LIST_OF_GAMES"] = self # Le seul objet de cette classe est TheVisualListOfGames
 
 
 	def getNthNLines(self, lineRank, numberOfLines):
+		# Retourne une portion de la liste commençan par lineRank et contenant numberOfLines lignes
 		subList = self.list[lineRank:lineRank+numberOfLines]
 		return subList
 
@@ -1394,7 +1409,10 @@ class VisualListOfGames:
 
 	def getCurrentVisibleList(self, screenHeight):
 		if self.selected_row > self.firstRowOnVisibleList + screenHeight-3-3 :
-			self.firstRowOnVisibleList+=1
+			if self.lastMove == goDown:
+				self.firstRowOnVisibleList+=1
+			elif self.lastMove == goUp:
+				self.firstRowOnVisibleList-=1
 
 		visibleList=self.getNthNLines(self.firstRowOnVisibleList, screenHeight-3) # TODO remplacer le 2 par une variable
 
@@ -1402,10 +1420,14 @@ class VisualListOfGames:
 		return visibleList
 
 	def goDown(self):
+		self.previus_selected_row = self.selected_row
 		self.selected_row = min(len(self.list) - 1, self.selected_row + 1)
+		self.lastMove=goDown
 
 	def goUp(self):
+		self.previus_selected_row = self.selected_row
 		self.selected_row = max(0, self.selected_row - 1)
+		self.lastMove=goUp
 
 	def openCurrent(self):
 		# Exécuter la commande de lancement du jeu associée à la ligne sélectionnée
@@ -1812,7 +1834,7 @@ def drawListOfGames(stdscr):
 
 	# Affichage des données de la liste avec surbrillance pour la ligne sélectionnée
 	# Cas particulier de la ligne ayant le focus
-	for column_number, column in enumerate(THE_VISUAL_LIST_OF_GAMES.list[THE_VISUAL_LIST_OF_GAMES.visualHighlightedLineNumber(screenHeight)][:HIDED_DATA_COLUMN]):  # Afficher seulement les 4 premières colonnes
+	for column_number, column in enumerate(THE_VISUAL_LIST_OF_GAMES.list[THE_VISUAL_LIST_OF_GAMES.selected_row][:HIDED_DATA_COLUMN]):  # Afficher seulement les 4 premières colonnes
 		stdscr.addstr(THE_VISUAL_LIST_OF_GAMES.visualHighlightedLineNumber(screenHeight) + 2, sum(col_widths[:column_number]) + column_number * 2, str(column), curses.color_pair(2) | curses.A_BOLD)
 
 ########################################################################
