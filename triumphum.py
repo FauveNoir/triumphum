@@ -1389,7 +1389,6 @@ class VisualListOfGames:
 		self.sortByProperty=None
 		self.sortingState=SORTING_ORDER[1]
 		self.selected_row = 0
-		self.previus_selected_row = 0
 		self.firstRowOnVisibleList = 0
 		self.lastMove=None
 
@@ -1408,11 +1407,18 @@ class VisualListOfGames:
 		return visualHighlightedLineNumber
 
 	def getCurrentVisibleList(self, screenHeight):
-		if self.selected_row > self.firstRowOnVisibleList + screenHeight-3-3 :
-			if self.lastMove == goDown:
+		if self.lastMove == goDown:
+			if self.selected_row > self.firstRowOnVisibleList + screenHeight-3-3 :
 				self.firstRowOnVisibleList+=1
-			elif self.lastMove == goUp:
+
+
+		if self.lastMove == goUp:
+			if self.selected_row == self.firstRowOnVisibleList +1 and self.selected_row > 1 :
 				self.firstRowOnVisibleList-=1
+			elif self.selected_row > self.firstRowOnVisibleList + screenHeight-3-3 :
+				self.firstRowOnVisibleList-=1
+
+		writeInTmp(self.firstRowOnVisibleList)
 
 		visibleList=self.getNthNLines(self.firstRowOnVisibleList, screenHeight-3) # TODO remplacer le 2 par une variable
 
@@ -1420,12 +1426,10 @@ class VisualListOfGames:
 		return visibleList
 
 	def goDown(self):
-		self.previus_selected_row = self.selected_row
 		self.selected_row = min(len(self.list) - 1, self.selected_row + 1)
 		self.lastMove=goDown
 
 	def goUp(self):
-		self.previus_selected_row = self.selected_row
 		self.selected_row = max(0, self.selected_row - 1)
 		self.lastMove=goUp
 
