@@ -1411,12 +1411,9 @@ class VisualListOfGames:
 			if self.selected_row > self.firstRowOnVisibleList + screenHeight-3-3 :
 				self.firstRowOnVisibleList+=1
 
-
 		if self.lastMove == goUp:
 			if self.selected_row == self.firstRowOnVisibleList +1 and self.selected_row > 1 :
 				self.firstRowOnVisibleList-=1
-
-		writeInTmp(self.firstRowOnVisibleList)
 
 		visibleList=self.getNthNLines(self.firstRowOnVisibleList, screenHeight-3) # TODO remplacer le 2 par une variable
 
