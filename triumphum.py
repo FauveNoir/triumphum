@@ -1415,8 +1415,6 @@ class VisualListOfGames:
 		if self.lastMove == goUp:
 			if self.selected_row == self.firstRowOnVisibleList +1 and self.selected_row > 1 :
 				self.firstRowOnVisibleList-=1
-			elif self.selected_row > self.firstRowOnVisibleList + screenHeight-3-3 :
-				self.firstRowOnVisibleList-=1
 
 		writeInTmp(self.firstRowOnVisibleList)
 
