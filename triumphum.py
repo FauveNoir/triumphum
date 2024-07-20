@@ -138,10 +138,16 @@ configurationFile.add_argument("-t", "--game-genres", dest="genres_file", metava
 addingData = parser.add_argument_group('Adding data')
 addingDataGroup = addingData.add_mutually_exclusive_group()
 addingDataGroup.add_argument("--add-game", dest="newGameDescriptor", metavar="game descriptor", nargs='*', help = "Ajouter un nouveau jeu.")
-
 addingDataGroup.add_argument("--add-licence", dest="newLicenceDescriptor", metavar="licence", nargs='*', help = "Ajouter une nouvelle licence.")
 addingDataGroup.add_argument("--add-genre", dest="newGenreDescriptor", nargs='*', metavar="genre", help = "Ajouter un nouveau genre de jeu.")
 addingDataGroup.add_argument("--add-platform", dest="newPlatformDescriptor", nargs='*', metavar="platform", help = "Ajouter une nouvelle plateforme.")
+
+deletingData = parser.add_argument_group('Deleting data')
+deletingDataGroup = deletingData.add_mutually_exclusive_group()
+deletingDataGroup.add_argument("--del-game", dest="delGame", metavar="game", help = "Suprimer un jeu.")
+deletingDataGroup.add_argument("--del-licence", dest="delLicence", metavar="licence", help = "Suprimer une licence.")
+deletingDataGroup.add_argument("--del-genre", dest="delGenre", metavar="genre", help = "Suprimer un genre de jeu.")
+deletingDataGroup.add_argument("--del-platform", dest="delPlatform", metavar="platform", help = "Suprimer une plateforme.")
 
 layoutArguments = parser.add_argument_group('Layout and keybinding')
 layoutArgumentsGroup = layoutArguments.add_mutually_exclusive_group()
@@ -535,8 +541,7 @@ def applyFileConfigurationsGraphicalSymbols():
 			aConfigiGrahpicalSymbol.value=config.get("General", aConfigiGrahpicalSymbol.fileConfigName)
 
 ########################################################################
-# Fonctions des options de la ligne de commande (nouveau)
-########################################################################
+# Fonctions des options de la ligne de commande ########################################################################
 
 #
 # Classe
@@ -1204,28 +1209,36 @@ def addPlatformToDataBase(theObject):
 	addObjectToDataBase(theObject=theObject, listOfObjects=listofPlatforms, object_file=PLATFORM_FILE, objectGroupName="platforms", object_name="plateforme")
 
 ########################################################################
-# Éidition des bases de données | Délétion
+# Éidition des bases de données | Délétion (nouveau)
 ########################################################################
 
-def deleteGameFromDatabase(code):
-	with open(GAME_FILE, 'r') as f:
+
+# Primitive
+
+def deleteObjectFromDatabase(givenObject=None, listOfObjectsFile=None, objectGroupName=None):
+	with open(listOfObjectsFile, 'r') as f:
 		jsonContent = json.load(f)  # Charger le JSON dans une structure de données Python
 
 	founded=False
 	# Vérifier si la clé "games" existe et qu'elle est une liste
-	if 'games' in jsonContent and isinstance(jsonContent['games'], list):
-		games = jsonContent['games']
+	if objectGroupName in jsonContent and isinstance(jsonContent[objectGroupName], list):
+		list_ = jsonContent[objectGroupName]
 		# Parcourir la liste des jeux
-		for game in games:
+		for anObject in list_:
 			# Vérifier si l'objet a pour valeur "code": "abc"
-			if isinstance(game, dict) and game.get('code') == code:
+			if isinstance(anObject, dict) and anObject.get('code') == givenObject.code:
 				founded=True
-				games.remove(game)  # Supprimer l'élément de la liste
+				list_.remove(anObject)  # Supprimer l'élément de la liste
 	
 	if founded:
 		# Réécrire le fichier JSON avec les modifications
-		with open(GAME_FILE, 'w') as f:
+		with open(listOfObjectsFile, 'w') as f:
 			json.dump(jsonContent, f, indent='\t')  # Réécrire le JSON avec indentation pour la lisibilité
+
+# Dérrivée
+def deleteGameFromDatabase(givenObject):
+	deleteObjectFromDatabase(givenObject=givenObject, listOfObjectsFile=GAME_FILE, objectGroupName="games")
+
 
 ########################################################################
 # Classe des colones de la liste visuelle
