@@ -92,7 +92,7 @@ CONFIG_DIR = appdirs.user_config_dir(APP_CODE_NAME)
 CONFIG_FILE= appdirs.user_config_dir("triumphumrc")
 
 BASE_NAME_GAME_FILE="games.json"
-BASE_NAME_GENRE_FILE="listOfGameGenres.json"
+BASE_NAME_GENRE_FILE="listOfGenres.json"
 BASE_NAME_LICENCE_FILE="listOfLicences.json"
 BASE_NAME_PLATFORM_FILE="listOfPlatforms.json"
 
@@ -709,15 +709,15 @@ def formatDataListToLitteralList(list_, voidSymbol):
 		return f"{elements}, et {list_[-1]}"
 
 # Défffinition de classe
-listOfGameGenres=[]
-class GameGenre:
+listOfGenres=[]
+class Genre:
 	def __init__(self, name=None, code=None, abbr=None, includeInSorting=True):
 		self.name = name
 		self.code = code
 		self.abbr = abbr
 		self.includeInSorting = includeInSorting
 
-		listOfGameGenres.append(self) # Adjonction à la liste des genres de jeux
+		listOfGenres.append(self) # Adjonction à la liste des genres de jeux
 		globals()[code] = self # Déclaration de la variable globale pérmétant d’atteindre directement le genre voulu
 
 		def shortName(self):
@@ -727,17 +727,17 @@ class GameGenre:
 			return self.name
 
 	def __eq__(self, other):
-		if isinstance(other, GameGenre):
+		if isinstance(other, Genre):
 			return self.abbr == other.abbr
 		return NotImplemented
 
 	def __lt__(self, other):
-		if isinstance(other, GameGenre):
+		if isinstance(other, Genre):
 			return self.abbr <  other.abbr
 		return NotImplemented
 
 	def __gt__(self, other):
-		if isinstance(other, GameGenre):
+		if isinstance(other, Genre):
 			return self.abbr > other.abbr
 		return NotImplemented
 
@@ -745,22 +745,22 @@ def create_game_genre_objects():
 	# Extraction des genres de jeux
 
 	# Réinitialisation de la liste des jeux
-	global listOfGameGenres
-	listOfGameGenres=[]
+	global listOfGenres
+	listOfGenres=[]
 
 	# Extraction des genres de jeux du fichier
-	with open(CONFIG_DIR + '/listOfGameGenres.json') as f:
-		listOfGameGenresData = json.load(f)["gameGenres"]
+	with open(CONFIG_DIR + '/listOfGenres.json') as f:
+		listOfGenresData = json.load(f)["genres"]
 
 	# Déploiment des objet de genre de jeux
-	for aGameGenre in listOfGameGenresData:
-		GameGenre(
-			name=aGameGenre.get("name"),
-			code=aGameGenre.get("code"),
-			abbr=aGameGenre.get("abbr")
+	for aGenre in listOfGenresData:
+		Genre(
+			name=aGenre.get("name"),
+			code=aGenre.get("code"),
+			abbr=aGenre.get("abbr")
 		)
 
-GameGenre(name="Genre inconu", abbr=GENRE_VOID_SYMBOL.value, code="unknowngenre", includeInSorting=False)
+Genre(name="Genre inconu", abbr=GENRE_VOID_SYMBOL.value, code="unknowngenre", includeInSorting=False)
 
 def get_genre_object_after_code(code):
 	if code in globals():
