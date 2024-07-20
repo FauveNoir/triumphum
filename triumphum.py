@@ -1391,6 +1391,10 @@ class VisualListOfGames:
 		self.refresh()
 		globals()["THE_VISUAL_LIST_OF_GAMES"] = self # Le seul objet de cette classe est TheVisualListOfGames
 
+	def isTheListEmpty(self):
+		if self.list in [None, []]:
+			return True
+		return False
 
 	def getNthNLines(self, lineRank, numberOfLines):
 		# Retourne une portion de la liste commençan par lineRank et contenant numberOfLines lignes
@@ -1809,29 +1813,55 @@ def drawBothBars(stdscr):
 	draw_bottom_bar(stdscr)
 	draw_bottom_right(stdscr, THE_VISUAL_LIST_OF_GAMES)
 
+def display_centered_text(stdscr, text):
+	# Obtenir les dimensions de l'écran
+	h, w = stdscr.getmaxyx()
+
+	# Diviser le texte en lignes si ce n'est pas déjà fait
+	lines = text.splitlines()
+
+	# Calculer la hauteur totale requise pour afficher toutes les lignes
+	total_lines = len(lines)
+	text_height = total_lines
+
+	# Calculer la position verticale (y) pour commencer à afficher les lignes
+	start_y = (h - text_height) // 2
+
+	# Afficher chaque ligne au milieu de l'écran
+	for i, line in enumerate(lines):
+		# Calculer la position horizontale (x) pour centrer la ligne
+		x = (w - len(line)) // 2
+		stdscr.addstr(start_y + i, x, line)
+
 def drawListOfGames(stdscr):
 	#setBottomBarContent("Don:x  Quitter:q  Tri par nom:b  Par date:o  Par licence:é  Par genre:p Par date:o  Par durée de jeu:!") # TODO rendre automatique
 	makeItemsList() # TODO : déglobaliser
 	THE_VISUAL_LIST_OF_GAMES.refresh()
-	# Calcul de la largeur des colones
-	col_widths = getColWidths()
-
-	for row_number, title in enumerate(titles):
-		stdscr.addstr(1, sum(col_widths[:row_number]) + row_number * 2, str(title), curses.color_pair(2) | curses.A_BOLD)
-
 	screenHeight, screenWidth = stdscr.getmaxyx()
-	# Affichage des données de la liste
-	for row_number, item in enumerate(THE_VISUAL_LIST_OF_GAMES.getCurrentVisibleList(screenHeight)):
-		for column_number, column in enumerate(item):
-			if column_number < HIDED_DATA_COLUMN:  # Masquer la colonne "commande"
-				stdscr.addstr(row_number + 2, sum(col_widths[:column_number]) + column_number * 2, str(column))
+	if THE_VISUAL_LIST_OF_GAMES.isTheListEmpty():
+		noGameFoundText="""Aucun jeu trouvé.
+Saissez :h ou consultez man triphum
+		"""
+		display_centered_text(stdscr,noGameFoundText)
+	else:
+		# Calcul de la largeur des colones
+		col_widths = getColWidths()
 
-	stdscr.addstr(THE_VISUAL_LIST_OF_GAMES.visualHighlightedLineNumber(screenHeight) + 2, 0, " " * curses.COLS, curses.color_pair(2))  # Effacer toute la ligne avec la couleur de fond
+		for row_number, title in enumerate(titles):
+			stdscr.addstr(1, sum(col_widths[:row_number]) + row_number * 2, str(title), curses.color_pair(2) | curses.A_BOLD)
 
-	# Affichage des données de la liste avec surbrillance pour la ligne sélectionnée
-	# Cas particulier de la ligne ayant le focus
-	for column_number, column in enumerate(THE_VISUAL_LIST_OF_GAMES.list[THE_VISUAL_LIST_OF_GAMES.selected_row][:HIDED_DATA_COLUMN]):  # Afficher seulement les 4 premières colonnes
-		stdscr.addstr(THE_VISUAL_LIST_OF_GAMES.visualHighlightedLineNumber(screenHeight) + 2, sum(col_widths[:column_number]) + column_number * 2, str(column), curses.color_pair(2) | curses.A_BOLD)
+		# Affichage des données de la liste
+		for row_number, item in enumerate(THE_VISUAL_LIST_OF_GAMES.getCurrentVisibleList(screenHeight)):
+			for column_number, column in enumerate(item):
+				if column_number < HIDED_DATA_COLUMN:  # Masquer la colonne "commande"
+					stdscr.addstr(row_number + 2, sum(col_widths[:column_number]) + column_number * 2, str(column))
+
+		stdscr.addstr(THE_VISUAL_LIST_OF_GAMES.visualHighlightedLineNumber(screenHeight) + 2, 0, " " * curses.COLS, curses.color_pair(2))  # Effacer toute la ligne avec la couleur de fond
+
+		# Affichage des données de la liste avec surbrillance pour la ligne sélectionnée
+		# Cas particulier de la ligne ayant le focus
+		for column_number, column in enumerate(THE_VISUAL_LIST_OF_GAMES.list[THE_VISUAL_LIST_OF_GAMES.selected_row][:HIDED_DATA_COLUMN]):  # Afficher seulement les 4 premières colonnes
+			stdscr.addstr(THE_VISUAL_LIST_OF_GAMES.visualHighlightedLineNumber(screenHeight) + 2, sum(col_widths[:column_number]) + column_number * 2, str(column), curses.color_pair(2) | curses.A_BOLD)
 
 ########################################################################
 # Commands for internal
