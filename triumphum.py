@@ -471,6 +471,9 @@ def getPaternToMatchAllLicencesCodes():
 	patern=getPaternToMatchAllCodesInDictionnary(listOfLicences)
 	return patern
 
+#
+###
+#
 
 def unactivatedInternallShellInstruction():
 	setBottomBarContent("Fonction non implémentée dans la version actuelle")
@@ -638,7 +641,7 @@ def interactiveDescriptorIntoDictionnary(newObjectDescriptor, objectSchema, isSp
 def addNewGameAfterInterativeDescriptor(newGameDescriptor, isSplited=False):
 	dictionnaryDescriptor=interactiveDescriptorIntoDictionnary(newGameDescriptor, ADD_GAME_STATEMENTS, isSplited)
 	print(dictionnaryDescriptor)
-	addGameToDataBase(**dictionnaryDescriptor)
+	addGameToDataBase(dictionnaryDescriptor)
 
 ########################################################################
 # classe des plateformes
@@ -1124,97 +1127,52 @@ def create_game_objects():
 		)
 
 ########################################################################
-# Éidition des bases de données 
+# Éidition des bases de données (nouveau)
 ########################################################################
 
-# Fonctions primitives #################################################################
+# Fonctions primitives #################################################
 
-def isObjectExistInsideListOfObjects(givenObject, listOfObjects):
+def isObjectExistInsideListOfObjects(theObject, listOfObjects):
 	for anObject in listOfObjects:
-		if givenObject == anObject.code:
+		if theObject == anObject.code:
 			return True
 	return False
 
-def isNewObjectCodeAllowed(givenObject, listOfObjects):
-	if not isObjectExistInsideListOfObjects(givenObject, listOfObjects) and givenObject.code != None:
+def isNewObjectCodeAllowed(theObject, listOfObjects):
+	if not isObjectExistInsideListOfObjects(theObject, listOfObjects) and theObject["code"] != None:
 		return True
 	return False
 
-def realyAddObjectToDataBase(parametters=None, object_file=None, object_name=None):
-	theObject={
-		"name": name,
-		"licence": licence,
-		"year": year,
-		"genre": genre,
-		"command": command,
-		"code": code,
-		"url": url,
-		"platform": platform,
-		"studios": studios,
-		"authors": authors,
-		"shortDesc": shortDesc
-	}
+def realyAddObjectToDataBase(theObject=None, object_file=None, objectGroupName=None):
 
 	# Charger le contenu JSON depuis le fichier
 	with open(object_file, 'r') as jsonFile:
 		jsonContent = json.load(jsonFile)
 
-	jsonContent[object_name].append(theObject)
+	jsonContent[objectGroupName].append(theObject)
 
 	# Réécrire le fichier JSON avec le contenu mis à jour
 	with open(object_file, 'w') as jsonFile:
 		json.dump(jsonContent, jsonFile, indent="\t")
 
-# Fonctions dérrivées #################################################################
-#
-# Jeux
-#
+#def addObjectToDataBase(name=None, licence=None, year=None, genre=None, command=None, code=None, url=None, platform=None, studios=None, authors=None, shortDesc=None):
 
-def isGameCodeExist(gameCode):
-	# Charger le contenu JSON depuis le fichier
-	for aGame in listOfGames:
-		if gameCode == aGame.code:
-			return True
-	return False
-
-def isNewGameCodeAllowded(gameCode):
-	if not isGameCodeExist(gameCode) and gameCode != None:
-		return True
-	return False
-
-def realyAddGameToDataBase(name=None, licence=None, year=None, genre=None, command=None, code=None, url=None, platform=None, studios=None, authors=None, shortDesc=None):
-	gameObject={
-		"name": name,
-		"licence": licence,
-		"year": year,
-		"genre": genre,
-		"command": command,
-		"code": code,
-		"url": url,
-		"platform": platform,
-		"studios": studios,
-		"authors": authors,
-		"shortDesc": shortDesc
-	}
-
-	# Charger le contenu JSON depuis le fichier
-	with open(GAME_FILE, 'r') as jsonFile:
-		jsonContent = json.load(jsonFile)
-
-	jsonContent['games'].append(gameObject)
-
-	# Réécrire le fichier JSON avec le contenu mis à jour
-	with open(GAME_FILE, 'w') as jsonFile:
-		json.dump(jsonContent, jsonFile, indent="\t")
-
-def addGameToDataBase(name=None, licence=None, year=None, genre=None, command=None, code=None, url=None, platform=None, studios=None, authors=None, shortDesc=None):
-	if isNewGameCodeAllowded(code) :
-		realyAddGameToDataBase(name, licence, year, genre, command, code, url, platform, studios, authors, shortDesc)
-	elif isGameCodeExist(code):
+def addObjectToDataBase(theObject=None, listOfObjects=None, object_file=None, objectGroupName=None, object_name=None):
+	if isNewObjectCodeAllowed(theObject, listOfObjects) :
+		realyAddObjectToDataBase(theObject=theObject, object_file=object_file, objectGroupName=objectGroupName)
+	elif isNewObjectCodeAllowed(theObject, listOfObjects):
 		print(f"Le code « {code} » éxiste déjà.")
 	elif code == None:
-		print(f"Veuillez déffinir un code d’entification pour le jeu.")
+		print(f"Veuillez déffinir un code d’entification pour le {object_name}.")
 
+# Fonctions dérrivées #################################################################
+
+def addGameToDataBase(theObject):
+	addObjectToDataBase(theObject=theObject, listOfObjects=listOfGames, object_file=GAME_FILE, objectGroupName="games", object_name="jeu")
+
+########################################################################
+# Éidition des bases de données (ancien)
+########################################################################
 #
 # Licence
 #
