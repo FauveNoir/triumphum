@@ -709,7 +709,7 @@ def formatDataListToLitteralList(list_, voidSymbol):
 		return f"{elements}, et {list_[-1]}"
 
 # Défffinition de classe
-listOfGenres=[]
+listOfGenres={}
 class Genre:
 	def __init__(self, name=None, code=None, abbr=None, includeInSorting=True):
 		self.name = name
@@ -717,7 +717,7 @@ class Genre:
 		self.abbr = abbr
 		self.includeInSorting = includeInSorting
 
-		listOfGenres.append(self) # Adjonction à la liste des genres de jeux
+		listOfGenres[self.code]=self # Adjonction à la liste des genres de jeux
 
 		def shortName(self):
 			# Recherche d’un nom abbrégé
@@ -745,7 +745,7 @@ def create_game_genre_objects():
 
 	# Réinitialisation de la liste des jeux
 	global listOfGenres
-	listOfGenres=[]
+	listOfGenres={}
 
 	# Extraction des genres de jeux du fichier
 	with open(CONFIG_DIR + '/listOfGenres.json') as f:
