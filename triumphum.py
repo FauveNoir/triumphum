@@ -637,14 +637,6 @@ def canonicalizeDescriptorChain(inputChain, objectSchema):
 				outputChain[aStatementName] = aStatementValue
 	return outputChain
 
-def sanitizeDescriptorChainFromUnexistingStatements(inputChain, objectSchema):
-	# TODO à suprimer peut-être
-	outputChain={}
-	for aStatementName, aStatementValue in inputChain.items():
-		if aStatementName in objectSchema:
-			outputChain[aStatementName] = aStatementValue
-	return outputChain
-
 def interactiveDescriptorIntoDictionnary(newObjectDescriptor, objectSchema, isSplited=False):
 	if not isSplited:
 		outputChain=splitDescriptorIntoList(newObjectDescriptor)
