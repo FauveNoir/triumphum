@@ -1134,7 +1134,7 @@ def create_game_objects():
 
 def isObjectExistInsideListOfObjects(theObject, listOfObjects):
 	for anObject in listOfObjects:
-		if theObject == anObject.code:
+		if theObject["code"] == anObject.code:
 			return True
 	return False
 
@@ -1160,8 +1160,8 @@ def realyAddObjectToDataBase(theObject=None, object_file=None, objectGroupName=N
 def addObjectToDataBase(theObject=None, listOfObjects=None, object_file=None, objectGroupName=None, object_name=None):
 	if isNewObjectCodeAllowed(theObject, listOfObjects) :
 		realyAddObjectToDataBase(theObject=theObject, object_file=object_file, objectGroupName=objectGroupName)
-	elif isNewObjectCodeAllowed(theObject, listOfObjects):
-		print(f"Le code « {code} » éxiste déjà.")
+	elif isObjectExistInsideListOfObjects(theObject, listOfObjects):
+		print(f"Le code « {theObject['code']} » éxiste déjà.")
 	elif code == None:
 		print(f"Veuillez déffinir un code d’entification pour le {object_name}.")
 
