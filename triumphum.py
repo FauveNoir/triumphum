@@ -116,7 +116,7 @@ interfaceBehaviour = parser.add_argument_group('Interface behaviour')
 interfaceBehaviourGroup = interfaceBehaviour.add_mutually_exclusive_group()
 
 interfaceBehaviourGroup.add_argument("--tui", action="store_true", default = True, help = "Run the game selection interface (default).")
-interfaceBehaviourGroup.add_argument("-r", "--run", metavar="game", help = "Run a given game and track playing time.")
+interfaceBehaviourGroup.add_argument("-r", "--run", metavar="GAME", help = "Run a given game and track playing time.")
 
 generalArgument = parser.add_argument_group('General arguments')
 generalArgument.add_argument("-a", "--about", action="store_true", help = "Show about message.")
@@ -130,27 +130,30 @@ generalArgument.add_argument("--list-platforms", action="store_true", help = "Af
 
 configurationFile = parser.add_argument_group('Configuration file')
 configurationFile.add_argument("-c", "--config-file", help = "Select different config file from default one.")
-configurationFile.add_argument("-g", "--games", dest="games_file", metavar="file", help = "Select different game file from default one.")
-configurationFile.add_argument("-p", "--platforms", dest="platforms_file", metavar="file", help = "Select different platform file from default one.")
-configurationFile.add_argument("-l", "--licences", dest="licences_file", metavar="file", help = "Select different licence file from default one.")
-configurationFile.add_argument("-t", "--game-genres", dest="genres_file", metavar="file", help = "Select different game genre file from default one.")
+configurationFile.add_argument("-g", "--games", dest="games_file", metavar="FILE", help = "Select different game file from default one.")
+configurationFile.add_argument("-p", "--platforms", dest="platforms_file", metavar="FILE", help = "Select different platform file from default one.")
+configurationFile.add_argument("-l", "--licences", dest="licences_file", metavar="FILE", help = "Select different licence file from default one.")
+configurationFile.add_argument("-t", "--game-genres", dest="genres_file", metavar="FILE", help = "Select different game genre file from default one.")
+configurationFile.add_argument("--layout", dest="layout", action="store", help = f"Utiliser des raccourcis dactyliques adaptés à la disposition de clavier.")
 
 addingData = parser.add_argument_group('Adding data')
 addingDataGroup = addingData.add_mutually_exclusive_group()
-addingDataGroup.add_argument("--add-game", dest="newGameDescriptor", metavar="game descriptor", nargs='*', help = "Ajouter un nouveau jeu.")
-addingDataGroup.add_argument("--add-licence", dest="newLicenceDescriptor", metavar="licence", nargs='*', help = "Ajouter une nouvelle licence.")
-addingDataGroup.add_argument("--add-genre", dest="newGenreDescriptor", nargs='*', metavar="genre", help = "Ajouter un nouveau genre de jeu.")
-addingDataGroup.add_argument("--add-platform", dest="newPlatformDescriptor", nargs='*', metavar="platform", help = "Ajouter une nouvelle plateforme.")
+addingDataGroup.add_argument("--add-game", dest="newGameDescriptor", metavar="GAME_DESCRIPTOR", nargs='*', help = "Ajouter un nouveau jeu.")
+addingDataGroup.add_argument("--add-licence", dest="newLicenceDescriptor", metavar="LICENCE", nargs='*', help = "Ajouter une nouvelle licence.")
+addingDataGroup.add_argument("--add-genre", dest="newGenreDescriptor", nargs='*', metavar="GENRE", help = "Ajouter un nouveau genre de jeu.")
+addingDataGroup.add_argument("--add-platform", dest="newPlatformDescriptor", nargs='*', metavar="PLATFORM", help = "Ajouter une nouvelle plateforme.")
 
 deletingData = parser.add_argument_group('Deleting data')
 deletingDataGroup = deletingData.add_mutually_exclusive_group()
-deletingDataGroup.add_argument("--del-game", dest="delGame", metavar="game", help = "Suprimer un jeu.")
-deletingDataGroup.add_argument("--del-licence", dest="delLicence", metavar="licence", help = "Suprimer une licence.")
-deletingDataGroup.add_argument("--del-genre", dest="delGenre", metavar="genre", help = "Suprimer un genre de jeu.")
-deletingDataGroup.add_argument("--del-platform", dest="delPlatform", metavar="platform", help = "Suprimer une plateforme.")
+deletingDataGroup.add_argument("--del-game", dest="delGame", metavar="GAME", help = "Suprimer un jeu.")
+deletingDataGroup.add_argument("--del-licence", dest="delLicence", metavar="LICENCE", help = "Suprimer une licence.")
+deletingDataGroup.add_argument("--del-genre", dest="delGenre", metavar="GENRE", help = "Suprimer un genre de jeu.")
+deletingDataGroup.add_argument("--del-platform", dest="delPlatform", metavar="PLATFORM", help = "Suprimer une plateforme.")
 
-layoutArguments = parser.add_argument_group('Layout and keybinding')
-layoutArgumentsGroup = layoutArguments.add_mutually_exclusive_group()
+#layoutArguments = parser.add_argument_group('Layout and keybinding')
+#layoutArgumentsGroup = layoutArguments.add_mutually_exclusive_group()
+
+args = parser.parse_args()
 
 ########################################################################
 # Classe des symbols graphiques
@@ -367,7 +370,7 @@ class Layout:
 		for attributName, value in attributs.items():
 			setattr(self, attributName, value)
 
-		layoutArgumentsGroup.add_argument(f"--{code}", dest="layout", action="store_const", const=self, help = f"Lancer l’interface avec une carte de touches adaptée à la disposition {fancyName}.")
+#		layoutArgumentsGroup.add_argument(f"--{code}", dest="layout", action="store_const", const=self, help = f"Lancer l’interface avec une carte de touches adaptée à la disposition {fancyName}.")
 		listOfLayouts[self.code]=self
 
 	def apply(self):
@@ -455,7 +458,6 @@ Layout(fancyName="QWERTY", code="qwerty",
 # Déploiement du parseur des arguments de la ligne de commande.
 # Il est nécéssaire d’attendre la définition des dispositions de clavier avant de l’éxecuter
 
-args = parser.parse_args()
 
 ########################################################################
 # Classe du shell interne
@@ -1974,9 +1976,10 @@ elif args.donate == True:
 
 elif args.tui == True:
 	if args.layout:
-		print(args.layout.code)
-		print(args.layout.bindGoDown)
-		args.layout.apply()
+		layout=listOfLayouts[args.layout]
+		print(layout.code)
+		print(layout.bindGoDown)
+		layout.apply()
 	printSplash()
 	curses.wrapper(main)
 
