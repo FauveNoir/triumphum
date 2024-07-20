@@ -92,12 +92,12 @@ CONFIG_DIR = appdirs.user_config_dir(APP_CODE_NAME)
 CONFIG_FILE= appdirs.user_config_dir("triumphumrc")
 
 BASE_NAME_GAME_FILE="games.json"
-BASE_NAME_TYPE_FILE="listOfGameTypes.json"
+BASE_NAME_GENRE_FILE="listOfGameGenres.json"
 BASE_NAME_LICENCE_FILE="listOfLicences.json"
 BASE_NAME_PLATFORM_FILE="listOfPlatforms.json"
 
 GAME_FILE=CONFIG_DIR + "/" + BASE_NAME_GAME_FILE
-TYPE_FILE=CONFIG_DIR + "/" + BASE_NAME_TYPE_FILE
+GENRE_FILE=CONFIG_DIR + "/" + BASE_NAME_GENRE_FILE
 LICENCE_FILE=CONFIG_DIR + "/" + BASE_NAME_LICENCE_FILE
 PLATFORM_FILE=CONFIG_DIR + "/" + BASE_NAME_PLATFORM_FILE
 
@@ -121,22 +121,22 @@ generalArgument.add_argument("-d", "--donate", action="store_true", help = "Open
 generalArgument.add_argument("--no-splash", action="store_true", help = "Do not show splash at opening.")
 generalArgument.add_argument("--list-games", action="store_true", help = "Afficher la liste des jeux.")
 generalArgument.add_argument("--list-licences", action="store_true", help = "Afficher la liste des licences.")
-generalArgument.add_argument("--list-types", action="store_true", help = "Afficher la liste des types de jeu.")
-generalArgument.add_argument("--list-platforms", action="store_true", help = "Afficher la liste des types des plateformes.")
+generalArgument.add_argument("--list-genres", action="store_true", help = "Afficher la liste des genres de jeu.")
+generalArgument.add_argument("--list-platforms", action="store_true", help = "Afficher la liste des genres des plateformes.")
 
 configurationFile = parser.add_argument_group('Configuration file')
 configurationFile.add_argument("-c", "--config-file", help = "Select different config file from default one.")
 configurationFile.add_argument("-g", "--games", dest="games_file", metavar="file", help = "Select different game file from default one.")
 configurationFile.add_argument("-p", "--platforms", dest="platforms_file", metavar="file", help = "Select different platform file from default one.")
 configurationFile.add_argument("-l", "--licences", dest="licences_file", metavar="file", help = "Select different licence file from default one.")
-configurationFile.add_argument("-t", "--game-types", dest="types_file", metavar="file", help = "Select different game type file from default one.")
+configurationFile.add_argument("-t", "--game-genres", dest="genres_file", metavar="file", help = "Select different game genre file from default one.")
 
 addingData = parser.add_argument_group('Adding data')
 addingDataGroup = addingData.add_mutually_exclusive_group()
 addingDataGroup.add_argument("--add-game", dest="newGameDescriptor", metavar="game descriptor", nargs='*', help = "Ajouter un nouveau jeu.")
 
 addingDataGroup.add_argument("--add-licence", metavar="licence", help = "Ajouter une nouvelle licence.")
-addingDataGroup.add_argument("--add-type", metavar="type", help = "Ajouter un nouveau type de jeu.")
+addingDataGroup.add_argument("--add-genre", metavar="genre", help = "Ajouter un nouveau genre de jeu.")
 addingDataGroup.add_argument("--add-platform", metavar="platform", help = "Ajouter une nouvelle plateforme.")
 
 layoutArguments = parser.add_argument_group('Layout and keybinding')
@@ -158,7 +158,7 @@ class GraphicalSymbol:
 		self.value=value
 
 		listOfGraphicalSymbols.append(self)
-		globals()[localName] = self # Déclaration de la variable globale pérmétant d’atteindre directement le type voulu
+		globals()[localName] = self # Déclaration de la variable globale pérmétant d’atteindre directement le genre voulu
 
 	def __str__(self):
 		return self.value
@@ -175,7 +175,7 @@ GraphicalSymbol(localName="GENERAL_VOID_SYMBOL", value="-")
 GraphicalSymbol(localName="NAME_VOID_SYMBOL", value=GENERAL_VOID_SYMBOL.value)
 GraphicalSymbol(localName="TITLE_VOID_SYMBOL", value=GENERAL_VOID_SYMBOL.value)
 GraphicalSymbol(localName="LICENCE_VOID_SYMBOL", value=GENERAL_VOID_SYMBOL.value)
-GraphicalSymbol(localName="TYPE_VOID_SYMBOL", value=GENERAL_VOID_SYMBOL.value)
+GraphicalSymbol(localName="GENRE_VOID_SYMBOL", value=GENERAL_VOID_SYMBOL.value)
 GraphicalSymbol(localName="DATE_VOID_SYMBOL", value=GENERAL_VOID_SYMBOL.value)
 GraphicalSymbol(localName="LASTOPENING_VOID_SYMBOL", value=GENERAL_VOID_SYMBOL.value)
 GraphicalSymbol(localName="CUMULATEDTIME_VOID_SYMBOL", value="0")
@@ -256,11 +256,11 @@ class Binding:
 			self.configFileName = self.code
 		else:
 			self.configFileName = configFileName
-		globals()[code] = self # Déclaration de la variable globale pérmétant d’atteindre directement le type voulu
+		globals()[code] = self # Déclaration de la variable globale pérmétant d’atteindre directement le genre voulu
 		if instructions:
 			setattr(self, 'executeInstructions', instructions)
 
-		listOfBindings.append(self) # Adjonction à la liste des types de jeux
+		listOfBindings.append(self) # Adjonction à la liste des genres de jeux
 	def setKey(self, key):
 		self.key = transform_key_to_character(key)
 
@@ -282,10 +282,10 @@ def bindSortByLicenceFunction():
 	THE_VISUAL_LIST_OF_GAMES.sortBy("licence")
 	setBottomBarContent(f"Tri par permissivité des licences.")
 
-def bindSortByTypeFunction():
+def bindSortByGenreFunction():
 	global THE_VISUAL_LIST_OF_GAMES
-	THE_VISUAL_LIST_OF_GAMES.sortBy("type_")
-	setBottomBarContent(f"Tri par type de jeu.")
+	THE_VISUAL_LIST_OF_GAMES.sortBy("genre")
+	setBottomBarContent(f"Tri par genre de jeu.")
 
 def bindSortByDateFunction():
 	global THE_VISUAL_LIST_OF_GAMES
@@ -372,7 +372,7 @@ Layout(fancyName="BÉPO", code="bepo",
 	bindRunGame="\n",
 	bindSortByName="b",
 	bindSortByLicence="é",
-	bindSortByType="p",
+	bindSortByGenre="p",
 	bindSortByDate="o",
 	bindSortByLastOpening="è",
 	bindSortByPlayingDuration="v",
@@ -396,7 +396,7 @@ Layout(fancyName="AZERTY", code="azerty",
 	bindRunGame="\n",
 	bindSortByName="a",
 	bindSortByLicence="z",
-	bindSortByType="e",
+	bindSortByGenre="e",
 	bindSortByDate="r",
 	bindSortByLastOpening="t",
 	bindSortByPlayingDuration="y",
@@ -420,7 +420,7 @@ Layout(fancyName="QWERTY", code="qwerty",
 	bindRunGame="\n",
 	bindSortByName="q",
 	bindSortByLicence="w",
-	bindSortByType="e",
+	bindSortByGenre="e",
 	bindSortByDate="r",
 	bindSortByLastOpening="t",
 	bindSortByPlayingDuration="y",
@@ -564,7 +564,7 @@ class promptStatement:
 ADD_GAME_STATEMENTS={
 	"name": promptStatement(name="name", patern=".*", isNecessary=True, isLabelNecessary=False),
 	"code": promptStatement(name="code", patern="[a-z0-9]*", isNecessary=True),
-	"type": promptStatement(name="type", patern="[a-z0-9]*"),
+	"genre": promptStatement(name="genre", patern="[a-z0-9]*"),
 	"licence": promptStatement(name="licence", patern="[a-z0-9]*"),
 	"command": promptStatement(name="command", patern='.*'),
 	"url": promptStatement(name="url", patern="\S+"),
@@ -651,7 +651,7 @@ class Platform:
 		self.code = code
 		self.abbr = abbr
 		self.includeInSorting = includeInSorting
-		globals()[code] = self # Déclaration de la variable globale pérmétant d’atteindre directement le type voulu
+		globals()[code] = self # Déclaration de la variable globale pérmétant d’atteindre directement le genre voulu
 	def __eq__(self, other):
 		if isinstance(other, Platform):
 			return self.abbr == other.abbr
@@ -690,7 +690,7 @@ def get_platform_object_after_code(code):
 	return unknownplatform
 
 ########################################################################
-# Classe des types de jeux
+# Classe des genres de jeux
 ########################################################################
 
 def formatDataListToLitteralList(list_, voidSymbol):
@@ -709,16 +709,16 @@ def formatDataListToLitteralList(list_, voidSymbol):
 		return f"{elements}, et {list_[-1]}"
 
 # Défffinition de classe
-listOfGameTypes=[]
-class GameType:
+listOfGameGenres=[]
+class GameGenre:
 	def __init__(self, name=None, code=None, abbr=None, includeInSorting=True):
 		self.name = name
 		self.code = code
 		self.abbr = abbr
 		self.includeInSorting = includeInSorting
 
-		listOfGameTypes.append(self) # Adjonction à la liste des types de jeux
-		globals()[code] = self # Déclaration de la variable globale pérmétant d’atteindre directement le type voulu
+		listOfGameGenres.append(self) # Adjonction à la liste des genres de jeux
+		globals()[code] = self # Déclaration de la variable globale pérmétant d’atteindre directement le genre voulu
 
 		def shortName(self):
 			# Recherche d’un nom abbrégé
@@ -727,45 +727,45 @@ class GameType:
 			return self.name
 
 	def __eq__(self, other):
-		if isinstance(other, GameType):
+		if isinstance(other, GameGenre):
 			return self.abbr == other.abbr
 		return NotImplemented
 
 	def __lt__(self, other):
-		if isinstance(other, GameType):
+		if isinstance(other, GameGenre):
 			return self.abbr <  other.abbr
 		return NotImplemented
 
 	def __gt__(self, other):
-		if isinstance(other, GameType):
+		if isinstance(other, GameGenre):
 			return self.abbr > other.abbr
 		return NotImplemented
 
-def create_game_type_objects():
-	# Extraction des types de jeux
+def create_game_genre_objects():
+	# Extraction des genres de jeux
 
 	# Réinitialisation de la liste des jeux
-	global listOfGameTypes
-	listOfGameTypes=[]
+	global listOfGameGenres
+	listOfGameGenres=[]
 
-	# Extraction des types de jeux du fichier
-	with open(CONFIG_DIR + '/listOfGameTypes.json') as f:
-		listOfGameTypesData = json.load(f)["gameTypes"]
+	# Extraction des genres de jeux du fichier
+	with open(CONFIG_DIR + '/listOfGameGenres.json') as f:
+		listOfGameGenresData = json.load(f)["gameGenres"]
 
-	# Déploiment des objet de type de jeux
-	for aGameType in listOfGameTypesData:
-		GameType(
-			name=aGameType.get("name"),
-			code=aGameType.get("code"),
-			abbr=aGameType.get("abbr")
+	# Déploiment des objet de genre de jeux
+	for aGameGenre in listOfGameGenresData:
+		GameGenre(
+			name=aGameGenre.get("name"),
+			code=aGameGenre.get("code"),
+			abbr=aGameGenre.get("abbr")
 		)
 
-GameType(name="Type inconu", abbr=TYPE_VOID_SYMBOL.value, code="unknowntype", includeInSorting=False)
+GameGenre(name="Genre inconu", abbr=GENRE_VOID_SYMBOL.value, code="unknowngenre", includeInSorting=False)
 
-def get_type_object_after_code(code):
+def get_genre_object_after_code(code):
 	if code in globals():
 		return globals()[code]
-	return unknowntype
+	return unknowngenre
 
 ########################################################################
 # AUtres classes de la console interactive
@@ -792,7 +792,7 @@ class Licence:
 		self.includeInSorting = includeInSorting
 
 		listOfLicences.append(self) # Adjonction à la liste des licences
-		globals()[code] = self # Déclaration de la variable globale pérmétant d’atteindre directement le type voulu
+		globals()[code] = self # Déclaration de la variable globale pérmétant d’atteindre directement le genre voulu
 
 	# Blocs de comparaisons permétant de trier les licences entre elles de la plus libre à la moins libre
 	def __eq__(self, other):
@@ -1000,13 +1000,13 @@ def retrive_history_of_a_game(game):
 # Défffinition de classe
 listOfGames=[]
 class Game:
-	def __init__(self, name=None, code=None, licence=None, url=None, year=None, type_=None, authors=None, studios=[], command=None, comments=None, platform=None):
+	def __init__(self, name=None, code=None, licence=None, url=None, year=None, genre=None, authors=None, studios=[], command=None, comments=None, platform=None):
 		self.name = name
 		self.code = code
 		self.licence = licence
 		self.url = url
 		self.year = year
-		self.type_ = type_
+		self.genre = genre
 		self.authors = authors
 		self.studios = studios
 		self.command = command
@@ -1026,7 +1026,7 @@ class Game:
 			self.platform.abbr or PLATFORM_VOID_SYMBOL.value,
 			self.name or NAME_VOID_SYMBOL.value,
 			self.licence.abbr or LICENCE_VOID_SYMBOL.value,
-			self.type_.abbr or TYPE_VOID_SYMBOL.value,
+			self.genre.abbr or GENRE_VOID_SYMBOL.value,
 			self.year or DATE_VOID_SYMBOL.value,
 			self.human_latest_opening_duration() or LASTOPENING_VOID_SYMBOL.value,
 			self.human_cumulate_time() or CUMULATEDTIME_VOID_SYMBOL.value,
@@ -1043,7 +1043,7 @@ class Game:
 			["code", self.code],
 			["Licence", self.licence.name],
 			["URL", self.url],
-			["Type", self.type_.name],
+			["Genre", self.genre.name],
 			["Auteur", self.listOfAuthors()],
 			["Commande", self.command],
 			["Dernière ouverture", self.latest_opening_date()],
@@ -1116,7 +1116,7 @@ def create_game_objects():
 			licence=get_licence_object_after_code(aGame.get("licence")),
 			url=aGame.get("url"),
 			year=aGame.get("year"),
-			type_=get_type_object_after_code(aGame.get("type")),
+			genre=get_genre_object_after_code(aGame.get("genre")),
 			command=aGame.get("command"),
 			authors=aGame.get("authors"),
 			studios=aGame.get("studios"),
@@ -1127,13 +1127,9 @@ def create_game_objects():
 # Éidition des bases de données 
 ########################################################################
 
-# Création #################################################################
+# Fonctions primitives #################################################################
 
-#
-# Fonctions primitives
-#
-
-def isObjectExistInsideListOfObjects(givenObject, listOfObjects)
+def isObjectExistInsideListOfObjects(givenObject, listOfObjects):
 	for anObject in listOfObjects:
 		if givenObject == anObject.code:
 			return True
@@ -1144,6 +1140,32 @@ def isNewObjectCodeAllowed(givenObject, listOfObjects):
 		return True
 	return False
 
+def realyAddObjectToDataBase(parametters=None, object_file=None, object_name=None):
+	theObject={
+		"name": name,
+		"licence": licence,
+		"year": year,
+		"genre": genre,
+		"command": command,
+		"code": code,
+		"url": url,
+		"platform": platform,
+		"studios": studios,
+		"authors": authors,
+		"shortDesc": shortDesc
+	}
+
+	# Charger le contenu JSON depuis le fichier
+	with open(object_file, 'r') as jsonFile:
+		jsonContent = json.load(jsonFile)
+
+	jsonContent[object_name].append(theObject)
+
+	# Réécrire le fichier JSON avec le contenu mis à jour
+	with open(object_file, 'w') as jsonFile:
+		json.dump(jsonContent, jsonFile, indent="\t")
+
+# Fonctions dérrivées #################################################################
 #
 # Jeux
 #
@@ -1160,12 +1182,12 @@ def isNewGameCodeAllowded(gameCode):
 		return True
 	return False
 
-def realyAddGameToDataBase(name=None, licence=None, year=None, type_=None, command=None, code=None, url=None, platform=None, studios=None, authors=None, shortDesc=None):
+def realyAddGameToDataBase(name=None, licence=None, year=None, genre=None, command=None, code=None, url=None, platform=None, studios=None, authors=None, shortDesc=None):
 	gameObject={
 		"name": name,
 		"licence": licence,
 		"year": year,
-		"type": type_,
+		"genre": genre,
 		"command": command,
 		"code": code,
 		"url": url,
@@ -1185,9 +1207,9 @@ def realyAddGameToDataBase(name=None, licence=None, year=None, type_=None, comma
 	with open(GAME_FILE, 'w') as jsonFile:
 		json.dump(jsonContent, jsonFile, indent="\t")
 
-def addGameToDataBase(name=None, licence=None, year=None, type_=None, command=None, code=None, url=None, platform=None, studios=None, authors=None, shortDesc=None):
+def addGameToDataBase(name=None, licence=None, year=None, genre=None, command=None, code=None, url=None, platform=None, studios=None, authors=None, shortDesc=None):
 	if isNewGameCodeAllowded(code) :
-		realyAddGameToDataBase(name, licence, year, type_, command, code, url, platform, studios, authors, shortDesc)
+		realyAddGameToDataBase(name, licence, year, genre, command, code, url, platform, studios, authors, shortDesc)
 	elif isGameCodeExist(code):
 		print(f"Le code « {code} » éxiste déjà.")
 	elif code == None:
@@ -1200,7 +1222,7 @@ def addGameToDataBase(name=None, licence=None, year=None, type_=None, command=No
 # TODO
 
 #
-# Type
+# Genre
 #
 
 # TODO
@@ -1254,8 +1276,8 @@ class VisuaColumn:
 def retrive_datas():
 	# Déploiement des objets de plateforme
 	create_platform_objects()
-	# Déploiement des objets de types de jeux
-	create_game_type_objects()
+	# Déploiement des objets de genres de jeux
+	create_game_genre_objects()
 	# Déploiement des objets de licence
 	create_licence_objects()
 	# Déploiement des objets de jeux
@@ -1303,7 +1325,7 @@ HIDED_DATA_COLUMN=9
 class VisualListOfGames:
 	def __init__(self):
 		self.columns=None
-		self.titles = [" ", "Titre", "Licence", "Type", "Date", "Dernière ouverture", "Temps cumulé", "Auteur", "Studio"]
+		self.titles = [" ", "Titre", "Licence", "Genre", "Date", "Dernière ouverture", "Temps cumulé", "Auteur", "Studio"]
 		self.list=None
 		self.sortByProperty=None
 		self.sortingState=SORTING_ORDER[1]
@@ -1474,8 +1496,8 @@ def sort_by_license(items):
 	items_sorted_by_licence_name=sorted(items, key=lambda x: x[7].licence.name)
 	return sorted(items_sorted_by_licence_name, key=lambda x: x[7].licence)
 
-# Fonction pour trier les jeux par type
-def sort_by_type(items):
+# Fonction pour trier les jeux par genre
+def sort_by_genre(items):
 	return sorted(items, key=lambda x: x[2].lower())
 
 # Fonction pour trier les jeux par date
@@ -1595,7 +1617,7 @@ def showHelpScreen():
 ########################################################################
 
 # Titres des colonnes
-titles = [" ", "Titre", "Licence", "Type", "Date", "Dernière ouverture", "Temps cumulé", "Auteur", "Studio"]
+titles = [" ", "Titre", "Licence", "Genre", "Date", "Dernière ouverture", "Temps cumulé", "Auteur", "Studio"]
 
 SORTING_COLUMN=0
 
@@ -1733,7 +1755,7 @@ def drawBothBars(stdscr):
 	draw_bottom_right(stdscr, THE_VISUAL_LIST_OF_GAMES)
 
 def drawListOfGames(stdscr):
-	#setBottomBarContent("Don:x  Quitter:q  Tri par nom:b  Par date:o  Par licence:é  Par type:p Par date:o  Par durée de jeu:!") # TODO rendre automatique
+	#setBottomBarContent("Don:x  Quitter:q  Tri par nom:b  Par date:o  Par licence:é  Par genre:p Par date:o  Par durée de jeu:!") # TODO rendre automatique
 	makeItemsList() # TODO : déglobaliser
 	THE_VISUAL_LIST_OF_GAMES.refresh()
 	# Calcul de la largeur des colones
@@ -1785,7 +1807,7 @@ def internalShellLayoutFunction(shellInput):
 	else:
 		setBottomBarContent(f"Disposition « {askedLayout} » inconue")
 
-InternalShellCommand(code="addNewGame", patern=addNewGamepatern, description="Ajouter un nouveau jeu à la base de donnée", synopsis=":n :new :newgame <Game name>, <code>, <type>, <licence>", instructions=addNewGameAfterInterativeDescriptor)
+InternalShellCommand(code="addNewGame", patern=addNewGamepatern, description="Ajouter un nouveau jeu à la base de donnée", synopsis=":n :new :newgame <Game name>, <code>, <genre>, <licence>", instructions=addNewGameAfterInterativeDescriptor)
 InternalShellCommand(code="about", patern='(a|about)', description="À propos", synopsis=":a :about", instructions=internalShelldrawAboutScreen)
 
 InternalShellCommand(code="donate", patern='(d|don|donate)', description="Faire un don", synopsis=":d :don :donate", instructions=internalShellbindMakeDonationFunction)
@@ -1807,7 +1829,7 @@ Binding(key="\n", code="bindRunGame", description="Lancer le jeu", instructions=
 
 Binding(key="b", code="bindSortByName", description="Trier par nom", instructions=bindSortByNameFunction, configFileName="bind_sort_title")
 Binding(key="é", code="bindSortByLicence", description="Trire par licence", instructions=bindSortByLicenceFunction, configFileName="bind_sort_licence")
-Binding(key="p", code="bindSortByType", description="Trier par type", instructions=bindSortByTypeFunction, configFileName="bind_sort_game_type")
+Binding(key="p", code="bindSortByGenre", description="Trier par genre", instructions=bindSortByGenreFunction, configFileName="bind_sort_game_genre")
 Binding(key="o", code="bindSortByDate", description="Trier par date", instructions=bindSortByDateFunction, configFileName="bind_sort_year")
 Binding(key="è", code="bindSortByLastOpening", description="Trier par date de dernière ouverture", instructions=bindSortByLastOpeningFunction, configFileName="bind_sort_last_opening")
 
@@ -1908,8 +1930,8 @@ applyFileConfigurationsGraphicalSymbols()
 # Fichiers de configuration
 if args.games_file:
 	GAME_FILE=args.games_file
-if args.types_file:
-	TYPE_FILE=args.types_file
+if args.genres_file:
+	GENRE_FILE=args.genres_file
 if args.licences_file:
 	LICENCE_FILE=args.licences_file
 if args.platforms_file:
@@ -1918,7 +1940,7 @@ if args.platforms_file:
 if  args.verbose == True:
 	print(f"Fichier de configuration principal : {CONFIG_FILE}")
 	print(f"Fichier des jeux : {GAME_FILE}")
-	print(f"Fichier des types de jeux : {TYPE_FILE}")
+	print(f"Fichier des genres de jeux : {GENRE_FILE}")
 	print(f"Fichier des licences : {LICENCE_FILE}")
 	print(f"Fichier des plateformes : {PLATFORM_FILE}")
 
