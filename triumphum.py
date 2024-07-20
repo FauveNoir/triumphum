@@ -139,6 +139,12 @@ class ConfigurationFile:
 			if ask_yes_no_question(f"Créer le fichier « {self.fullPath()} » ?"):
 				self.createMinimalFile()
 
+	def setNew(self):
+		pass
+
+	def __str__(self):
+		return self.fullPath(self)
+
 def ask_yes_no_question(question):
 	while True:
 		user_input = input(f"{question} (Y/n): ").strip().lower()
@@ -149,12 +155,12 @@ def ask_yes_no_question(question):
 		else:
 			print("Veuillez répondre par 'Y' ou 'n'.")
 
-
 ConfigurationFile(code="CONFIG_GAME_FILE",     minimalContent="""{"games":[]}""",      baseName="games.json")
 ConfigurationFile(code="CONFIG_GENRE_FILE",    minimalContent="""{"genres":[]}""",     baseName="listOfGenres.json")
 ConfigurationFile(code="CONFIG_LICENCE_FILE",  minimalContent="""{"licences":[]}""",   baseName="listOfLicences.json")
 ConfigurationFile(code="CONFIG_PLATFORM_FILE", minimalContent="""{"platforms":[]}""",  baseName="listOfPlatforms.json")
 ConfigurationFile(code="CONFIG_HISTORY_FILE",  minimalContent="""{"history":[]}""",    baseName="history.json")
+ConfigurationFile(code="CONFIG_GENERAL_FILE",  minimalContent="",    baseName="triumphumrc", path=appdirs.user_config_dir())
 
 def verifyConfigFileExistence():
 	for aFile in listOfConfigurationFile:
@@ -1864,16 +1870,10 @@ Saissez :h ou consultez man triphum
 			stdscr.addstr(THE_VISUAL_LIST_OF_GAMES.visualHighlightedLineNumber(screenHeight) + 2, sum(col_widths[:column_number]) + column_number * 2, str(column), curses.color_pair(2) | curses.A_BOLD)
 
 ########################################################################
-# Commands for internal
-########################################################################
-
-########################################################################
 # Internal shell
 ########################################################################
 
 addNewGamepatern='(n|new|newgame)\s+.*'
-
-
 
 def internalShelldrawAboutScreen(shellInput):
 	drawAboutScreen()
@@ -1882,6 +1882,7 @@ def internalShellbindMakeDonationFunction(shellInput):
 	bindMakeDonationFunction()
 
 def internalShellLayoutFunction(shellInput):
+	# TODO utiliser la fonction factorisée
 	matchedInput=re.match("(l|layout)\s+(?P<relevant>[a-z]+)", shellInput)
 	askedLayout=matchedInput.group("relevant")
 	writeInTmp('"' + askedLayout + '"' )
