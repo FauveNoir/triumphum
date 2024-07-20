@@ -644,14 +644,15 @@ def addNewGameAfterInterativeDescriptor(newGameDescriptor, isSplited=False):
 ########################################################################
 
 # défffinition de classe
-listofPlatforms=[]
+listofPlatforms={}
 class Platform:
 	def __init__(self, name=None, code=None, abbr=None, includeInSorting=True):
 		self.name = name
 		self.code = code
 		self.abbr = abbr
 		self.includeInSorting = includeInSorting
-		globals()[code] = self # Déclaration de la variable globale pérmétant d’atteindre directement le genre voulu
+
+		listofPlatforms[self.code]=self
 	def __eq__(self, other):
 		if isinstance(other, Platform):
 			return self.abbr == other.abbr
@@ -682,11 +683,11 @@ def create_platform_objects():
 			abbr=aPlatform.get("abbr")
 		)
 
-Platform(name="Plateforme inconue", code="unknownplatform", abbr="", includeInSorting=False)
+unknownplatform=Platform(name="Plateforme inconue", code="unknownplatform", abbr="", includeInSorting=False)
 
 def get_platform_object_after_code(code):
-	if code in globals():
-		return globals()[code]
+	if code in listofPlatforms:
+		return listofPlatforms[code]
 	return unknownplatform
 
 ########################################################################
