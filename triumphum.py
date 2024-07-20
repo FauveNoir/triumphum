@@ -20,6 +20,7 @@ import shlex
 from Xlib import XK
 from Xlib.display import Display
 import curses.textpad
+import os
 
 ########################################################################
 # fonctions de test
@@ -123,13 +124,20 @@ class ConfigurationFile:
 		return self.path + "/" + self.baseName
 
 	def isExisting(self):
-		pass
+		return os.path.exists(self.fullPath())
 
 	def createMinimalFile(self):
-		pass
+		try:
+			with open(self.fullPath(), 'w') as f:
+				f.write(self.minimalContent)
+			print(f"Le fichier « {self.fullPath()} » a été créé avec succès.")
+		except IOError:
+			print(f"Erreur : Impossible de créer le fichier « {file_path} ».")
 
 	def testAndAskToCreateIfNone(self):
-		pass
+		if not self.isExisting():
+			if ask_yes_no_question(f"Créer le fichier « {self.fullPath()} » ?"):
+				self.createMinimalFile()
 
 def ask_yes_no_question(question):
 	while True:
@@ -148,9 +156,11 @@ ConfigurationFile(code="CONFIG_LICENCE_FILE",  minimalContent="""{"licences":[]}
 ConfigurationFile(code="CONFIG_PLATFORM_FILE", minimalContent="""{"platforms":[]}""",  baseName="listOfPlatforms.json")
 ConfigurationFile(code="CONFIG_HISTORY_FILE",  minimalContent="""{"history":[]}""",    baseName="history.json")
 
+def verifyConfigFileExistence():
+	for aFile in listOfConfigurationFile:
+		listOfConfigurationFile[aFile].testAndAskToCreateIfNone()
 
-def testIfDirectoryExist(directoryPath):
-	pass
+verifyConfigFileExistence()
 
 ########################################################################
 # Options de la ligne de commande
