@@ -116,6 +116,7 @@ interfaceBehaviourGroup.add_argument("-r", "--run", metavar="game", help = "Run 
 
 generalArgument = parser.add_argument_group('General arguments')
 generalArgument.add_argument("-a", "--about", action="store_true", help = "Show about message.")
+generalArgument.add_argument("-v", "--verbose", action="store_true", help = "Show debug inromations.")
 generalArgument.add_argument("-d", "--donate", action="store_true", help = "Open link to give a tip.")
 generalArgument.add_argument("--no-splash", action="store_true", help = "Do not show splash at opening.")
 generalArgument.add_argument("--list-games", action="store_true", help = "Afficher la liste des jeux.")
@@ -530,7 +531,7 @@ def applyFileConfigurationsGraphicalSymbols():
 			aConfigiGrahpicalSymbol.value=config.get("General", aConfigiGrahpicalSymbol.fileConfigName)
 
 ########################################################################
-# Fonctions des options de la ligne de commande bis
+# Fonctions des options de la ligne de commande (nouveau)
 ########################################################################
 
 class promptStatement:
@@ -561,8 +562,8 @@ ADD_GAME_STATEMENTS2={
 	"licence": promptStatement(name="licence", patern="[a-z0-9]*"),
 	"command": promptStatement(name="command", patern='.*'),
 	"url": promptStatement(name="url", patern="\S+"),
-	"studios": promptStatement(name="studios", patern=".*"),
-	"authors": promptStatement(name="authors", patern=".*"),
+	"studios": promptStatement(name="studios", patern=".*", multipleValues=True),
+	"authors": promptStatement(name="authors", patern=".*", multipleValues=True),
 	"shortDesc":promptStatement(name="shortDesc", patern=".*"),
 }
 
@@ -574,7 +575,9 @@ ADD_TYPE_STATEMENTS={
 
 
 def splitDescriptorIntoList(inputChain):
+	writeInTmp(inputChain)
 	objectDescriptorList=shlex.split(inputChain)
+	writeInTmp(objectDescriptorList)
 	return objectDescriptorList
 
 def sanitizeDescriptorListFromKeysWithoutValues(inputChain):
@@ -596,72 +599,48 @@ def descriptorIntoDict(inputChain):
 
 	return dictConfig
 
+def canonicalizeDescriptorChain(inputChain, objectSchema):
+	outputChain={}
+	for aStatementName, aStatementValue in inputChain.items():
+		if aStatementName in objectSchema:
+			if objectSchema[aStatementName].multipleValues:
+				outputChain[aStatementName] = aStatementValue.split(",")
+			else:
+				outputChain[aStatementName] = aStatementValue
+	return outputChain
+
 def sanitizeDescriptorChainFromUnexistingStatements(inputChain, objectSchema):
+	# TODO à suprimer peut-être
 	outputChain={}
 	for aStatementName, aStatementValue in inputChain.items():
 		if aStatementName in objectSchema:
 			outputChain[aStatementName] = aStatementValue
 	return outputChain
 
-def interactiveDescriptorIntoDictionnary(newObjectDescriptor, objectSchema):
-	outputChain=splitDescriptorIntoList(newObjectDescriptor)
+
+#
+# Ajouter un jeu
+#
+
+def interactiveDescriptorIntoDictionnary(newObjectDescriptor, objectSchema, isSplited=False):
+	if not isSplited:
+		outputChain=splitDescriptorIntoList(newObjectDescriptor)
+	else:
+		outputChain=newObjectDescriptor
 	outputChain, wrongStatements=sanitizeDescriptorListFromKeysWithoutValues(outputChain)
 	outputChain=descriptorIntoDict(outputChain)
-	outputChain=sanitizeDescriptorChainFromUnexistingStatements(outputChain, objectSchema)
+	outputChain=canonicalizeDescriptorChain(outputChain, objectSchema)
 	return outputChain
 
-def addNewGameAfterInterativeDescriptor(newGameDescriptor):
-	dictionnaryDescriptor=interactiveDescriptorIntoDictionnary(newGameDescriptor, ADD_GAME_STATEMENTS2)
+def addNewGameAfterInterativeDescriptor(newGameDescriptor, isSplited=False):
+	dictionnaryDescriptor=interactiveDescriptorIntoDictionnary(newGameDescriptor, ADD_GAME_STATEMENTS2, isSplited)
+	print(dictionnaryDescriptor)
 	addGameToDataBase(**dictionnaryDescriptor)
 
 ########################################################################
-# Fonctions des options de la ligne de commande
+# Fonctions des options de la ligne de commande (Ancien)
 ########################################################################
 
-def multipleStatementCommandProcess(inputObjectDescriptor, objectStatementsModel):
-	validStatements=[]
-	for anInputStatement in inputObjectDescriptor:
-		for aStatement in objectStatementsModel:
-			match = re.match(aStatement["patern"], anInputStatement)
-			if match:
-				if aStatement["name"] in ["authors", "studios"]:
-					value=match.group("relevant").split(',')
-				else:
-					value=match.group("relevant")
-				validStatements.append({"name": aStatement["name"], "value": value})
-
-	return validStatements
-
-def prepareParamsForAddingObjectAfterInteractiveDescriptor(newGameDescriptor, elementStatement):
-	validStatements=multipleStatementCommandProcess(newGameDescriptor, elementStatement)
-	params = {item['name']: item['value'] for item in validStatements}
-	return params
-
-########################################################
-
-# Nouveau jeu
-
-# --add-game "0 A. D." --code=0ad  --licence=gpl  --type=rts --command="0ad --run" --url="http://0ad.com" --studios="WRT,Wirefield" --autors="Sid Meyers,machin"
-
-ADD_GAME_STATEMENTS={
-	"name":'name=(?P<relevant>(?:"[^"]*"|\'[^\']*\'|[^"\']*))',
-	"code":'code=(?P<relevant>[a-z0-9]*)',
-	"type_":'type=(?P<relevant>[a-z0-9]*)',
-	"licence":'licence=(?P<relevant>[a-z0-9]*)',
-	"command":'command=(?P<relevant>(?:"[^"]*"|\'[^\']*\'|[^"\']*))',
-	"url":'url=(?P<relevant>\S+)',
-	"studios":'studios=(?P<relevant>.*)',
-	"authors":'authors=(?P<relevant>.*)',
-	"shortDesc":'shortdesc=(?P<relevant>.*)',
-}
-
-
-
-def addNewGameAfterInteractiveDescriptor(newGameDescriptor):
-	params=prepareParamsForAddingObjectAfterInteractiveDescriptor(newGameDescriptor, ADD_GAME_STATEMENTS)
-	addGameToDataBase(**params)
-
-########################################################################
 
 # Ajout de type
 
@@ -681,10 +660,6 @@ ADD_TYPE_STATEMENTS=[
 		"patern":'type=(?P<relevant>[a-z0-9]*)'
 	}
 ]
-
-def addNewTypeAfterInteractiveDescriptor(newTypeDescriptor):
-	params=prepareParamsForAddingObjectAfterInteractiveDescriptor(newTypeDescriptor, ADD_TYPE_STATEMENTS)
-	addTypeToDataBase(**params)
 
 ########################################################################
 # classe des plateformes
@@ -1415,6 +1390,7 @@ class VisualListOfGames:
 			if self.selected_row == self.firstRowOnVisibleList +1 and self.selected_row > 1 :
 				self.firstRowOnVisibleList-=1
 
+
 		visibleList=self.getNthNLines(self.firstRowOnVisibleList, screenHeight-3) # TODO remplacer le 2 par une variable
 
 
@@ -1847,16 +1823,6 @@ def drawListOfGames(stdscr):
 addNewGamepatern='(n|new|newgame)\s+.*'
 
 
-def internalShellAddNewGameFunction(shellInput):
-#	ListOfInternalShellCommand["addNewGame"]
-	splitedShellInput=shlex.split(shellInput)
-	match = re.match(ListOfInternalShellCommand["addNewGame"].patern, shellInput)
-	name=match.group("name")
-	code=match.group("code")
-	type_=match.group("type")
-	licence=match.group("licence")
-
-	addGameToDataBase(name=name, code=code, licence=licence, type_=type_)
 
 def internalShelldrawAboutScreen(shellInput):
 	drawAboutScreen()
@@ -1997,9 +1963,6 @@ if args.config_file != None:
 applyFileConfigurationsBindings()
 applyFileConfigurationsGraphicalSymbols()
 
-
-
-
 # Fichiers de configuration
 if args.games_file:
 	GAME_FILE=args.games_file
@@ -2010,19 +1973,19 @@ if args.licences_file:
 if args.platforms_file:
 	PLATFORM_FILE=args.platforms_file
 
-# Configuration
-if args.newGameDescriptor :
-	print(args.newGameDescriptor)
-	addNewGameAfterInteractiveDescriptor(args.newGameDescriptor)
-
-elif  args.about != True:
+if  args.verbose == True:
 	print(f"Fichier de configuration principal : {CONFIG_FILE}")
 	print(f"Fichier des jeux : {GAME_FILE}")
 	print(f"Fichier des types de jeux : {TYPE_FILE}")
 	print(f"Fichier des licences : {LICENCE_FILE}")
 	print(f"Fichier des plateformes : {PLATFORM_FILE}")
 
-if args.run not in [None, False]:
+# Configuration
+if args.newGameDescriptor :
+	addNewGameAfterInterativeDescriptor(args.newGameDescriptor, True)
+	sys.exit()
+
+elif args.run not in [None, False]:
 	theGame=getGameObjectByItCodeName(args.run)
 	if theGame != None:
 		print(f"Ouverture de « {theGame.name} »")
