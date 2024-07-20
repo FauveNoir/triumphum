@@ -580,7 +580,22 @@ ADD_GAME_STATEMENTS={
 ADD_GENRE_STATEMENTS={
 	"name": promptStatement(name="name", patern=".*", isNecessary=True, isLabelNecessary=False),
 	"code": promptStatement(name="code", patern="[a-z0-9]*", isNecessary=True),
-	"abbr": promptStatement(name="genre", patern="[a-z0-9]*"),
+	"abbr": promptStatement(name="abbr", patern="[a-z0-9]*"),
+}
+
+ADD_PLATFORM_STATEMENTS={
+	"name": promptStatement(name="name", patern=".*", isNecessary=True, isLabelNecessary=False),
+	"code": promptStatement(name="code", patern="[a-z0-9]*", isNecessary=True),
+	"abbr": promptStatement(name="abbr", patern="[a-z0-9]*"),
+}
+
+ADD_LICENCE_STATEMENTS={
+	"name": promptStatement(name="name", patern=".*", isNecessary=True, isLabelNecessary=False),
+	"code": promptStatement(name="code", patern="[a-z0-9]*", isNecessary=True),
+	"abbr": promptStatement(name="abbr", patern="[a-z0-9]*"),
+	"url": promptStatement(name="url", patern="\S+"),
+	"freedomCoefficient": promptStatement(name="freedomCoefficient", patern="(0(\.\d*)?|1(\.0*)?|\.\d+)"),
+	"shortDesc":promptStatement(name="shortDesc", patern=".*"),
 }
 
 #
@@ -651,6 +666,14 @@ def addNewGameAfterInterativeDescriptor(newGameDescriptor, isSplited=False):
 def addNewGenreAfterInterativeDescriptor(newGenreDescriptor, isSplited=False):
 	dictionnaryDescriptor=interactiveDescriptorIntoDictionnary(newGenreDescriptor, ADD_GENRE_STATEMENTS, isSplited)
 	addGenreToDataBase(dictionnaryDescriptor)
+
+def addNewLicenceAfterInterativeDescriptor(newLicenceDescriptor, isSplited=False):
+	dictionnaryDescriptor=interactiveDescriptorIntoDictionnary(newLicenceDescriptor, ADD_LICENCE_STATEMENTS, isSplited)
+	addLicenceToDataBase(dictionnaryDescriptor)
+
+def addNewPlatformAfterInterativeDescriptor(newPlatformDescriptor, isSplited=False):
+	dictionnaryDescriptor=interactiveDescriptorIntoDictionnary(newPlatformDescriptor, ADD_PLATFORM_STATEMENTS, isSplited)
+	addPlatformToDataBase(dictionnaryDescriptor)
 
 ########################################################################
 # classe des plateformes
@@ -1897,6 +1920,10 @@ if args.newGameDescriptor :
 	addNewGameAfterInterativeDescriptor(args.newGameDescriptor, True)
 elif args.newGenreDescriptor :
 	addNewGenreAfterInterativeDescriptor(args.newGenreDescriptor, True)
+elif args.newLicenceDescriptor :
+	addNewLicenceAfterInterativeDescriptor(args.newLicenceDescriptor, True)
+elif args.newPlatformDescriptor :
+	addNewPlatformAfterInterativeDescriptor(args.newPlatformDescriptor, True)
 
 elif args.run not in [None, False]:
 	theGame=getGameObjectByItCodeName(args.run)
