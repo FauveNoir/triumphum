@@ -778,7 +778,7 @@ def printSplash():
 ########################################################################
 
 # Défffinition de classe
-listOfLicences=[]
+listOfLicences={}
 class Licence:
 	def __init__(self, name=None, abbr=None, code=None, url=None, shortText=None, fullText=None, freedomCoefficient=0, includeInSorting=True):
 		self.name = name
@@ -790,8 +790,7 @@ class Licence:
 		self.freedomCoefficient = freedomCoefficient
 		self.includeInSorting = includeInSorting
 
-		listOfLicences.append(self) # Adjonction à la liste des licences
-		globals()[code] = self # Déclaration de la variable globale pérmétant d’atteindre directement le genre voulu
+		listOfLicences[self.code]=self # Adjonction à la liste des licences
 
 	# Blocs de comparaisons permétant de trier les licences entre elles de la plus libre à la moins libre
 	def __eq__(self, other):
@@ -835,11 +834,11 @@ def create_licence_objects():
 			freedomCoefficient=aLicence.get("freedomCoefficient") or 0
 		)
 
-Licence(name="Licence inconue", abbr=LICENCE_VOID_SYMBOL.value, code="unknownlicence", includeInSorting=False)
+unknownlicence=Licence(name="Licence inconue", abbr=LICENCE_VOID_SYMBOL.value, code="unknownlicence", includeInSorting=False)
 
 def get_licence_object_after_code(code):
-	if code in globals():
-		return globals()[code]
+	if code in listOfLicences:
+		return listOfLicences[code]
 	return unknownlicence
 
 ########################################################################
