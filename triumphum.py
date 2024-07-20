@@ -555,7 +555,7 @@ class promptStatement:
 
 # Shémats
 
-ADD_GAME_STATEMENTS2={
+ADD_GAME_STATEMENTS={
 	"name": promptStatement(name="name", patern=".*", isNecessary=True, isLabelNecessary=False),
 	"code": promptStatement(name="code", patern="[a-z0-9]*", isNecessary=True),
 	"type": promptStatement(name="type", patern="[a-z0-9]*"),
@@ -567,11 +567,6 @@ ADD_GAME_STATEMENTS2={
 	"shortDesc":promptStatement(name="shortDesc", patern=".*"),
 }
 
-ADD_TYPE_STATEMENTS={
-	"name": promptStatement(name="name", patern=".*", isNecessary=True, isLabelNecessary=False),
-	"code": promptStatement(name="code", patern="[a-z0-9]*", isNecessary=True),
-	"abbr": promptStatement(name="abbr", patern="[a-z0-9]*")
-}
 
 
 def splitDescriptorIntoList(inputChain):
@@ -633,33 +628,9 @@ def interactiveDescriptorIntoDictionnary(newObjectDescriptor, objectSchema, isSp
 	return outputChain
 
 def addNewGameAfterInterativeDescriptor(newGameDescriptor, isSplited=False):
-	dictionnaryDescriptor=interactiveDescriptorIntoDictionnary(newGameDescriptor, ADD_GAME_STATEMENTS2, isSplited)
+	dictionnaryDescriptor=interactiveDescriptorIntoDictionnary(newGameDescriptor, ADD_GAME_STATEMENTS, isSplited)
 	print(dictionnaryDescriptor)
 	addGameToDataBase(**dictionnaryDescriptor)
-
-########################################################################
-# Fonctions des options de la ligne de commande (Ancien)
-########################################################################
-
-
-# Ajout de type
-
-# Exemple --add-type name="Jeu de rôle" code=rpg  abbr=RPG
-
-ADD_TYPE_STATEMENTS=[
-	{
-		"name":"name",
-		"patern":'name=(?P<relevant>(?:"[^"]*"|\'[^\']*\'|[^"\']*))'
-	},
-	{
-		"name":"code",
-		"patern":'code=(?P<relevant>[a-z0-9]*)'
-	},
-	{
-		"name":"abbr",
-		"patern":'type=(?P<relevant>[a-z0-9]*)'
-	}
-]
 
 ########################################################################
 # classe des plateformes
@@ -1983,7 +1954,6 @@ if  args.verbose == True:
 # Configuration
 if args.newGameDescriptor :
 	addNewGameAfterInterativeDescriptor(args.newGameDescriptor, True)
-	sys.exit()
 
 elif args.run not in [None, False]:
 	theGame=getGameObjectByItCodeName(args.run)
