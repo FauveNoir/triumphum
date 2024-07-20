@@ -139,9 +139,9 @@ addingData = parser.add_argument_group('Adding data')
 addingDataGroup = addingData.add_mutually_exclusive_group()
 addingDataGroup.add_argument("--add-game", dest="newGameDescriptor", metavar="game descriptor", nargs='*', help = "Ajouter un nouveau jeu.")
 
-addingDataGroup.add_argument("--add-licence", metavar="licence", help = "Ajouter une nouvelle licence.")
-addingDataGroup.add_argument("--add-genre", metavar="genre", help = "Ajouter un nouveau genre de jeu.")
-addingDataGroup.add_argument("--add-platform", metavar="platform", help = "Ajouter une nouvelle plateforme.")
+addingDataGroup.add_argument("--add-licence", dest="newLicenceDescriptor", metavar="licence", nargs='*', help = "Ajouter une nouvelle licence.")
+addingDataGroup.add_argument("--add-genre", dest="newGenreDescriptor", nargs='*', metavar="genre", help = "Ajouter un nouveau genre de jeu.")
+addingDataGroup.add_argument("--add-platform", dest="newPlatformDescriptor", nargs='*', metavar="platform", help = "Ajouter une nouvelle plateforme.")
 
 layoutArguments = parser.add_argument_group('Layout and keybinding')
 layoutArgumentsGroup = layoutArguments.add_mutually_exclusive_group()
@@ -577,6 +577,12 @@ ADD_GAME_STATEMENTS={
 	"shortDesc":promptStatement(name="shortDesc", patern=".*"),
 }
 
+ADD_GENRE_STATEMENTS={
+	"name": promptStatement(name="name", patern=".*", isNecessary=True, isLabelNecessary=False),
+	"code": promptStatement(name="code", patern="[a-z0-9]*", isNecessary=True),
+	"abbr": promptStatement(name="genre", patern="[a-z0-9]*"),
+}
+
 #
 # Fonctions
 #
@@ -640,8 +646,11 @@ def interactiveDescriptorIntoDictionnary(newObjectDescriptor, objectSchema, isSp
 
 def addNewGameAfterInterativeDescriptor(newGameDescriptor, isSplited=False):
 	dictionnaryDescriptor=interactiveDescriptorIntoDictionnary(newGameDescriptor, ADD_GAME_STATEMENTS, isSplited)
-	print(dictionnaryDescriptor)
 	addGameToDataBase(dictionnaryDescriptor)
+
+def addNewGenreAfterInterativeDescriptor(newGenreDescriptor, isSplited=False):
+	dictionnaryDescriptor=interactiveDescriptorIntoDictionnary(newGenreDescriptor, ADD_GENRE_STATEMENTS, isSplited)
+	addGenreToDataBase(dictionnaryDescriptor)
 
 ########################################################################
 # classe des plateformes
@@ -1001,7 +1010,7 @@ def retrive_history_of_a_game(game):
 ########################################################################
 
 # Défffinition de classe
-listOfGames=[]
+listOfGames={}
 class Game:
 	def __init__(self, name=None, code=None, licence=None, url=None, year=None, genre=None, authors=None, studios=[], command=None, comments=None, platform=None):
 		self.name = name
@@ -1019,7 +1028,7 @@ class Game:
 		self.latest_opening_date_value = self.latest_opening_date()
 		self.playing_duration = self.cumulate_time()
 
-		listOfGames.append(self) # Adjonction à la liste des jeux
+		listOfGames[self.code]=self # Adjonction à la liste des jeux
 
 	def ncurseLine(self):
 		# Préparation de la ligne de tableau
@@ -1105,7 +1114,7 @@ def create_game_objects():
 
 	# Intialisation
 	global listOfGames
-	listOfGames=[]
+	listOfGames={}
 
 	# Extraction des jeux
 	with open(GAME_FILE) as f:
@@ -1134,7 +1143,7 @@ def create_game_objects():
 
 def isObjectExistInsideListOfObjects(theObject, listOfObjects):
 	for anObject in listOfObjects:
-		if theObject["code"] == anObject.code:
+		if theObject["code"] == listOfObjects[anObject].code:
 			return True
 	return False
 
@@ -1155,7 +1164,7 @@ def realyAddObjectToDataBase(theObject=None, object_file=None, objectGroupName=N
 	with open(object_file, 'w') as jsonFile:
 		json.dump(jsonContent, jsonFile, indent="\t")
 
-#def addObjectToDataBase(name=None, licence=None, year=None, genre=None, command=None, code=None, url=None, platform=None, studios=None, authors=None, shortDesc=None):
+# Fonctions primitive #################################################################
 
 def addObjectToDataBase(theObject=None, listOfObjects=None, object_file=None, objectGroupName=None, object_name=None):
 	if isNewObjectCodeAllowed(theObject, listOfObjects) :
@@ -1170,26 +1179,14 @@ def addObjectToDataBase(theObject=None, listOfObjects=None, object_file=None, ob
 def addGameToDataBase(theObject):
 	addObjectToDataBase(theObject=theObject, listOfObjects=listOfGames, object_file=GAME_FILE, objectGroupName="games", object_name="jeu")
 
-########################################################################
-# Éidition des bases de données (ancien)
-########################################################################
-#
-# Licence
-#
+def addGenreToDataBase(theObject):
+	addObjectToDataBase(theObject=theObject, listOfObjects=listOfGenres, object_file=GENRE_FILE, objectGroupName="genres", object_name="genre")
 
-# TODO
+def addLicenceToDataBase(theObject):
+	addObjectToDataBase(theObject=theObject, listOfObjects=listOfLicences, object_file=LICENCE_FILE, objectGroupName="licences", object_name="licence")
 
-#
-# Genre
-#
-
-# TODO
-
-#
-# Plateforme
-#
-
-# TODO
+def addPlatformToDataBase(theObject):
+	addObjectToDataBase(theObject=theObject, listOfObjects=listofPlatforms, object_file=PLATFORM_FILE, objectGroupName="platforms", object_name="plateforme")
 
 ########################################################################
 # Éidition des bases de données | Délétion
@@ -1374,7 +1371,7 @@ class VisualListOfGames:
 
 		self.list=[]
 		for aGame in listOfGames:
-			self.list.append(aGame.ncurseLine())
+			self.list.append(listOfGames[aGame].ncurseLine())
 		self.softSortBy(self.sortByProperty)
 
 	def shiftSortingState(self, property_):
@@ -1585,7 +1582,7 @@ def makeItemsList():
 	items=[]
 	global listOfGames
 	for aGame in listOfGames:
-		items.append(aGame.ncurseLine())
+		items.append(listOfGames[aGame].ncurseLine())
 	return items
 
 #makeItemsList()
@@ -1898,6 +1895,8 @@ if  args.verbose == True:
 # Configuration
 if args.newGameDescriptor :
 	addNewGameAfterInterativeDescriptor(args.newGameDescriptor, True)
+elif args.newGenreDescriptor :
+	addNewGenreAfterInterativeDescriptor(args.newGenreDescriptor, True)
 
 elif args.run not in [None, False]:
 	theGame=getGameObjectByItCodeName(args.run)
