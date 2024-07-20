@@ -213,9 +213,6 @@ deletingDataGroup.add_argument("--del-licence", dest="delLicence", metavar="LICE
 deletingDataGroup.add_argument("--del-genre", dest="delGenre", metavar="GENRE", help = "Suprimer un genre de jeu.")
 deletingDataGroup.add_argument("--del-platform", dest="delPlatform", metavar="PLATFORM", help = "Suprimer une plateforme.")
 
-#layoutArguments = parser.add_argument_group('Layout and keybinding')
-#layoutArgumentsGroup = layoutArguments.add_mutually_exclusive_group()
-
 args = parser.parse_args()
 
 ########################################################################
@@ -267,15 +264,6 @@ GraphicalSymbol(localName="CUMULATED_TIME_PLAYED_SEPARATOR", value="│")
 
 ########################################################################
 # Classe des racoucris dactyliques
-########################################################################
-
-def getKeycode(key_name):
-	display = Display()
-	keysym = XK.string_to_keysym(key_name)
-	keycode = display.keysym_to_keycode(keysym)
-	display.close()
-	return keycode
-
 ########################################################################
 
 def getListOfKeyBindingsCodes():
