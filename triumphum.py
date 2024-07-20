@@ -26,9 +26,11 @@ import curses.textpad
 ########################################################################
 
 def tprint(content):
+	# Éxactement la même chose que la fonction print mais utilisée lors des testes pour la retrouver vite avec un ctrl-f
 	print(content)
 
 def writeInTmp(text):
+	# Écrit les  résultats des points d’arret dans un fichier lorsque la sortie standard est cachée
 	with open('/tmp/output', 'a') as f:
 		f.write(f"[{datetime.now()}] {text} \n")
 
@@ -451,23 +453,20 @@ args = parser.parse_args()
 # Classe du shell interne
 ########################################################################
 
-
-def getPaternToMatchAllLayoutCodes():
+def getPaternToMatchAllCodesInDictionnary(dictionnary):
+	# Primitive de construction des regex
 	patern=""
-	for aLayout in listOfLayouts:
-		patern=patern+aLayout+"|"
+	for aCode in dictionnary:
+		patern=patern+aCode+"|"
 	patern="("+patern[:-1]+")"
 	return patern
 
-
-# TODO à factoriser avec en haut.
+def getPaternToMatchAllLayoutCodes():
+	patern=getPaternToMatchAllCodesInDictionnary(listOfLayouts)
+	return patern
 
 def getPaternToMatchAllLicencesCodes():
-	patern=""
-	for aLicence in listOfLicences:
-		patern=patern+aLicence.code+"|"
-	patern="("+patern[:-1]+")"
-
+	patern=getPaternToMatchAllCodesInDictionnary(listOfLicences)
 	return patern
 
 
@@ -1806,17 +1805,13 @@ def internalShellLayoutFunction(shellInput):
 	else:
 		setBottomBarContent(f"Disposition « {askedLayout} » inconue")
 
-InternalShellCommand(code="addNewGame", patern=addNewGamepatern, description="Ajouter un nouveau jeu à la base de donnée", synopsis=":n :new :newgame <Game name>, <code>, <genre>, <licence>", instructions=addNewGameAfterInterativeDescriptor)
+InternalShellCommand(code="addNewGame", patern=addNewGamepatern, description="Ajouter un nouveau jeu à la base de donnée", synopsis=":n :new :newgame name=<Game name> code=<code> [genre=<genre>] [licence=getPaternToMatchAllLicencesCodes()]", instructions=addNewGameAfterInterativeDescriptor)
 InternalShellCommand(code="about", patern='(a|about)', description="À propos", synopsis=":a :about", instructions=internalShelldrawAboutScreen)
 
 InternalShellCommand(code="donate", patern='(d|don|donate)', description="Faire un don", synopsis=":d :don :donate", instructions=internalShellbindMakeDonationFunction)
 InternalShellCommand(code="layout", patern=f'(l|layout)\s+(?P<layout>{getPaternToMatchAllLayoutCodes()})', description="Changer de disposition de clavier", synopsis=":l :layout <layout>", instructions=internalShellLayoutFunction)
 InternalShellCommand(code="comment", patern='(c|comment)', description="Ajouter un commentaire", synopsis=":c :comment", activated=False)
 InternalShellCommand(code="viewComment", patern='(v|view)', description="Voir les commentaires", synopsis=":v :vew", activated=False)
-
-
-
-
 
 ########################################################################
 # Déclaration des racoucis dactiliques
@@ -1850,11 +1845,9 @@ Binding(key="q", code="bindQuit", description=f"Quitter {APP_FANCY_NAME}", confi
 Binding(key=":", code="bindExMode", description=f"Mode Ex", configFileName="bind_exMode", instructions=enteringExModeByBinding)
 
 
-
 STDSCR=None
 def main(stdscr):
 	global STDSCR
-
 
 	STDSCR=stdscr
 	# Initialisation de ncurses
@@ -1919,7 +1912,6 @@ def getGameObjectByItCodeName(code):
 ########################################################################
 # Que faire
 ########################################################################
-
 
 if args.config_file != None:
 	CONFIG_FILE=args.config_file
