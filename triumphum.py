@@ -534,6 +534,10 @@ def applyFileConfigurationsGraphicalSymbols():
 # Fonctions des options de la ligne de commande (nouveau)
 ########################################################################
 
+#
+# Classe
+#
+
 class promptStatement:
 	def __init__(self, name=None, patern=None, isNecessary=False, isLabelNecessary=True, multipleValues=False):
 		self.name=name
@@ -553,7 +557,9 @@ class promptStatement:
 			return match.group("relevant").split(',')
 		return match.group("relevant")
 
+#
 # Shémats
+#
 
 ADD_GAME_STATEMENTS={
 	"name": promptStatement(name="name", patern=".*", isNecessary=True, isLabelNecessary=False),
@@ -567,7 +573,9 @@ ADD_GAME_STATEMENTS={
 	"shortDesc":promptStatement(name="shortDesc", patern=".*"),
 }
 
-
+#
+# Fonctions
+#
 
 def splitDescriptorIntoList(inputChain):
 	writeInTmp(inputChain)
@@ -612,11 +620,6 @@ def sanitizeDescriptorChainFromUnexistingStatements(inputChain, objectSchema):
 			outputChain[aStatementName] = aStatementValue
 	return outputChain
 
-
-#
-# Ajouter un jeu
-#
-
 def interactiveDescriptorIntoDictionnary(newObjectDescriptor, objectSchema, isSplited=False):
 	if not isSplited:
 		outputChain=splitDescriptorIntoList(newObjectDescriptor)
@@ -626,6 +629,10 @@ def interactiveDescriptorIntoDictionnary(newObjectDescriptor, objectSchema, isSp
 	outputChain=descriptorIntoDict(outputChain)
 	outputChain=canonicalizeDescriptorChain(outputChain, objectSchema)
 	return outputChain
+
+#
+# Fonctions par objet
+#
 
 def addNewGameAfterInterativeDescriptor(newGameDescriptor, isSplited=False):
 	dictionnaryDescriptor=interactiveDescriptorIntoDictionnary(newGameDescriptor, ADD_GAME_STATEMENTS, isSplited)
@@ -1117,73 +1124,29 @@ def create_game_objects():
 		)
 
 ########################################################################
-# Éidition des bases de données
+# Éidition des bases de données 
 ########################################################################
 
-# SEction en TODO
+# Création #################################################################
 
-def isElementCodeExist(elementCode, listToSearchOn):
-	# Charger le contenu JSON depuis le fichier
-	for anElement in listToSearchOn:
-		if elementCode == anElement.code:
+#
+# Fonctions primitives
+#
+
+def isObjectExistInsideListOfObjects(givenObject, listOfObjects)
+	for anObject in listOfObjects:
+		if givenObject == anObject.code:
 			return True
 	return False
 
-def isNewElementCodeAllowded(elementCode):
-	if not isElementCodeExist(elementCode, listToSearchOn) and elementCode != None:
+def isNewObjectCodeAllowed(givenObject, listOfObjects):
+	if not isObjectExistInsideListOfObjects(givenObject, listOfObjects) and givenObject.code != None:
 		return True
 	return False
 
-gameArguments=["name", "licence", "type", "command", "code", "url", "platfrom", "studios", "authors", "shortDesc"]
-typeArguments=["name", "code", "abbr"]
-licenceArguments=["name", "abbr", "code", "url", "shortText", "freedomCoefficient"]
-platformArguments=["name", "code", "abbr"]
-
-def selectArgumentsList(type_):
-	if type_ == Game:
-		return gameArguments
-	if type_ == GameType:
-		return typeArguments
-	if type_ == Licence:
-		return licenceArguments
-	if Platform == Licence:
-		return platformArguments
-
-def rellayAddElementToDataBase(type_=None, elementsFile=None, listName=None, **kwargs):
-	# TODO adapter 
-	object_={
-		"name": name,
-		"licence": licence,
-		"year": year,
-		"type": type_,
-		"command": command,
-		"code": code,
-		"url": url,
-		"platform": platform,
-		"studios": studios,
-		"authors": authors,
-		"shortDesc": shortDesc
-	}
-
-	# Charger le contenu JSON depuis le fichier
-	with open(elementsFile, 'r') as jsonFile:
-		jsonContent = json.load(jsonFile)
-
-	jsonContent[listName].append(object_)
-
-	# Réécrire le fichier JSON avec le contenu mis à jour
-	with open(elementsFile, 'w') as jsonFile:
-		json.dump(jsonContent, jsonFile, indent="\t")
-
-def addElementsToDataBase(type_=None, elementsFile=None, listName=None, code=None, **kwargs):
-	if isNewObjectCodeAllowded(code) :
-		rellayAddElementToDataBase(type_=None, elementsFile=None, listName=None)
-	elif isElementCodeExist(code):
-		print(f"Le code « {code} » éxiste déjà.")
-	elif code == None:
-		print(f"Veuillez déffinir un code d’identification pour le nouvel objet.")
-
-# Jeux #################################################################
+#
+# Jeux
+#
 
 def isGameCodeExist(gameCode):
 	# Charger le contenu JSON depuis le fichier
@@ -1197,7 +1160,7 @@ def isNewGameCodeAllowded(gameCode):
 		return True
 	return False
 
-def rellayAddGameToDataBase(name=None, licence=None, year=None, type_=None, command=None, code=None, url=None, platform=None, studios=None, authors=None, shortDesc=None):
+def realyAddGameToDataBase(name=None, licence=None, year=None, type_=None, command=None, code=None, url=None, platform=None, studios=None, authors=None, shortDesc=None):
 	gameObject={
 		"name": name,
 		"licence": licence,
@@ -1224,11 +1187,33 @@ def rellayAddGameToDataBase(name=None, licence=None, year=None, type_=None, comm
 
 def addGameToDataBase(name=None, licence=None, year=None, type_=None, command=None, code=None, url=None, platform=None, studios=None, authors=None, shortDesc=None):
 	if isNewGameCodeAllowded(code) :
-		rellayAddGameToDataBase(name, licence, year, type_, command, code, url, platform, studios, authors, shortDesc)
+		realyAddGameToDataBase(name, licence, year, type_, command, code, url, platform, studios, authors, shortDesc)
 	elif isGameCodeExist(code):
 		print(f"Le code « {code} » éxiste déjà.")
 	elif code == None:
 		print(f"Veuillez déffinir un code d’entification pour le jeu.")
+
+#
+# Licence
+#
+
+# TODO
+
+#
+# Type
+#
+
+# TODO
+
+#
+# Plateforme
+#
+
+# TODO
+
+########################################################################
+# Éidition des bases de données | Délétion
+########################################################################
 
 def deleteGameFromDatabase(code):
 	with open(GAME_FILE, 'r') as f:
@@ -1249,18 +1234,6 @@ def deleteGameFromDatabase(code):
 		# Réécrire le fichier JSON avec les modifications
 		with open(GAME_FILE, 'w') as f:
 			json.dump(jsonContent, f, indent='\t')  # Réécrire le JSON avec indentation pour la lisibilité
-
-# Licence ##############################################################
-
-# TODO
-
-# Type #################################################################
-
-# TODO
-
-# Plateforme ###########################################################
-
-# TODO
 
 ########################################################################
 # Classe des colones de la liste visuelle
@@ -1926,8 +1899,6 @@ def getGameObjectByItCodeName(code):
 # Que faire
 ########################################################################
 
-
-#addGameToDataBase(name="Test", code="test")
 
 if args.config_file != None:
 	CONFIG_FILE=args.config_file
