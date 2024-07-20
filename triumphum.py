@@ -106,6 +106,53 @@ PLATFORM_FILE=CONFIG_DIR + "/" + BASE_NAME_PLATFORM_FILE
 HISTORY_FILE=CONFIG_DIR + "/" + BASE_NAME_HISTORY_FILE
 
 ########################################################################
+# Initialisation
+########################################################################
+
+listOfConfigurationFile={}
+class ConfigurationFile:
+	def __init__(self, code=None, baseName=None, path=CONFIG_DIR, minimalContent=None):
+		self.code=code
+		self.baseName=baseName
+		self.path=path
+		self.minimalContent=minimalContent
+
+		listOfConfigurationFile[self.code]=self
+
+	def fullPath(self):
+		return self.path + "/" + self.baseName
+
+	def isExisting(self):
+		pass
+
+	def createMinimalFile(self):
+		pass
+
+	def testAndAskToCreateIfNone(self):
+		pass
+
+def ask_yes_no_question(question):
+	while True:
+		user_input = input(f"{question} (Y/n): ").strip().lower()
+		if user_input in ['y', 'yes']:
+			return True
+		elif user_input in ['n', 'no']:
+			return False
+		else:
+			print("Veuillez répondre par 'Y' ou 'n'.")
+
+
+ConfigurationFile(code="CONFIG_GAME_FILE",     minimalContent="""{"games":[]}""",      baseName="games.json")
+ConfigurationFile(code="CONFIG_GENRE_FILE",    minimalContent="""{"genres":[]}""",     baseName="listOfGenres.json")
+ConfigurationFile(code="CONFIG_LICENCE_FILE",  minimalContent="""{"licences":[]}""",   baseName="listOfLicences.json")
+ConfigurationFile(code="CONFIG_PLATFORM_FILE", minimalContent="""{"platforms":[]}""",  baseName="listOfPlatforms.json")
+ConfigurationFile(code="CONFIG_HISTORY_FILE",  minimalContent="""{"history":[]}""",    baseName="history.json")
+
+
+def testIfDirectoryExist(directoryPath):
+	pass
+
+########################################################################
 # Options de la ligne de commande
 ########################################################################
 
