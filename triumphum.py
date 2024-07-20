@@ -718,7 +718,6 @@ class Genre:
 		self.includeInSorting = includeInSorting
 
 		listOfGenres.append(self) # Adjonction à la liste des genres de jeux
-		globals()[code] = self # Déclaration de la variable globale pérmétant d’atteindre directement le genre voulu
 
 		def shortName(self):
 			# Recherche d’un nom abbrégé
@@ -760,11 +759,11 @@ def create_game_genre_objects():
 			abbr=aGenre.get("abbr")
 		)
 
-Genre(name="Genre inconu", abbr=GENRE_VOID_SYMBOL.value, code="unknowngenre", includeInSorting=False)
+unknowngenre=Genre(name="Genre inconu", abbr=GENRE_VOID_SYMBOL.value, code="unknowngenre", includeInSorting=False)
 
 def get_genre_object_after_code(code):
-	if code in globals():
-		return globals()[code]
+	if code in listOfGenres:
+		return listOfGenres[code]
 	return unknowngenre
 
 ########################################################################
