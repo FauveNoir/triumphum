@@ -1212,8 +1212,9 @@ def addPlatformToDataBase(theObject):
 # Éidition des bases de données | Délétion (nouveau)
 ########################################################################
 
-
+#
 # Primitive
+#
 
 def deleteObjectFromDatabase(givenObject=None, listOfObjectsFile=None, objectGroupName=None):
 	with open(listOfObjectsFile, 'r') as f:
@@ -1235,9 +1236,21 @@ def deleteObjectFromDatabase(givenObject=None, listOfObjectsFile=None, objectGro
 		with open(listOfObjectsFile, 'w') as f:
 			json.dump(jsonContent, f, indent='\t')  # Réécrire le JSON avec indentation pour la lisibilité
 
+#
 # Dérrivée
+#
+
 def deleteGameFromDatabase(givenObject):
 	deleteObjectFromDatabase(givenObject=givenObject, listOfObjectsFile=GAME_FILE, objectGroupName="games")
+
+def deleteLicenceFromDatabase(givenObject):
+	deleteObjectFromDatabase(givenObject=givenObject, listOfObjectsFile=LICENCE_FILE, objectGroupName="licences")
+
+def deleteGenreFromDatabase(givenObject):
+	deleteObjectFromDatabase(givenObject=givenObject, listOfObjectsFile=GENRE_FILE, objectGroupName="genres")
+
+def deletePlatformFromDatabase(givenObject):
+	deleteObjectFromDatabase(givenObject=givenObject, listOfObjectsFile=PLATFORM_FILE, objectGroupName="platforms")
 
 
 ########################################################################
@@ -1921,6 +1934,9 @@ if  args.verbose == True:
 	print(f"Fichier des plateformes : {PLATFORM_FILE}")
 
 # Configuration
+
+
+# Section des adjonctions
 if args.newGameDescriptor :
 	addNewGameAfterInterativeDescriptor(args.newGameDescriptor, True)
 elif args.newGenreDescriptor :
@@ -1929,6 +1945,16 @@ elif args.newLicenceDescriptor :
 	addNewLicenceAfterInterativeDescriptor(args.newLicenceDescriptor, True)
 elif args.newPlatformDescriptor :
 	addNewPlatformAfterInterativeDescriptor(args.newPlatformDescriptor, True)
+
+# Section des suppresions
+elif args.delGame:
+	deleteGameFromDatabase(iargs.delGame)
+elif args.delLicence:
+	deleteLicenceFromDatabase(iargs.delLicence)
+elif args.delGenre:
+	deleteGenreFromDatabase(iargs.delGenre)
+elif args.delPlatform:
+	deletePlatfromFromDatabase(iargs.delPlatform)
 
 elif args.run not in [None, False]:
 	theGame=getGameObjectByItCodeName(args.run)
