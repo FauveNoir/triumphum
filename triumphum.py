@@ -97,11 +97,13 @@ BASE_NAME_GAME_FILE="games.json"
 BASE_NAME_GENRE_FILE="listOfGenres.json"
 BASE_NAME_LICENCE_FILE="listOfLicences.json"
 BASE_NAME_PLATFORM_FILE="listOfPlatforms.json"
+BASE_NAME_HISTORY_FILE="history.json"
 
 GAME_FILE=CONFIG_DIR + "/" + BASE_NAME_GAME_FILE
 GENRE_FILE=CONFIG_DIR + "/" + BASE_NAME_GENRE_FILE
 LICENCE_FILE=CONFIG_DIR + "/" + BASE_NAME_LICENCE_FILE
 PLATFORM_FILE=CONFIG_DIR + "/" + BASE_NAME_PLATFORM_FILE
+HISTORY_FILE=CONFIG_DIR + "/" + BASE_NAME_HISTORY_FILE
 
 ########################################################################
 # Options de la ligne de commande
@@ -671,7 +673,7 @@ def create_platform_objects():
 	# Création de la liste des plateformes disponibles
 
 	# Extraction des plateformes
-	with open(CONFIG_DIR + '/listOfPlatforms.json') as f:
+	with open(PLATFORM_FILE) as f:
 		listOfPlatformsData = json.load(f)["platforms"]
 
 	# Déploiment des objet de licence
@@ -748,7 +750,7 @@ def create_game_genre_objects():
 	listOfGenres={}
 
 	# Extraction des genres de jeux du fichier
-	with open(CONFIG_DIR + '/listOfGenres.json') as f:
+	with open(GENRE_FILE) as f:
 		listOfGenresData = json.load(f)["genres"]
 
 	# Déploiment des objet de genre de jeux
@@ -820,7 +822,7 @@ class Licence:
 
 def create_licence_objects():
 	# Extraction des licences
-	with open(CONFIG_DIR + '/listOfLicences.json') as f:
+	with open(LICENCE_FILE) as f:
 		listOfLicencesData = json.load(f)["licences"]
 
 	# Déploiment des objet de licence
@@ -979,7 +981,7 @@ def is_history_entry_relevant(history_entry):
 
 def retrive_history_of_a_game(game):
 	prepared_history = History()
-	with open(CONFIG_DIR + '/history.json') as f:
+	with open(HISTORY_FILE) as f:
 		data = json.load(f)
 
 	if 'history' in data and game.code in data['history']:
@@ -1103,7 +1105,7 @@ def create_game_objects():
 	listOfGames=[]
 
 	# Extraction des jeux
-	with open(CONFIG_DIR + '/games.json') as f:
+	with open(GAME_FILE) as f:
 		listOfGamesData = json.load(f)["games"]
 
 	## Déploiment des objet de jeux
@@ -1503,7 +1505,7 @@ def sort_by_date(items):
 	return sorted(items, key=lambda x: str(x[3]))
 
 def history_data_with_current_game(game):
-	with open(CONFIG_DIR + '/history.json') as f:
+	with open(HISTORY_FILE) as f:
 		data = json.load(f)
 
 	if 'history' not in data:
@@ -1517,7 +1519,7 @@ def history_data_with_current_game(game):
 def write_opening_date_on_history(game=None, start_time=None, end_time=None, duration=None):
 	try:
 		# Charger le JSON existant depuis un fichier
-		with open(CONFIG_DIR + '/history.json') as f:
+		with open(HISTORY_FILE) as f:
 			data = json.load(f)
 
 		data = history_data_with_current_game(game)
@@ -1525,7 +1527,7 @@ def write_opening_date_on_history(game=None, start_time=None, end_time=None, dur
 		data['history'][game.code].append(history_entry.make_data())
 
 		# Enregistrer la structure de données modifiée en tant que JSON
-		with open(CONFIG_DIR + '/history.json', 'w') as f:
+		with open(HISTORY_FILE, 'w') as f:
 			json.dump(data, f, indent=4)
 	except:
 		pass
