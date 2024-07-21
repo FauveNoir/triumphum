@@ -158,7 +158,7 @@ def prepareConfigFiles():
 	ConfigurationFile(code="LICENCE_FILE",  minimalContent="""{"licences":[]}""",   baseName="listOfLicences.json")
 	ConfigurationFile(code="PLATFORM_FILE", minimalContent="""{"platforms":[]}""",  baseName="listOfPlatforms.json")
 	ConfigurationFile(code="HISTORY_FILE",  minimalContent="""{"history":[]}""",    baseName="history.json")
-	ConfigurationFile(code="CONFIG_GENERAL_FILE",  minimalContent=makeFileConfigMinimalContent(),    baseName="triumphumrc", path=appdirs.user_config_dir())
+	ConfigurationFile(code="CONFIG_FILE",  minimalContent=makeFileConfigMinimalContent(),    baseName="triumphumrc", path=appdirs.user_config_dir())
 
 def verifyConfigFileExistence():
 	for aFile in listOfConfigurationFile:
@@ -581,7 +581,7 @@ def whatToDoWithShellInput(shellInput):
 def applyFileConfigurationsBindings():
 	config = configparser.ConfigParser()
 
-	config.read(CONFIG_GENERAL_FILE.fullPath())
+	config.read(CONFIG_FILE.fullPath())
 	configValues={}
 
 	for aConfigKey in getListOfConfigKeyCodes():
@@ -593,7 +593,7 @@ def applyFileConfigurationsBindings():
 def applyFileConfigurationsGraphicalSymbols():
 	config = configparser.ConfigParser()
 
-	config.read(CONFIG_GENERAL_FILE.fullPath())
+	config.read(CONFIG_FILE.fullPath())
 
 	for aConfigiGrahpicalSymbol in listOfGraphicalSymbols:
 		if config.has_option("General", aConfigiGrahpicalSymbol.fileConfigName):
@@ -2009,7 +2009,8 @@ def getGameObjectByItCodeName(code):
 ########################################################################
 
 if args.config_file != None:
-	CONFIG_FILE=args.config_file
+	CONFIG_FILE.setNew(args.config_file)
+
 applyFileConfigurationsBindings()
 applyFileConfigurationsGraphicalSymbols()
 
