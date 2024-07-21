@@ -131,7 +131,7 @@ class ConfigurationFile:
 		self.path=os.path.dirname(newPath)
 
 	def __str__(self):
-		return self.fullPath(self)
+		return self.fullPath()
 
 def ask_yes_no_question(question):
 	while True:
