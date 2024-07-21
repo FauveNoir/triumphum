@@ -92,20 +92,6 @@ _t = humanize.i18n.activate("fr_FR")
 # Obtenez le répertoire de configuration de l'application
 CONFIG_DIR = appdirs.user_config_dir(APP_CODE_NAME)
 
-CONFIG_FILE= appdirs.user_config_dir("triumphumrc")
-
-BASE_NAME_GAME_FILE="games.json"
-BASE_NAME_GENRE_FILE="listOfGenres.json"
-BASE_NAME_LICENCE_FILE="listOfLicences.json"
-BASE_NAME_PLATFORM_FILE="listOfPlatforms.json"
-BASE_NAME_HISTORY_FILE="history.json"
-
-#GAME_FILE=CONFIG_DIR + "/" + BASE_NAME_GAME_FILE
-#GENRE_FILE=CONFIG_DIR + "/" + BASE_NAME_GENRE_FILE
-#LICENCE_FILE=CONFIG_DIR + "/" + BASE_NAME_LICENCE_FILE
-#PLATFORM_FILE=CONFIG_DIR + "/" + BASE_NAME_PLATFORM_FILE
-#HISTORY_FILE=CONFIG_DIR + "/" + BASE_NAME_HISTORY_FILE
-
 ########################################################################
 # Initialisation
 ########################################################################
