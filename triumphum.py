@@ -1408,7 +1408,7 @@ class VisualListOfGames:
 
 	def getCurrentVisibleList(self, screenHeight):
 		if self.lastMove == goDown:
-			if self.selected_row > self.firstRowOnVisibleList + screenHeight-3-3 :
+			if self.selected_row > self.firstRowOnVisibleList + screenHeight-4-3 :
 				self.firstRowOnVisibleList+=1
 
 		if self.lastMove == goUp:
@@ -1416,7 +1416,7 @@ class VisualListOfGames:
 				self.firstRowOnVisibleList-=1
 
 
-		visibleList=self.getNthNLines(self.firstRowOnVisibleList, screenHeight-3) # TODO remplacer le 2 par une variable
+		visibleList=self.getNthNLines(self.firstRowOnVisibleList, screenHeight-4) # TODO remplacer le 2 par une variable
 
 
 		return visibleList
@@ -1711,8 +1711,8 @@ def draw_bottom_bar(stdscr):
 
 	# Dessine la barre au bas de l'écran
 	bar_text = f" {BOTTOM_BAR_TEXT} "
-	stdscr.addstr(h-1, 0, bar_text, curses.A_REVERSE)
-	stdscr.chgat(h-1, 0, w, curses.A_REVERSE)
+	stdscr.addstr(h-MAIN_SCREEN_MARGIN_BOTTOM, 0, bar_text, curses.A_REVERSE)
+	stdscr.chgat(h-MAIN_SCREEN_MARGIN_BOTTOM, 0, w, curses.A_REVERSE)
 
 def enteringExMode(stdscr):
 	# Activer la saisie de texte
@@ -1720,7 +1720,7 @@ def enteringExMode(stdscr):
 	h, w = bottomBarCoordinate(stdscr)
 	curses.curs_set(1)  # Afficher le curseur
 
-	curses.init_pair(h-2, curses.COLOR_BLUE, curses.COLOR_BLACK)
+#	curses.init_pair(h-2, curses.COLOR_BLUE, curses.COLOR_BLACK)
 	# Position de départ pour la saisie de texte
 	stdscr.move(h-1, 0)
 
@@ -1791,6 +1791,7 @@ def prepareTextForRightIndicator(visualListOfGames):
 
 	return rightIndicatorText
 
+MAIN_SCREEN_MARGIN_BOTTOM=2
 STDSCR=""
 # Barre inférieure
 def draw_bottom_right(stdscr, visualListOfGames):
@@ -1804,13 +1805,13 @@ def draw_bottom_right(stdscr, visualListOfGames):
 	# Définir le texte de la barre inférieure
 
 	# Calculer la position de départ pour l'alignement à droite
-	x_start = w - len(rightIndicatorText) - 1  # -1 pour éviter le débordement
+	x_start = w - len(rightIndicatorText)
 
 	# Effacer l'arrière-plan de la ligne
-	stdscr.move(h-1, 0)
+	stdscr.move(h-MAIN_SCREEN_MARGIN_BOTTOM, 0)
 
 	# Dessiner le texte avec la couleur d'origine, sans arrière-plan
-	stdscr.addstr(h-1, x_start, rightIndicatorText, curses.A_REVERSE)
+	stdscr.addstr(h-MAIN_SCREEN_MARGIN_BOTTOM, x_start, rightIndicatorText, curses.A_REVERSE)
 
 	# Rafraîchir l'écran
 	stdscr.refresh()
@@ -1852,7 +1853,7 @@ def drawListOfGames(stdscr):
 	screenHeight, screenWidth = stdscr.getmaxyx()
 	if THE_VISUAL_LIST_OF_GAMES.isTheListEmpty():
 		noGameFoundText="""Aucun jeu trouvé.
-Saissez :h ou consultez man triphum
+ Saissez :h ou consultez man triphum
 		"""
 		display_centered_text(stdscr,noGameFoundText)
 	else:
