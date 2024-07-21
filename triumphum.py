@@ -101,7 +101,7 @@ BASE_NAME_PLATFORM_FILE="listOfPlatforms.json"
 BASE_NAME_HISTORY_FILE="history.json"
 
 #GAME_FILE=CONFIG_DIR + "/" + BASE_NAME_GAME_FILE
-GENRE_FILE=CONFIG_DIR + "/" + BASE_NAME_GENRE_FILE
+#GENRE_FILE=CONFIG_DIR + "/" + BASE_NAME_GENRE_FILE
 LICENCE_FILE=CONFIG_DIR + "/" + BASE_NAME_LICENCE_FILE
 PLATFORM_FILE=CONFIG_DIR + "/" + BASE_NAME_PLATFORM_FILE
 HISTORY_FILE=CONFIG_DIR + "/" + BASE_NAME_HISTORY_FILE
@@ -168,7 +168,7 @@ def makeFileConfigMinimalContent():
 
 def prepareConfigFiles():
 	ConfigurationFile(code="GAME_FILE",     minimalContent="""{"games":[]}""",      baseName="games.json")
-	ConfigurationFile(code="CONFIG_GENRE_FILE",    minimalContent="""{"genres":[]}""",     baseName="listOfGenres.json")
+	ConfigurationFile(code="GENRE_FILE",    minimalContent="""{"genres":[]}""",     baseName="listOfGenres.json")
 	ConfigurationFile(code="CONFIG_LICENCE_FILE",  minimalContent="""{"licences":[]}""",   baseName="listOfLicences.json")
 	ConfigurationFile(code="CONFIG_PLATFORM_FILE", minimalContent="""{"platforms":[]}""",  baseName="listOfPlatforms.json")
 	ConfigurationFile(code="CONFIG_HISTORY_FILE",  minimalContent="""{"history":[]}""",    baseName="history.json")
@@ -855,7 +855,7 @@ def create_game_genre_objects():
 	listOfGenres={}
 
 	# Extraction des genres de jeux du fichier
-	with open(GENRE_FILE) as f:
+	with open(GENRE_FILE.fullPath()) as f:
 		listOfGenresData = json.load(f)["genres"]
 
 	# Déploiment des objet de genre de jeux
@@ -1273,7 +1273,7 @@ def addGameToDataBase(theObject):
 	addObjectToDataBase(theObject=theObject, listOfObjects=listOfGames, object_file=GAME_FILE.fullPath(), objectGroupName="games", object_name="jeu")
 
 def addGenreToDataBase(theObject):
-	addObjectToDataBase(theObject=theObject, listOfObjects=listOfGenres, object_file=GENRE_FILE, objectGroupName="genres", object_name="genre")
+	addObjectToDataBase(theObject=theObject, listOfObjects=listOfGenres, object_file=GENRE_FILE.fullPath(), objectGroupName="genres", object_name="genre")
 
 def addLicenceToDataBase(theObject):
 	addObjectToDataBase(theObject=theObject, listOfObjects=listOfLicences, object_file=LICENCE_FILE, objectGroupName="licences", object_name="licence")
@@ -1320,7 +1320,7 @@ def deleteLicenceFromDatabase(givenObject):
 	deleteObjectFromDatabase(givenObject=givenObject, listOfObjectsFile=LICENCE_FILE, objectGroupName="licences")
 
 def deleteGenreFromDatabase(givenObject):
-	deleteObjectFromDatabase(givenObject=givenObject, listOfObjectsFile=GENRE_FILE, objectGroupName="genres")
+	deleteObjectFromDatabase(givenObject=givenObject, listOfObjectsFile=GENRE_FILE.fullPath(), objectGroupName="genres")
 
 def deletePlatformFromDatabase(givenObject):
 	deleteObjectFromDatabase(givenObject=givenObject, listOfObjectsFile=PLATFORM_FILE, objectGroupName="platforms")
@@ -2031,7 +2031,7 @@ applyFileConfigurationsGraphicalSymbols()
 if args.games_file:
 	GAME_FILE.setNew(args.games_file)
 if args.genres_file:
-	GENRE_FILE=args.genres_file
+	GENRE_FILE.setNew(args.genres_file)
 if args.licences_file:
 	LICENCE_FILE=args.licences_file
 if args.platforms_file:
