@@ -1982,8 +1982,6 @@ def main(stdscr):
 		# Rafraîchir l'écran
 		stdscr.refresh()
 
-		#enteringExMode(stdscr)
-
 		# Lecture de la touche pressée
 		key = transform_key_to_character(stdscr.get_wch())
 #		setBottomBarContent(f"Touche préssée {key}")
