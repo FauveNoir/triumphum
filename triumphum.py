@@ -103,7 +103,7 @@ BASE_NAME_HISTORY_FILE="history.json"
 #GAME_FILE=CONFIG_DIR + "/" + BASE_NAME_GAME_FILE
 #GENRE_FILE=CONFIG_DIR + "/" + BASE_NAME_GENRE_FILE
 #LICENCE_FILE=CONFIG_DIR + "/" + BASE_NAME_LICENCE_FILE
-PLATFORM_FILE=CONFIG_DIR + "/" + BASE_NAME_PLATFORM_FILE
+#PLATFORM_FILE=CONFIG_DIR + "/" + BASE_NAME_PLATFORM_FILE
 HISTORY_FILE=CONFIG_DIR + "/" + BASE_NAME_HISTORY_FILE
 
 ########################################################################
@@ -170,7 +170,7 @@ def prepareConfigFiles():
 	ConfigurationFile(code="GAME_FILE",     minimalContent="""{"games":[]}""",      baseName="games.json")
 	ConfigurationFile(code="GENRE_FILE",    minimalContent="""{"genres":[]}""",     baseName="listOfGenres.json")
 	ConfigurationFile(code="LICENCE_FILE",  minimalContent="""{"licences":[]}""",   baseName="listOfLicences.json")
-	ConfigurationFile(code="CONFIG_PLATFORM_FILE", minimalContent="""{"platforms":[]}""",  baseName="listOfPlatforms.json")
+	ConfigurationFile(code="PLATFORM_FILE", minimalContent="""{"platforms":[]}""",  baseName="listOfPlatforms.json")
 	ConfigurationFile(code="CONFIG_HISTORY_FILE",  minimalContent="""{"history":[]}""",    baseName="history.json")
 	ConfigurationFile(code="CONFIG_GENERAL_FILE",  minimalContent=makeFileConfigMinimalContent(),    baseName="triumphumrc", path=appdirs.user_config_dir())
 
@@ -778,7 +778,7 @@ def create_platform_objects():
 	# Création de la liste des plateformes disponibles
 
 	# Extraction des plateformes
-	with open(PLATFORM_FILE) as f:
+	with open(PLATFORM_FILE.fullPath()) as f:
 		listOfPlatformsData = json.load(f)["platforms"]
 
 	# Déploiment des objet de licence
@@ -1279,7 +1279,7 @@ def addLicenceToDataBase(theObject):
 	addObjectToDataBase(theObject=theObject, listOfObjects=listOfLicences, object_file=LICENCE_FILE.fullPath(), objectGroupName="licences", object_name="licence")
 
 def addPlatformToDataBase(theObject):
-	addObjectToDataBase(theObject=theObject, listOfObjects=listofPlatforms, object_file=PLATFORM_FILE, objectGroupName="platforms", object_name="plateforme")
+	addObjectToDataBase(theObject=theObject, listOfObjects=listofPlatforms, object_file=PLATFORM_FILE.fullPath(), objectGroupName="platforms", object_name="plateforme")
 
 ########################################################################
 # Éidition des bases de données | Délétion (nouveau)
@@ -1323,7 +1323,7 @@ def deleteGenreFromDatabase(givenObject):
 	deleteObjectFromDatabase(givenObject=givenObject, listOfObjectsFile=GENRE_FILE.fullPath(), objectGroupName="genres")
 
 def deletePlatformFromDatabase(givenObject):
-	deleteObjectFromDatabase(givenObject=givenObject, listOfObjectsFile=PLATFORM_FILE, objectGroupName="platforms")
+	deleteObjectFromDatabase(givenObject=givenObject, listOfObjectsFile=PLATFORM_FILE.fullPath(), objectGroupName="platforms")
 
 
 ########################################################################
@@ -2035,7 +2035,7 @@ if args.genres_file:
 if args.licences_file:
 	LICENCE_FILE.setNew(args.licences_file)
 if args.platforms_file:
-	PLATFORM_FILE=args.platforms_file
+	PLATFORM_FILE.setNew(args.platforms_file)
 
 if  args.verbose == True:
 	print(f"Fichier de configuration principal : {CONFIG_FILE}")
