@@ -100,7 +100,7 @@ BASE_NAME_LICENCE_FILE="listOfLicences.json"
 BASE_NAME_PLATFORM_FILE="listOfPlatforms.json"
 BASE_NAME_HISTORY_FILE="history.json"
 
-GAME_FILE=CONFIG_DIR + "/" + BASE_NAME_GAME_FILE
+#GAME_FILE=CONFIG_DIR + "/" + BASE_NAME_GAME_FILE
 GENRE_FILE=CONFIG_DIR + "/" + BASE_NAME_GENRE_FILE
 LICENCE_FILE=CONFIG_DIR + "/" + BASE_NAME_LICENCE_FILE
 PLATFORM_FILE=CONFIG_DIR + "/" + BASE_NAME_PLATFORM_FILE
@@ -140,8 +140,9 @@ class ConfigurationFile:
 			if ask_yes_no_question(f"Créer le fichier « {self.fullPath()} » ?"):
 				self.createMinimalFile()
 
-	def setNew(self):
-		pass
+	def setNew(self, newPath):
+		self.baseName=os.path.basename(newPath)
+		self.path=os.path.dirname(newPath)
 
 	def __str__(self):
 		return self.fullPath(self)
@@ -166,7 +167,7 @@ def makeFileConfigMinimalContent():
 	return fileConfigMinimalContent
 
 def prepareConfigFiles():
-	ConfigurationFile(code="CONFIG_GAME_FILE",     minimalContent="""{"games":[]}""",      baseName="games.json")
+	ConfigurationFile(code="GAME_FILE",     minimalContent="""{"games":[]}""",      baseName="games.json")
 	ConfigurationFile(code="CONFIG_GENRE_FILE",    minimalContent="""{"genres":[]}""",     baseName="listOfGenres.json")
 	ConfigurationFile(code="CONFIG_LICENCE_FILE",  minimalContent="""{"licences":[]}""",   baseName="listOfLicences.json")
 	ConfigurationFile(code="CONFIG_PLATFORM_FILE", minimalContent="""{"platforms":[]}""",  baseName="listOfPlatforms.json")
@@ -607,7 +608,6 @@ def applyFileConfigurationsGraphicalSymbols():
 	config = configparser.ConfigParser()
 
 	config.read(CONFIG_GENERAL_FILE.fullPath())
-	#config.read(CONFIG_FILE)
 
 	for aConfigiGrahpicalSymbol in listOfGraphicalSymbols:
 		if config.has_option("General", aConfigiGrahpicalSymbol.fileConfigName):
@@ -1210,7 +1210,7 @@ def create_game_objects():
 	listOfGames={}
 
 	# Extraction des jeux
-	with open(GAME_FILE) as f:
+	with open(GAME_FILE.fullPath()) as f:
 		listOfGamesData = json.load(f)["games"]
 
 	## Déploiment des objet de jeux
@@ -1270,7 +1270,7 @@ def addObjectToDataBase(theObject=None, listOfObjects=None, object_file=None, ob
 # Fonctions dérrivées #################################################################
 
 def addGameToDataBase(theObject):
-	addObjectToDataBase(theObject=theObject, listOfObjects=listOfGames, object_file=GAME_FILE, objectGroupName="games", object_name="jeu")
+	addObjectToDataBase(theObject=theObject, listOfObjects=listOfGames, object_file=GAME_FILE.fullPath(), objectGroupName="games", object_name="jeu")
 
 def addGenreToDataBase(theObject):
 	addObjectToDataBase(theObject=theObject, listOfObjects=listOfGenres, object_file=GENRE_FILE, objectGroupName="genres", object_name="genre")
@@ -1314,7 +1314,7 @@ def deleteObjectFromDatabase(givenObject=None, listOfObjectsFile=None, objectGro
 #
 
 def deleteGameFromDatabase(givenObject):
-	deleteObjectFromDatabase(givenObject=givenObject, listOfObjectsFile=GAME_FILE, objectGroupName="games")
+	deleteObjectFromDatabase(givenObject=givenObject, listOfObjectsFile=GAME_FILE.fullPath(), objectGroupName="games")
 
 def deleteLicenceFromDatabase(givenObject):
 	deleteObjectFromDatabase(givenObject=givenObject, listOfObjectsFile=LICENCE_FILE, objectGroupName="licences")
@@ -1554,7 +1554,6 @@ class VisualListOfGames:
 	def filterByPattern(self, pattern):
 		pass
 
-VisualListOfGames()
 
 ########################################################################
 # Fonctions foncitonnelles de l’interface interactive
@@ -1948,6 +1947,9 @@ Binding(key=":", code="bindExMode", description=f"Mode Ex", configFileName="bind
 
 prepareConfigFiles()
 
+# /!\ Il est imporatnt que VisualListOfGames() vienne après prepareConfigFiles() car ce dernier décalre des variables globales dont VisualListOfGames() a besoin
+VisualListOfGames()
+
 ########################################################################
 # Fonctions main
 ########################################################################
@@ -2027,7 +2029,7 @@ applyFileConfigurationsGraphicalSymbols()
 
 # Fichiers de configuration
 if args.games_file:
-	GAME_FILE=args.games_file
+	GAME_FILE.setNew(args.games_file)
 if args.genres_file:
 	GENRE_FILE=args.genres_file
 if args.licences_file:
