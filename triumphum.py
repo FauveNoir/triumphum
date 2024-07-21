@@ -1696,6 +1696,8 @@ BOTTOM_BAR_TEXT=APP_MOTO
 def setBottomBarContent(newBottomBarText):
 	global BOTTOM_BAR_TEXT
 	BOTTOM_BAR_TEXT = newBottomBarText
+	STDSCR.refresh()
+
 
 
 def bottomBarCoordinate(stdscr):
@@ -1715,7 +1717,6 @@ def draw_bottom_bar(stdscr):
 def enteringExMode(stdscr):
 	# Activer la saisie de texte
 
-
 	h, w = bottomBarCoordinate(stdscr)
 	curses.curs_set(1)  # Afficher le curseur
 
@@ -1733,6 +1734,18 @@ def enteringExMode(stdscr):
 
 		if ch == 27:  # Si ESC est pressé
 			break
+
+		elif ch == 263: # Si BSP est préssé
+			y, x = stdscr.getyx()
+
+			if x > 1:
+				input_text=input_text[:-1]
+				stdscr.move(y, x - 1)  # Déplace le curseur à la position juste avant
+				stdscr.delch()         # Supprime le caractère à cette position
+
+				stdscr.refresh()
+			else:
+				break
 
 		elif ch in [curses.KEY_ENTER, 10]:  # Si Entrée est pressé (curses.KEY_ENTER vaut 10)
 
