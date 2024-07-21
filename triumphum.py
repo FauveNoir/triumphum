@@ -104,7 +104,7 @@ BASE_NAME_HISTORY_FILE="history.json"
 #GENRE_FILE=CONFIG_DIR + "/" + BASE_NAME_GENRE_FILE
 #LICENCE_FILE=CONFIG_DIR + "/" + BASE_NAME_LICENCE_FILE
 #PLATFORM_FILE=CONFIG_DIR + "/" + BASE_NAME_PLATFORM_FILE
-HISTORY_FILE=CONFIG_DIR + "/" + BASE_NAME_HISTORY_FILE
+#HISTORY_FILE=CONFIG_DIR + "/" + BASE_NAME_HISTORY_FILE
 
 ########################################################################
 # Initialisation
@@ -171,7 +171,7 @@ def prepareConfigFiles():
 	ConfigurationFile(code="GENRE_FILE",    minimalContent="""{"genres":[]}""",     baseName="listOfGenres.json")
 	ConfigurationFile(code="LICENCE_FILE",  minimalContent="""{"licences":[]}""",   baseName="listOfLicences.json")
 	ConfigurationFile(code="PLATFORM_FILE", minimalContent="""{"platforms":[]}""",  baseName="listOfPlatforms.json")
-	ConfigurationFile(code="CONFIG_HISTORY_FILE",  minimalContent="""{"history":[]}""",    baseName="history.json")
+	ConfigurationFile(code="HISTORY_FILE",  minimalContent="""{"history":[]}""",    baseName="history.json")
 	ConfigurationFile(code="CONFIG_GENERAL_FILE",  minimalContent=makeFileConfigMinimalContent(),    baseName="triumphumrc", path=appdirs.user_config_dir())
 
 def verifyConfigFileExistence():
@@ -1086,7 +1086,7 @@ def is_history_entry_relevant(history_entry):
 
 def retrive_history_of_a_game(game):
 	prepared_history = History()
-	with open(HISTORY_FILE) as f:
+	with open(HISTORY_FILE.fullPath()) as f:
 		data = json.load(f)
 
 	if 'history' in data and game.code in data['history']:
@@ -1577,7 +1577,7 @@ def sort_by_date(items):
 	return sorted(items, key=lambda x: str(x[3]))
 
 def history_data_with_current_game(game):
-	with open(HISTORY_FILE) as f:
+	with open(HISTORY_FILE.fullPath()) as f:
 		data = json.load(f)
 
 	if 'history' not in data:
@@ -1591,7 +1591,7 @@ def history_data_with_current_game(game):
 def write_opening_date_on_history(game=None, start_time=None, end_time=None, duration=None):
 	try:
 		# Charger le JSON existant depuis un fichier
-		with open(HISTORY_FILE) as f:
+		with open(HISTORY_FILE.fullPath()) as f:
 			data = json.load(f)
 
 		data = history_data_with_current_game(game)
@@ -1599,7 +1599,7 @@ def write_opening_date_on_history(game=None, start_time=None, end_time=None, dur
 		data['history'][game.code].append(history_entry.make_data())
 
 		# Enregistrer la structure de données modifiée en tant que JSON
-		with open(HISTORY_FILE, 'w') as f:
+		with open(HISTORY_FILE.fullPath(), 'w') as f:
 			json.dump(data, f, indent=4)
 	except:
 		pass
