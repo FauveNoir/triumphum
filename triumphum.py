@@ -382,7 +382,11 @@ def bindRunGameFunction():
 	THE_VISUAL_LIST_OF_GAMES.openCurrent()
 
 def bindDeleteGameFunction():
-	THE_VISUAL_LIST_OF_GAMES.deleteCurrent()
+	currentGame=THE_VISUAL_LIST_OF_GAMES.currentGame().name
+	if questionMode(f"Supprimer « {currentGame} » ?"):
+		THE_VISUAL_LIST_OF_GAMES.deleteCurrent()
+	else:
+		setBottomBarContent(f"« {currentGame} est conservé. Rien n’est altéré.")
 
 def bindOpenLinkFunction():
 	THE_VISUAL_LIST_OF_GAMES.openLink()
@@ -567,12 +571,20 @@ class InternalShellCommand:
 		setBottomBarContent(self.description)
 
 
+def whatTodoWhenShellInputIsWrong(shellInput):
+	setBottomBarContent(f"La commande « {shellInput} » est invalide.")
+
 
 def whatToDoWithShellInput(shellInput):
+	isShellInputValid=False
 	for anInternalCommand in ListOfInternalShellCommand:
 		match = re.match(ListOfInternalShellCommand[anInternalCommand].patern, shellInput)
 		if match:
+			isShellInputValid=True
 			ListOfInternalShellCommand[anInternalCommand].executeInstructions(shellInput)
+
+	if isShellInputValid == False:
+		whatTodoWhenShellInputIsWrong(shellInput)
 
 ########################################################################
 # Traitement du fichier de configuration
@@ -1184,9 +1196,7 @@ class Game:
 		return formatDataListToLitteralList(self.studios, STUDIO_VOID_SYMBOL.value)
 
 	def delete(self):
-		#deleteGameFromDatabase(self.code)
-		pass
-		#listOfGames.remove(self)
+		deleteGameFromDatabase(self.code)
 
 def create_game_objects():
 	# Création de la liste des jeux
@@ -1286,7 +1296,7 @@ def deleteObjectFromDatabase(givenObject=None, listOfObjectsFile=None, objectGro
 		# Parcourir la liste des jeux
 		for anObject in list_:
 			# Vérifier si l'objet a pour valeur "code": "abc"
-			if isinstance(anObject, dict) and anObject.get('code') == givenObject.code:
+			if isinstance(anObject, dict) and anObject.get('code') == givenObject:
 				founded=True
 				list_.remove(anObject)  # Supprimer l'élément de la liste
 	
@@ -1436,6 +1446,11 @@ class VisualListOfGames:
 		game = self.list[self.selected_row][HIDED_DATA_COLUMN]
 		threading.Thread(target=run_command_and_write_on_history, args=(game,)).start()
 
+	def currentGame(self):
+		# TODO factorisé un peu partout.
+		game = self.list[self.selected_row][HIDED_DATA_COLUMN]
+		return game
+
 	def deleteCurrent(self):
 		# Exécuter la commande de lancement du jeu associée à la ligne sélectionnée
 		global HIDED_DATA_COLUMN
@@ -1446,7 +1461,7 @@ class VisualListOfGames:
 			self.goUp() # TODO work on
 			game = self.list[self.selected_row+1][HIDED_DATA_COLUMN]
 		game.delete()
-		#self.refresh()
+		self.refresh()
 
 	def copyLinkToClipBoard(self):
 		url = self.list[self.selected_row][self.hiden_data_column_number()].url
@@ -1698,7 +1713,8 @@ def setBottomBarContent(newBottomBarText):
 	BOTTOM_BAR_TEXT = newBottomBarText
 	STDSCR.refresh()
 
-
+def setBottomBarColor(color):
+	pass
 
 def bottomBarCoordinate(stdscr):
 	return stdscr.getmaxyx()
@@ -1711,8 +1727,8 @@ def draw_bottom_bar(stdscr):
 
 	# Dessine la barre au bas de l'écran
 	bar_text = f" {BOTTOM_BAR_TEXT} "
-	stdscr.addstr(h-MAIN_SCREEN_MARGIN_BOTTOM, 0, bar_text, curses.A_REVERSE)
 	stdscr.chgat(h-MAIN_SCREEN_MARGIN_BOTTOM, 0, w, curses.A_REVERSE)
+	stdscr.addstr(h-MAIN_SCREEN_MARGIN_BOTTOM, 0, bar_text, curses.A_REVERSE)
 
 def enteringExMode(stdscr):
 	# Activer la saisie de texte
@@ -1876,6 +1892,21 @@ def drawListOfGames(stdscr):
 		for column_number, column in enumerate(THE_VISUAL_LIST_OF_GAMES.list[THE_VISUAL_LIST_OF_GAMES.selected_row][:HIDED_DATA_COLUMN]):  # Afficher seulement les 4 premières colonnes
 			stdscr.addstr(THE_VISUAL_LIST_OF_GAMES.visualHighlightedLineNumber(screenHeight) + 2, sum(col_widths[:column_number]) + column_number * 2, str(column), curses.color_pair(2) | curses.A_BOLD)
 
+def questionMode(question):
+	setBottomBarContent(question + " (Y/n)")
+	draw_bottom_bar(STDSCR)
+	STDSCR.refresh()
+	while True:
+		key = transform_key_to_character(STDSCR.get_wch())
+		if key in ['y', 'yes']:
+			return True
+		elif key in ['n', 'no']:
+			return False
+		else:
+			setBottomBarContent("Veuillez répondre par 'Y' ou 'n'.")
+			draw_bottom_bar(STDSCR)
+			STDSCR.refresh()
+
 ########################################################################
 # Internal shell
 ########################################################################
@@ -2003,6 +2034,7 @@ def main(stdscr):
 		if (key) == transform_key_to_character('q'):  # Quitter si la touche 'q' est pressée
 			break
 		elif (key) in getListOfKeyBindingsCodes():
+			setBottomBarContent("")
 			returnBindingAfterKeyStroke(key).executeInstructions()
 
 ########################################################################
