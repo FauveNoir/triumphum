@@ -119,6 +119,7 @@ class ConfigurationFile:
 		self.minimalContent=minimalContent
 
 		listOfConfigurationFile[self.code]=self
+		globals()[self.code]=self
 
 	def fullPath(self):
 		return self.path + "/" + self.baseName
@@ -155,12 +156,22 @@ def ask_yes_no_question(question):
 		else:
 			print("Veuillez répondre par 'Y' ou 'n'.")
 
-ConfigurationFile(code="CONFIG_GAME_FILE",     minimalContent="""{"games":[]}""",      baseName="games.json")
-ConfigurationFile(code="CONFIG_GENRE_FILE",    minimalContent="""{"genres":[]}""",     baseName="listOfGenres.json")
-ConfigurationFile(code="CONFIG_LICENCE_FILE",  minimalContent="""{"licences":[]}""",   baseName="listOfLicences.json")
-ConfigurationFile(code="CONFIG_PLATFORM_FILE", minimalContent="""{"platforms":[]}""",  baseName="listOfPlatforms.json")
-ConfigurationFile(code="CONFIG_HISTORY_FILE",  minimalContent="""{"history":[]}""",    baseName="history.json")
-ConfigurationFile(code="CONFIG_GENERAL_FILE",  minimalContent="",    baseName="triumphumrc", path=appdirs.user_config_dir())
+def makeFileConfigMinimalContent():
+	fileConfigMinimalContent="language=fre"
+	for aGraphicalSymbol in listOfGraphicalSymbols:
+		fileConfigMinimalContent+="\n" + aGraphicalSymbol.fileConfigName + "=" + aGraphicalSymbol.value
+	for aBinding in listOfBindings:
+		fileConfigMinimalContent+="\n" + aBinding.makeDefaultConfigEntry()
+
+	return fileConfigMinimalContent
+
+def prepareConfigFiles():
+	ConfigurationFile(code="CONFIG_GAME_FILE",     minimalContent="""{"games":[]}""",      baseName="games.json")
+	ConfigurationFile(code="CONFIG_GENRE_FILE",    minimalContent="""{"genres":[]}""",     baseName="listOfGenres.json")
+	ConfigurationFile(code="CONFIG_LICENCE_FILE",  minimalContent="""{"licences":[]}""",   baseName="listOfLicences.json")
+	ConfigurationFile(code="CONFIG_PLATFORM_FILE", minimalContent="""{"platforms":[]}""",  baseName="listOfPlatforms.json")
+	ConfigurationFile(code="CONFIG_HISTORY_FILE",  minimalContent="""{"history":[]}""",    baseName="history.json")
+	ConfigurationFile(code="CONFIG_GENERAL_FILE",  minimalContent=makeFileConfigMinimalContent(),    baseName="triumphumrc", path=appdirs.user_config_dir())
 
 def verifyConfigFileExistence():
 	for aFile in listOfConfigurationFile:
@@ -296,16 +307,21 @@ def returnBindingAfterConfigKeyCode(configKeyCode):
 
 ########################################################################
 
-def transform_key_to_character(key_name):
-	key_mapping = {
-		"Enter": "\n",
-		"Return": "\r",
-		"Space": " ",
-	}
+KEY_MAPPING = {
+	"Enter": "\n",
+	"Return": "\r",
+	"Space": " ",
+}
 
-	# Return the mapped character if it exists in the dictionary,
-	# otherwise return the original key_name (which might be a letter or unknown key)
-	return key_mapping.get(key_name, key_name)
+def reverseDictionnary(dictionnary):
+	return {v: k for k, v in dictionnary.items()}
+
+def transform_key_to_character(key_name):
+	return KEY_MAPPING.get(key_name, key_name)
+
+def transform_character_to_key(character_name):
+	reverseKeyMapping=reverseDictionnary(KEY_MAPPING)
+	return reverseKeyMapping.get(character_name, character_name)
 
 ########################################################################
 
@@ -330,6 +346,10 @@ class Binding:
 
 	def executeInstructions(self):
 		setBottomBarContent(f"{self.key} : Aucune action associée.")
+
+	def makeDefaultConfigEntry(self):
+		configEntry=self.configFileName + "=" + transform_character_to_key(self.key)
+		return configEntry
 
 def bindGoDownFunction():
 	THE_VISUAL_LIST_OF_GAMES.goDown()
@@ -574,7 +594,7 @@ def whatToDoWithShellInput(shellInput):
 def applyFileConfigurationsBindings():
 	config = configparser.ConfigParser()
 
-	config.read('triumphumrc')
+	config.read(CONFIG_GENERAL_FILE.fullPath())
 	configValues={}
 
 	for aConfigKey in getListOfConfigKeyCodes():
@@ -586,7 +606,7 @@ def applyFileConfigurationsBindings():
 def applyFileConfigurationsGraphicalSymbols():
 	config = configparser.ConfigParser()
 
-	config.read('triumphumrc')
+	config.read(CONFIG_GENERAL_FILE.fullPath())
 	#config.read(CONFIG_FILE)
 
 	for aConfigiGrahpicalSymbol in listOfGraphicalSymbols:
@@ -1920,6 +1940,17 @@ Binding(key="l", code="bindRefreshScreen", description="Rafraichir l’écran", 
 Binding(key="q", code="bindQuit", description=f"Quitter {APP_FANCY_NAME}", configFileName="bind_quit")
 Binding(key=":", code="bindExMode", description=f"Mode Ex", configFileName="bind_exMode", instructions=enteringExModeByBinding)
 
+########################################################################
+# Éexecution des fichiers de configuration
+########################################################################
+
+# /!\ Il est imporatnt que prepareConfigFiles() soit éxecutée après les déclarations de bindings car elle en a besoin pour générer les bindings par défaut.
+
+prepareConfigFiles()
+
+########################################################################
+# Fonctions main
+########################################################################
 
 STDSCR=None
 def main(stdscr):
