@@ -184,17 +184,17 @@ generalArgument.add_argument("-a", "--about", action="store_true", help = "Show 
 generalArgument.add_argument("-v", "--verbose", action="store_true", help = "Show debug inromations.")
 generalArgument.add_argument("-d", "--donate", action="store_true", help = "Open link to give a tip.")
 generalArgument.add_argument("--no-splash", action="store_true", help = "Do not show splash at opening.")
-generalArgument.add_argument("--list-games", action="store_true", help = "Afficher la liste des jeux.")
-generalArgument.add_argument("--list-licences", action="store_true", help = "Afficher la liste des licences.")
-generalArgument.add_argument("--list-genres", action="store_true", help = "Afficher la liste des genres de jeu.")
-generalArgument.add_argument("--list-platforms", action="store_true", help = "Afficher la liste des genres des plateformes.")
+generalArgument.add_argument("--list-games", action="store_true", help = "Afficher la liste des jeux.") # TODO
+generalArgument.add_argument("--list-licences", action="store_true", help = "Afficher la liste des licences.") # TODO
+generalArgument.add_argument("--list-genres", action="store_true", help = "Afficher la liste des genres de jeu.") # TODO
+generalArgument.add_argument("--list-platforms", action="store_true", help = "Afficher la liste des genres des plateformes.") # TODO
 
 configurationFile = parser.add_argument_group('Configuration file')
 configurationFile.add_argument("-c", "--config-file", help = "Select different config file from default one.")
 configurationFile.add_argument("-g", "--games", dest="games_file", metavar="FILE", help = "Select different game file from default one.")
 configurationFile.add_argument("-p", "--platforms", dest="platforms_file", metavar="FILE", help = "Select different platform file from default one.")
 configurationFile.add_argument("-l", "--licences", dest="licences_file", metavar="FILE", help = "Select different licence file from default one.")
-configurationFile.add_argument("-t", "--game-genres", dest="genres_file", metavar="FILE", help = "Select different game genre file from default one.")
+configurationFile.add_argument("-t", "--genres", dest="genres_file", metavar="FILE", help = "Select different game genre file from default one.")
 configurationFile.add_argument("--layout", dest="layout", action="store", help = f"Utiliser des raccourcis dactyliques adaptés à la disposition de clavier.")
 
 addingData = parser.add_argument_group('Adding data')
@@ -210,6 +210,13 @@ deletingDataGroup.add_argument("--del-game", dest="delGame", metavar="GAME", hel
 deletingDataGroup.add_argument("--del-licence", dest="delLicence", metavar="LICENCE", help = "Suprimer une licence.")
 deletingDataGroup.add_argument("--del-genre", dest="delGenre", metavar="GENRE", help = "Suprimer un genre de jeu.")
 deletingDataGroup.add_argument("--del-platform", dest="delPlatform", metavar="PLATFORM", help = "Suprimer une plateforme.")
+
+autocompletionFunctions = parser.add_argument_group('For autocomplexion only')
+autocompletionFunctionsGroup = autocompletionFunctions.add_mutually_exclusive_group()
+autocompletionFunctionsGroup.add_argument("--ag", action="store_true",  dest="autocompletionGame", help = "Lister les codes des jeux")
+autocompletionFunctionsGroup.add_argument("--al", action="store_true",  dest="autocompletionLicence", help = "Lister les codes des licences.")
+autocompletionFunctionsGroup.add_argument("--at", action="store_true",  dest="autocompletionGenre", help = "Lister les codes des genres de jeu.")
+autocompletionFunctionsGroup.add_argument("--ap", action="store_true",  dest="autocompletionPlatform", help = "Lister les codes des plateformes.")
 
 args = parser.parse_args()
 
@@ -432,7 +439,6 @@ class Layout:
 		for attributName, value in attributs.items():
 			setattr(self, attributName, value)
 
-#		layoutArgumentsGroup.add_argument(f"--{code}", dest="layout", action="store_const", const=self, help = f"Lancer l’interface avec une carte de touches adaptée à la disposition {fancyName}.")
 		listOfLayouts[self.code]=self
 
 	def apply(self):
@@ -512,14 +518,6 @@ Layout(fancyName="QWERTY", code="qwerty",
 	bindRefreshScreen="l",
 	bindQuit="x"
 	)
-
-########################################################################
-########################################################################
-########################################################################
-
-# Déploiement du parseur des arguments de la ligne de commande.
-# Il est nécéssaire d’attendre la définition des dispositions de clavier avant de l’éxecuter
-
 
 ########################################################################
 # Classe du shell interne
@@ -1223,6 +1221,40 @@ def create_game_objects():
 			studios=aGame.get("studios"),
 			platform=get_platform_object_after_code(aGame.get("platform")),
 		)
+
+########################################################################
+# Fonction de l’æutocompletion
+########################################################################
+
+def deleteBlancLines(chaine):
+	# Divise la chaîne en lignes individuelles
+	lignes = chaine.splitlines()
+	
+	# Filtre les lignes qui ne sont pas vides
+	lignes_non_vides = [ligne for ligne in lignes if ligne.strip() != '']
+	
+	# Rejoint les lignes non vides en une seule chaîne
+	chaine_sans_lignes_vides = '\n'.join(lignes_non_vides)
+	
+	return chaine_sans_lignes_vides
+
+def listAllObjectsCodeOfClassCodePerLine(listOfObjectsOfClass):
+	listOfCodes=""
+	for anObject in listOfObjectsOfClass:
+		listOfCodes+="\n" + anObject
+	return deleteBlancLines(listOfCodes)
+
+def listOfAllGamesCodePerLine():
+	return listAllObjectsCodeOfClassCodePerLine(listOfGames)
+
+def listOfAllLicencesCodePerLine():
+	return listAllObjectsCodeOfClassCodePerLine(listOfLicences)
+
+def listOfAllGenresCodePerLine():
+	return listAllObjectsCodeOfClassCodePerLine(listOfGenres)
+
+def listOfAllPlatformsCodePerLine():
+	return listAllObjectsCodeOfClassCodePerLine(listofPlatforms)
 
 ########################################################################
 # Éidition des bases de données (nouveau)
@@ -2088,6 +2120,16 @@ elif args.newLicenceDescriptor :
 elif args.newPlatformDescriptor :
 	addNewPlatformAfterInterativeDescriptor(args.newPlatformDescriptor, True)
 
+# Parametres de l’autocompletion
+if args.autocompletionGame:
+	print(listOfAllGamesCodePerLine())
+elif args.autocompletionGenre :
+	print(listOfAllGenresCodePerLine())
+elif args.autocompletionLicence :
+	print(listOfAllLicencesCodePerLine())
+elif args.autocompletionPlatform :
+	print(listOfAllPlatformsCodePerLine())
+
 # Section des suppresions
 elif args.delGame:
 	deleteGameFromDatabase(iargs.delGame)
@@ -2122,5 +2164,3 @@ elif args.tui == True:
 		layout.apply()
 	printSplash()
 	curses.wrapper(main)
-
-
