@@ -2209,7 +2209,7 @@ elif args.autocompletionPlatform :
 	print(listOfAllPlatformsCodePerLine())
 
 # Affichages des listes cli
-if args.list_games:
+elif args.list_games:
 	printGamesTable()
 elif args.list_genres :
 	printGenresTable()
