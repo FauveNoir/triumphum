@@ -185,10 +185,10 @@ generalArgument.add_argument("-a", "--about", action="store_true", help = "Show 
 generalArgument.add_argument("-v", "--verbose", action="store_true", help = "Show debug inromations.")
 generalArgument.add_argument("-d", "--donate", action="store_true", help = "Open link to give a tip.")
 generalArgument.add_argument("--no-splash", action="store_true", help = "Do not show splash at opening.")
-generalArgument.add_argument("--list-games", action="store_true", help = "Afficher la liste des jeux.") # TODO
-generalArgument.add_argument("--list-licences", action="store_true", help = "Afficher la liste des licences.") # TODO
-generalArgument.add_argument("--list-genres", action="store_true", help = "Afficher la liste des genres de jeu.") # TODO
-generalArgument.add_argument("--list-platforms", action="store_true", help = "Afficher la liste des genres des plateformes.") # TODO
+generalArgument.add_argument("--list-games", action="store_true", help = "Afficher la liste des jeux.")
+generalArgument.add_argument("--list-licences", action="store_true", help = "Afficher la liste des licences.")
+generalArgument.add_argument("--list-genres", action="store_true", help = "Afficher la liste des genres de jeu.")
+generalArgument.add_argument("--list-platforms", action="store_true", help = "Afficher la liste des genres des plateformes.")
 
 configurationFile = parser.add_argument_group('Configuration file')
 configurationFile.add_argument("-c", "--config-file", help = "Select different config file from default one.")
@@ -1568,7 +1568,7 @@ class VisualListOfGames:
 		game = self.list[self.selected_row][HIDED_DATA_COLUMN]
 		if self.selected_row == len(self.list)-1:
 			
-			self.goUp() # TODO work on
+			self.goUp()
 			game = self.list[self.selected_row+1][HIDED_DATA_COLUMN]
 		game.delete()
 		self.refresh()
@@ -1808,12 +1808,9 @@ items=[]
 def makeItemsList():
 	global items
 	items=[]
-	global listOfGames
 	for aGame in listOfGames:
 		items.append(listOfGames[aGame].ncurseLine())
 	return items
-
-#makeItemsList()
 
 SPACE_COLUMN_SEPARATION_NUMBER=2
 
@@ -1974,7 +1971,7 @@ def display_centered_text(stdscr, text):
 
 def drawListOfGames(stdscr):
 	#setBottomBarContent("Don:x  Quitter:q  Tri par nom:b  Par date:o  Par licence:é  Par genre:p Par date:o  Par durée de jeu:!") # TODO rendre automatique
-	makeItemsList() # TODO : déglobaliser
+	makeItemsList()
 	THE_VISUAL_LIST_OF_GAMES.refresh()
 	screenHeight, screenWidth = stdscr.getmaxyx()
 	if THE_VISUAL_LIST_OF_GAMES.isTheListEmpty():
@@ -2127,7 +2124,7 @@ def main(stdscr):
 		#retrive_datas()
 		# Mise à jour de la liste des jeux
 
-		curses.noecho()  # Désactiver l'écho des touches # TODO à édcommenter avant prod
+		curses.noecho()  # Désactiver l'écho des touches
 		stdscr.clear()
 
 		drawListOfGames(stdscr)
@@ -2199,7 +2196,7 @@ elif args.newPlatformDescriptor :
 	addNewPlatformAfterInterativeDescriptor(args.newPlatformDescriptor, True)
 
 # Parametres de l’autocompletion
-if args.autocompletionGame:
+elif args.autocompletionGame:
 	print(listOfAllGamesCodePerLine())
 elif args.autocompletionGenre :
 	print(listOfAllGenresCodePerLine())
@@ -2228,6 +2225,7 @@ elif args.delGenre:
 elif args.delPlatform:
 	deletePlatfromFromDatabase(iargs.delPlatform)
 
+# Execution d’un jeu
 elif args.run not in [None, False]:
 	theGame=getGameObjectByItCodeName(args.run)
 	if theGame != None:
@@ -2237,6 +2235,7 @@ elif args.run not in [None, False]:
 	else:
 		print(f"Aucun jeu ne correspond à l’identifiant « {args.run} »")
 
+# Autres fonctions autonomes
 elif  args.about == True:
 	print(APP_FANCY_NAME + " " + APP_VERSION + " " + APP_DESCRIPTION)
 
