@@ -21,6 +21,7 @@ from Xlib import XK
 from Xlib.display import Display
 import curses.textpad
 import os
+from prettytable import PrettyTable
 
 ########################################################################
 # fonctions de test
@@ -746,7 +747,7 @@ def addNewPlatformAfterInterativeDescriptor(newPlatformDescriptor, isSplited=Fal
 ########################################################################
 
 # défffinition de classe
-listofPlatforms={}
+listOfPlatforms={}
 class Platform:
 	def __init__(self, name=None, code=None, abbr=None, includeInSorting=True):
 		self.name = name
@@ -754,7 +755,7 @@ class Platform:
 		self.abbr = abbr
 		self.includeInSorting = includeInSorting
 
-		listofPlatforms[self.code]=self
+		listOfPlatforms[self.code]=self
 	def __eq__(self, other):
 		if isinstance(other, Platform):
 			return self.abbr == other.abbr
@@ -769,6 +770,14 @@ class Platform:
 		if isinstance(other, Platform):
 			return self.abbr > other.abbr
 		return NotImplemented
+
+	def asciiRow(self):
+		# Vérifier chaque clé pour une éventuelle valeur vide et remplacer par "-"
+		asciiRow = [
+			self.name or GENERAL_VOID_SYMBOL,
+			self.abbr or GENERAL_VOID_SYMBOL,
+		]
+		return asciiRow
 
 def create_platform_objects():
 	# Création de la liste des plateformes disponibles
@@ -788,8 +797,8 @@ def create_platform_objects():
 unknownplatform=Platform(name="Plateforme inconue", code="unknownplatform", abbr="", includeInSorting=False)
 
 def get_platform_object_after_code(code):
-	if code in listofPlatforms:
-		return listofPlatforms[code]
+	if code in listOfPlatforms:
+		return listOfPlatforms[code]
 	return unknownplatform
 
 ########################################################################
@@ -842,6 +851,16 @@ class Genre:
 		if isinstance(other, Genre):
 			return self.abbr > other.abbr
 		return NotImplemented
+
+	def asciiRow(self):
+		# Préparation de la ligne de tableau
+
+		# Vérifier chaque clé pour une éventuelle valeur vide et remplacer par "-"
+		asciiRow = [
+			self.name or GENERAL_VOID_SYMBOL,
+			self.abbr or GENERAL_VOID_SYMBOL,
+		]
+		return asciiRow
 
 def create_game_genre_objects():
 	# Extraction des genres de jeux
@@ -920,6 +939,14 @@ class Licence:
 		if isinstance(other, Licence):
 			return self.freedomCoefficient >= other.freedomCoefficient
 		return NotImplemented
+	def asciiRow(self):
+		# Vérifier chaque clé pour une éventuelle valeur vide et remplacer par "-"
+		asciiRow = [
+			self.name or GENERAL_VOID_SYMBOL,
+			self.url or GENERAL_VOID_SYMBOL,
+			self.freedomCoefficient or GENERAL_VOID_SYMBOL,
+		]
+		return asciiRow
 
 def create_licence_objects():
 	# Extraction des licences
@@ -1137,6 +1164,21 @@ class Game:
 		]
 		return ncurseLine
 
+	def asciiRow(self):
+		# Vérifier chaque clé pour une éventuelle valeur vide et remplacer par "-"
+		asciiRow = [
+			self.platform.abbr or PLATFORM_VOID_SYMBOL.value,
+			self.name or NAME_VOID_SYMBOL.value,
+			self.licence.abbr or LICENCE_VOID_SYMBOL.value,
+			self.genre.abbr or GENRE_VOID_SYMBOL.value,
+			self.year or DATE_VOID_SYMBOL.value,
+			self.human_latest_opening_duration() or LASTOPENING_VOID_SYMBOL.value,
+			self.human_cumulate_time() or CUMULATEDTIME_VOID_SYMBOL.value,
+			self.listOfAuthors() or AUTHOR_VOID_SYMBOL.value,
+			self.listOfStudios() or STUDIO_VOID_SYMBOL.value
+		]
+		return asciiRow
+
 	def sheet(self):
 		# Fiche rapide de description de jeu
 		sheet_data=[
@@ -1223,7 +1265,7 @@ def create_game_objects():
 		)
 
 ########################################################################
-# Fonction de l’æutocompletion
+# Fonction de l’autocompletion
 ########################################################################
 
 def deleteBlancLines(chaine):
@@ -1254,7 +1296,43 @@ def listOfAllGenresCodePerLine():
 	return listAllObjectsCodeOfClassCodePerLine(listOfGenres)
 
 def listOfAllPlatformsCodePerLine():
-	return listAllObjectsCodeOfClassCodePerLine(listofPlatforms)
+	return listAllObjectsCodeOfClassCodePerLine(listOfPlatforms)
+
+########################################################################
+# Fonction de lestage
+########################################################################
+
+GAME_HEADERS=["Plateforme", "Titre", "Licence", "Genre", "Date", "Dernière ouverture", "Temps cumulé", "Auteur", "Studio"]
+LICENCE_HEADERS=["Titre", "URL", "Coeficient"]
+PLATFORM_HEADERS=["Titre", "Acronyme"]
+GENRES_HEADERS=["Titre", "Acronyme"]
+
+def printObjectsFromTypeTable(object_headers, listOfObjectsFromType):
+	table = PrettyTable()
+	table.field_names = object_headers
+
+	for anObject in listOfObjectsFromType:
+		# Ajout des données à la table
+		row=listOfObjectsFromType[anObject].asciiRow()
+		table.add_row(row)
+
+	for anElement in table.field_names:
+		table.align[anElement] = "l"
+
+	# Affichage de la table
+	print(table)
+
+def printGamesTable():
+	printObjectsFromTypeTable(GAME_HEADERS, listOfGames)
+
+def printLicencesTable():
+	printObjectsFromTypeTable(LICENCE_HEADERS, listOfLicences)
+
+def printPlatformsTable():
+	printObjectsFromTypeTable(PLATFORM_HEADERS, listOfPlatforms)
+
+def printGenresTable():
+	printObjectsFromTypeTable(GENRES_HEADERS, listOfGenres)
 
 ########################################################################
 # Éidition des bases de données (nouveau)
@@ -1307,7 +1385,7 @@ def addLicenceToDataBase(theObject):
 	addObjectToDataBase(theObject=theObject, listOfObjects=listOfLicences, object_file=LICENCE_FILE.fullPath(), objectGroupName="licences", object_name="licence")
 
 def addPlatformToDataBase(theObject):
-	addObjectToDataBase(theObject=theObject, listOfObjects=listofPlatforms, object_file=PLATFORM_FILE.fullPath(), objectGroupName="platforms", object_name="plateforme")
+	addObjectToDataBase(theObject=theObject, listOfObjects=listOfPlatforms, object_file=PLATFORM_FILE.fullPath(), objectGroupName="platforms", object_name="plateforme")
 
 ########################################################################
 # Éidition des bases de données | Délétion (nouveau)
@@ -2130,6 +2208,16 @@ elif args.autocompletionLicence :
 elif args.autocompletionPlatform :
 	print(listOfAllPlatformsCodePerLine())
 
+# Affichages des listes cli
+if args.list_games:
+	printGamesTable()
+elif args.list_genres :
+	printGenresTable()
+elif args.list_licences :
+	printLicencesTable()
+elif args.list_platforms :
+	printPlatformsTable()
+
 # Section des suppresions
 elif args.delGame:
 	deleteGameFromDatabase(iargs.delGame)
@@ -2164,3 +2252,4 @@ elif args.tui == True:
 		layout.apply()
 	printSplash()
 	curses.wrapper(main)
+
