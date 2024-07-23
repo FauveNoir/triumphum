@@ -2145,17 +2145,6 @@ def main(stdscr):
 			returnBindingAfterKeyStroke(key).executeInstructions()
 
 ########################################################################
-# Fonctions de la ligne de commande
-########################################################################
-
-def getGameObjectByItCodeName(code):
-	global listOfGames
-	for aGame in listOfGames:
-		if aGame.code == code:
-			return aGame
-	return None
-
-########################################################################
 # Que faire
 ########################################################################
 
@@ -2227,7 +2216,7 @@ elif args.delPlatform:
 
 # Execution d’un jeu
 elif args.run not in [None, False]:
-	theGame=getGameObjectByItCodeName(args.run)
+	theGame=listOfGames[args.run]
 	if theGame != None:
 		print(f"Ouverture de « {theGame.name} »")
 		theGame.sheet()
