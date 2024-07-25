@@ -162,7 +162,7 @@ def prepareConfigFiles():
 	ConfigurationFile(code="LICENCE_FILE",  minimalContent="""{"licences":[]}""",   baseName="listOfLicences.json")
 	ConfigurationFile(code="PLATFORM_FILE", minimalContent="""{"platforms":[]}""",  baseName="listOfPlatforms.json")
 	ConfigurationFile(code="HISTORY_FILE",  minimalContent="""{"history":[]}""",    baseName="history.json")
-	ConfigurationFile(code="CONFIG_FILE",  minimalContent=makeFileConfigMinimalContent(),    baseName="triumphumrc", path=appdirs.user_config_dir())
+	ConfigurationFile(code="CONFIG_FILE",   minimalContent=makeFileConfigMinimalContent(),    baseName="triumphumrc", path=appdirs.user_config_dir())
 
 def verifyConfigFileExistence():
 	for aFile in listOfConfigurationFile:
@@ -1241,6 +1241,10 @@ class Game:
 	def delete(self):
 		deleteGameFromDatabase(self.code)
 
+	def showPlot(self):
+		pass
+
+
 def create_game_objects():
 	# Création de la liste des jeux
 
@@ -2080,6 +2084,7 @@ Binding(key="y", code="bindCopyLink", description="Copier le lien dans le presse
 Binding(key="l", code="bindRefreshScreen", description="Rafraichir l’écran", instructions=bindRefreshScreenFunction, configFileName="bind_refresh")
 Binding(key="q", code="bindQuit", description=f"Quitter {APP_FANCY_NAME}", configFileName="bind_quit")
 Binding(key=":", code="bindExMode", description=f"Mode Ex", configFileName="bind_exMode", instructions=enteringExModeByBinding)
+Binding(key="g", code="bindShowPlot", description=f"Montrer le graphique du jeu", configFileName="bind_plot") # TODO Ajouter l’instruction idoine
 
 ########################################################################
 # Éexecution des fichiers de configuration
