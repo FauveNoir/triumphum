@@ -22,6 +22,9 @@ from Xlib.display import Display
 import curses.textpad
 import os
 from prettytable import PrettyTable
+import plotext as plt
+import numpy as np
+
 
 ########################################################################
 # fonctions de test
@@ -1283,7 +1286,8 @@ def deleteBlancLines(chaine):
 def listAllObjectsCodeOfClassCodePerLine(listOfObjectsOfClass):
 	listOfCodes=""
 	for anObject in listOfObjectsOfClass:
-		listOfCodes+="\n" + anObject
+#		listOfCodes+="\n" + anObject
+		listOfCodes+="\n" + f"{anObject}[{listOfObjectsOfClass[anObject].name}]"
 	return deleteBlancLines(listOfCodes)
 
 def listOfAllGamesCodePerLine():
