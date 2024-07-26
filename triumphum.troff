@@ -1,0 +1,162 @@
+.\" Manpage for example
+.TH TRIUMPHUM 1 "2024-03-25" "1.0" "Triumphum"
+.SH NOM
+triumphum \- Gestionnaire de ludothèque en Python et NCurses pour GNU/Linux
+.SH SYNOPSIS
+.B triumphum
+[-h | -a | -d]
+
+.B triumphum
+[--config-file \fIFICHIER_CONF\fR] [--games \fIFICHIER_JEUX\fR] [--platforms \fIFICHIER_PLATEFORMES\fR] [--licences \fIFICHIER_LICENCES\fR] [--genres \fIFICHIERS_GENRES\fR] [-v]
+    [ [--tui] [--no-splash] [--layout \fILAYOUT\fR]
+
+    | -r \fIJEU\fR
+
+    | [--add-game \fIDESCRIPTEUR_JEU\fR | --add-licence \fIDESCRIPTEUR_LICENCE\fR | --add-genre \fIDESCRIPTEUR_LICENCEGENRE\fR | --add-platform \fIDESCRIPTEUR_LICENCEPLATEFORME\fR | --del-game \fIJEU | --del-licence \fILICENCE\fR | --del-genre \fIGENRE\fR | --del-platform \fIPLATEFORM\EfR]
+
+    | [--list-games | --list-licences | --list-genres | --list-platforms]
+
+    | [--ag | --al | --at | --ap] ]
+
+.SH DESCRIPTION
+Triumphum est un gestionnaire de collection de jeux pour GNU/Linux. Il permet d’avoir une liste des jeux disponibles (ou ayant été à un moment donné disponible), de les lancer, et aussi d’avoir un suivi du temps qui y a été consacré.
+
+.SS GENRES
+Dans la suite, sera utilisé le terme « genre » pour désigner ce qui ailleurs est appelé « type » de jeu (stratégie, temps réel, tour par tour, etc). « Genre » a été préféré à « type » dans la nomenclatiure de Triumphum car ce dernier a été jugé trop ambigüe.
+.SH OPTIONS
+.SS Aide
+.B \-h, \-\-help
+Montre une aide succinte sur la ligne de commande
+
+.B \-a, \-\-about
+Présente rapidement les informations sur la commande et son auteur
+
+.B \-d, \-\-donate
+Ouvrir le lien de don sur le navigateur.
+
+.SS Comportement de l’interface
+.B \-\-tui
+Ouvre l’interface interactive en TUI. Ceci est le comportement par défaut.
+
+.B \-r \fIJEU\fR,
+.B \-\-run \fIJEU\fR
+Lancer le jeu de code \fIJEU\fR en traquant le temps qui y est consacré par Triumphum.
+
+.SS Options générales
+.B \-v, \-\-verbose
+Mode verbeux. Donne des informations sur les configurations en cours.
+
+.B \-\-no\-splash
+N’imprime pas la banière en art ASCII sur la sortie standard. Comportement par défaut.
+
+.B \-\-list\-games
+Afficher la liste détaillée des jeux.
+
+.B \-\-list\-licences
+Afficher la liste détaillée des licences.
+
+.B \-\-list\-genres
+Afficher la liste détaillée des genres de jeu.
+
+.B \-\-list\-platforms
+Afficher la liste détaillée des genres des plateformes.
+
+.SS Options de configuration
+.B \-c \fIFICHIER_CONF\fR,
+.B \-\-config\-file \fIFICHIER_CONFN\fR
+Utiliser comme fichier de configuration générale \fIFICHIER_CONF\fR, au lieux de celui par défaut.
+
+.B \-g \fIFILE\fR,
+.B \-\-games \fIFILE\fR
+Select different game file from default one.
+
+.B \-p \fIFILE\fR,
+.B \-\-platforms \fIFILE\fR
+Select different platform file from default one.
+
+.B \-l \fIFILE\fR,
+.B \-\-licences \fIFILE\fR
+Select different licence file from default one.
+
+.B \-t \fIFILE\fR,
+.B \-\-genres \fIFILE\fR
+Select different game genre file from default one.
+
+.B \-\-layout \fILAYOUT\fR
+Utiliser des raccourcis dactyliques adaptés à la disposition de clavier.
+
+.SS Ajout de donnée
+.B \-\-add\-game \fIDESCRIPTEUR_JEU\fR
+Ajouter un nouveau jeu.
+
+.B \-\-add\-licence \fILICENCE\fR
+Ajouter une nouvelle licence.
+
+.B \-\-add\-genre \fIGENRE\fR
+Ajouter un nouveau genre de jeu.
+
+.B \-\-add\-platform \fIPLATFORM\fR
+Ajouter une nouvelle plateforme.
+
+.SS Supression de donnée
+.B \-\-del\-game \fIJEU\fR
+Suprimer un jeu.
+
+.B \-\-del\-licence \fILICENCE\fR
+Suprimer une licence.
+
+.B \-\-del\-genre \fIGENRE\fR
+Suprimer un genre de jeu.
+
+.B \-\-del\-platform \fIPLATFORM\fR
+Suprimer une plateforme.
+
+.SS Commandes utiles à l’autocompletion
+.B \-\-ag
+Lister les codes des jeux
+
+.B \-\-al
+Lister les codes des licences.
+
+.B \-\-at
+Lister les codes des genres de jeu.
+
+.B \-\-ap
+Lister les codes des plateformes.
+.SH EXAMPLES
+To display the help information:
+.IP
+.B example \-h
+.SH FICHIERS
+.SS triumphumrc
+Principal fichier de configuration portant essentiellement sur les racourcis claviers et les éléments graphiques de l’interface TUI.
+.SS games.json
+Fichier de configuration des jeux tels qu’ils appraissent dans la liste principale.
+.SS history.json
+Historique des parties jouées, avec heure de début, de fin, et temps de jeu.
+.SS listOfGenres.json
+Fichier contenant les déffinitions des genres reconnus par Triumphum.
+.SS listOfLicences.json
+Fichier contenant les déffinitions des licence reconnues par Triumphum.
+.SS listOfPlatforms.json
+Fichier contenant les plateformes des licence reconnues par Triumphum.
+
+.SH Altérloquence
+.SS Histoire
+Cette section regroupe les propos additionnels ainsi que les réflexions connexes.
+L’idée originelle de ce logiciel provint de deux courroies. La première fût que j’avais dans mes moments creux besoins d’une réponse à la question « À quoi puis-je jouer en ce moment ? ». Bien entendu, sur la plus part des systèmes GNU/Linux, l’on peut lister le contenu de \fI/usr/games\fR, mais enfin, quiconque l’a inspecté au moins une fois s’est rendu compte qu’il ne répond pas vraiment à cette question. Car d’une part il peut contenir aussi bien des émulateurs, des éditeurs de cartes de jeu, ou tout logiciel ayant trait aux jeux sans être un jeu lui même ; et parce que d’autre part, il ne liste évidement pas des jeux que l’utilisateur aurait configuré sur des émulateurs, voir même des jeux qui ne se jouent qu’à travers le web.
+
+La deuxième courroie était le fait que je rencontrais une amie, elle même joueuse invétérée, qui profitait de tous ses congés pour s’adonner aux jeux sortis dans l’année auxquels elle n’avait pas pu consacré du temps. Et il se trouvait qu’elle maintenait un long tableur de bureautique contenant environ cent-trente jeu. Et avec le zèle d’une bonne élève, elle commentait méticuleusement dans une colonne dédiée ce qu’elle avait pensé de chaque jeu. C’est pourquoi il est prévu dans la raison d’être de Triumphum d’intégrer la possibilité de tenir un historique de commentaires qui refléteront l’évolution de l’utilisateur de ses réflexions concernant chaque jeu. Aussi cette fonctionnalité ne saurait tarder à venir dans de prochaines versions.
+
+Il s’est alors trouvé que de la conjonction de ces deux facteurs, l’idée de Triumphum s’imposa parcequ’aussitôt comme une évidence.
+
+.SS Fonctionnalité de notation
+Bien que dans l’industrie du jeu vidéo et l’univers qui y est associé, il est commun d’attribuer des notes aux jeu, j’ai décidé après mûre réflexion que jamais cette fonctionnalité ne sera intégrée à Triumphum.
+
+Le fait est que pareil usage n’a strictement aucune autre utilité que dans le contexte très particulier de l’industrie et plus encore des distributeurs. En d’autres termes, les notes de jeu attribuée par des magasines de connivence avec les éditeurs, n’a d’autre intérêt que de diriger le consommateur en lui disant qu’il doit acheter tel jeu car ayant une note de plus de huit ou neuf sur dix. Or, à priori, un utilisateur de Triumphum n’est pas ce père de famille qui, un 24 décembre à 20 h se demande désespérément quoi acheter comme jeu à ses enfants avant de se poser la même question dix minutes plus tard pour le parfum à acheter à sa femme. Triumphum ne vend rien à ses utilisateur, et n’a pas à reprendre à son compte les obsessions de l’industrie.
+
+.SH VOIR AUSSI
+.BR lutris (1),
+.BR gnome-games (1).
+.SH AUTHOR
+Écrit par Fauve alias Idriss al Idrissi <contact@taniere.info>.
