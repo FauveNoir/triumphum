@@ -653,7 +653,10 @@ ADD_GAME_STATEMENTS={
 	"studios": promptStatement(name="studios", patern=".*", multipleValues=True),
 	"authors": promptStatement(name="authors", patern=".*", multipleValues=True),
 	"shortDesc":promptStatement(name="shortDesc", patern=".*"),
+	"year":promptStatement(name="year", patern="[0-9]*"),
 }
+# TODO YEAR
+
 
 ADD_GENRE_STATEMENTS={
 	"name": promptStatement(name="name", patern=".*", isNecessary=True, isLabelNecessary=False),
