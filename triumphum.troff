@@ -213,6 +213,7 @@ Où les valeurs associées à J, S, M, et A, correspondent respectivement au tem
 Lieu où s’affiche les commandes du shell interne saisies par l’utilisateur.
 
 
+.P
 Au sein de l’interface TUI, il est possible d’interagir avec au travers des différentes actions qui s’actionnent par les touches dédiées dans la section
 .B BINDINGS.
 
@@ -379,6 +380,13 @@ name="Jeu de rôle en ligne massivement multijoueur" code=mmorpg abbr=MMORPG
 .SH FICHIERS DE CONFIGURATION
 .SS triumphumrc
 Principal fichier de configuration portant essentiellement sur les raccourcis claviers et les éléments graphiques de l’interface TUI.
+
+Il est possible d’y configurer essentiellement deux aspects. D’une part les associations de touches, pour cela voir la section
+.B ATTRIBUTION DES TOUCHES ;
+et d’autre part les éléments graphiques apparaissant sur l’interface, pour cela voir la section
+.B ÉLÉMENTS GRAPHIQUES DE L’INTERFACE.
+
+
 .SS games.json
 Fichier de configuration des jeux tels qu’ils apprissent dans la liste principale.
 Il se présente sous la forme d’une liste JSON, où chaque entrée est un dictionnaire JSON représentant un jeu. 
@@ -617,6 +625,67 @@ Touche espace
 .TP
 .B Return
 Touche de retour
+
+.SH ÉLÉMENTS GRAPHIQUES DE L’INTERFACE
+Dans le 
+.B triumphumrc
+il est possible de changer divers symboles apparaissant sur l’interface TUI en associant la clé du dit symbole au nouveau symbole voulu, sous la forme :
+
+.IP
+\fI<clé>\fR=\fI<symbole>\fR
+
+.P
+Et ce où \fI<clé>\fR est l’une des valeurs ci-dessous
+et où \fI<symbole>\fR est une chaine de caractères.
+
+.SS Éléments de la liste
+.TP
+.B general_void_symbol
+Symbole par défaut remplaçant toutes les valeurs manquantes de la liste (Défault : -)
+.TP
+.B name_void_symbol
+Symbole remplaçant les noms de jeu manquants sur la liste (Défault : -)
+.TP
+.B platform_void_symbol
+Symbole remplaçant les plateformes manquantes sur la liste (Défault : -)
+.TP
+.B licence_void_symbol
+Symbole remplaçant les licences manquantes sur la liste (Défault : -)
+.TP
+.B type_void_symbol
+Symbole remplaçant les types manquants sur la liste (Défault : -)
+.TP
+.B date_void_symbol
+Symbole remplaçant les dates de sorties manquantes sur la liste (Défault : -)
+.TP
+.B lastopening_void_symbol
+Symbole remplaçant les dates de dernière ouverture manquantes sur la liste (Défault : -)
+.TP
+.B cumulatedtime_void_symbol
+Symbole remplaçant les temps totaux manquants sur la liste (Défault : -)
+.TP
+.B author_void_symbol
+Symbole remplaçant les auteurs manquants sur la liste (Défault : -)
+.TP
+.B studio_void_symbol
+Symbole remplaçant les studios manquants sur la liste (Défault : -)
+
+.SS Éléments du récapitulatif
+.TP
+.B cumulated_time_played_per_day
+Symbole antécédent au temps de jeu cumulé par jour (Défault : J)
+.TP
+.B cumulated_time_played_per_week
+Symbole antécédent au temps de jeu cumulé par semaine (Défault : S)
+.TP
+.B cumulated_time_played_per_month
+Symbole antécédent au temps de jeu cumulé par mois (Défault : M)
+.TP
+.B cumulated_time_played_per_year
+Symbole antécédent au temps de jeu cumulé par année (Défault : A)
+.TP
+.B cumulated_time_played_separator
+Séparateur entre les temps de jeux cumulés par périodes (Défault : │)
 
 .SH EXTRALOQUENCE
 .SS Histoire

@@ -255,7 +255,6 @@ class GraphicalSymbol:
 GraphicalSymbol(localName="GENERAL_VOID_SYMBOL", value="-")
 
 GraphicalSymbol(localName="NAME_VOID_SYMBOL", value=GENERAL_VOID_SYMBOL.value)
-GraphicalSymbol(localName="TITLE_VOID_SYMBOL", value=GENERAL_VOID_SYMBOL.value)
 GraphicalSymbol(localName="LICENCE_VOID_SYMBOL", value=GENERAL_VOID_SYMBOL.value)
 GraphicalSymbol(localName="GENRE_VOID_SYMBOL", value=GENERAL_VOID_SYMBOL.value)
 GraphicalSymbol(localName="DATE_VOID_SYMBOL", value=GENERAL_VOID_SYMBOL.value)
