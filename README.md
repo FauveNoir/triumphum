@@ -20,4 +20,7 @@ Triumphum est un gestionnaire de ludothèque. Il permet aux joueurs de gérer le
 - [ ] Prise de commentaire
 - [ ] Consomation moyenne de RAM|GPU par jeu
 - [ ] Poid des jeux
+- [ ] Filtre
+- [ ] Affichage de l’aide sur l’interface TUI
+- [ ] Éditer les jeux sur l’interface TUI
 

@@ -22,126 +22,262 @@ triumphum \- Gestionnaire de ludothèque en Python et NCurses pour GNU/Linux
 .SH DESCRIPTION
 Triumphum est un gestionnaire de collection de jeux pour GNU/Linux. Il permet d’avoir une liste des jeux disponibles (ou ayant été à un moment donné disponible), de les lancer, et aussi d’avoir un suivi du temps qui y a été consacré.
 
-.SS TERMINOLOGIE
+Lorsqu’il est ouvert avec l’option
+.B --tui
+qui est le comportement par défaut,
+Triumphum présente l’interface en TUI où l’utilisateur peut interagir interactivement.
+
+.SH TERMINOLOGIE
 Dans la suite, sera utilisé le terme « genre » pour désigner ce qui ailleurs est appelé « type » de jeu (stratégie, temps réel, tour par tour, etc). « Genre » a été préféré à « type » dans la nomenclature de Triumphum car ce dernier a été jugé trop ambigüe.
 .SH OPTIONS
 .SS Aide
+.TP
 .B \-h, \-\-help
 Montre une aide succincte sur la ligne de commande
 
+.TP
 .B \-a, \-\-about
 Présente rapidement les informations sur la commande et son auteur
 
+.TP
 .B \-d, \-\-donate
 Ouvrir le lien de don sur le navigateur.
 
 .SS Comportement de l’interface
+.TP
 .B \-\-tui
 Ouvre l’interface interactive en TUI. Ceci est le comportement par défaut.
 
-.B \-r \fIJEU\fR,
-.B \-\-run \fIJEU\fR
+.TP
+.B \-r \fIJEU\fR, \-\-run \fIJEU\fR
 Lancer le jeu de code \fIJEU\fR en traquant le temps qui y est consacré par Triumphum.
 
 .SS Options générales
+.TP
 .B \-v, \-\-verbose
 Mode verbeux. Donne des informations sur les configurations en cours.
 
+.TP
 .B \-\-no\-splash
 N’imprime pas la bannière en art ASCII sur la sortie standard. Comportement par défaut.
 
+.TP
 .B \-\-list\-games
 Afficher la liste détaillée des jeux.
 
+.TP
 .B \-\-list\-licences
 Afficher la liste détaillée des licences.
 
+.TP
 .B \-\-list\-genres
 Afficher la liste détaillée des genres de jeu.
 
+.TP
 .B \-\-list\-platforms
 Afficher la liste détaillée des genres des plateformes.
 
 .SS Options de configuration
-.B \-c \fIFICHIER_CONF\fR,
-.B \-\-config\-file \fIFICHIER_CONF\fR
+.TP
+.B \-c \fIFICHIER_CONF\fR, \-\-config\-file \fIFICHIER_CONF\fR
 Utiliser comme fichier de configuration générale \fIFICHIER_CONF\fR, au lieux de celui par défaut. Voir la section 
 .B triumphumrc
 .
-.B \-g \fIFICHIER_JEUX\fR,
-.B \-\-games \fIFICHIER_JEUX\fR
+.TP
+.B \-g \fIFICHIER_JEUX\fR, \-\-games \fIFICHIER_JEUX\fR
 Utiliser comme fichier de description des jeux \fIFICHIER_JEUX\fR, au lieux de celui par défaut. Voir la section 
 .B games.json
 .
 
-.B \-p \fIFICHIER_PLATEFORMES\fR,
-.B \-\-platforms \fIFICHIER_PLATEFORMES\fR
+.TP
+.B \-p \fIFICHIER_PLATEFORMES\fR, \-\-platforms \fIFICHIER_PLATEFORMES\fR
 Utiliser comme fichier de description des jeux \fIFICHIER_PLATEFORMES\fR, au lieux de celui par défaut. Voir la section 
 .B listOfPlatforms.json
 
-.B \-l \fIFICHIER_LICENCES\fR,
-.B \-\-licences \fIFICHIER_LICENCES\fR
+.TP
+.B \-l \fIFICHIER_LICENCES\fR, \-\-licences \fIFICHIER_LICENCES\fR
 Utiliser comme fichier de description des licence \fIFICHIER_LICENCES\fR, au lieux de celui par défaut. Voir la section 
 .B listOfLicences.json
 
-.B \-t \fIFICHIER_GENRES\fR,
-.B \-\-genres \fIFICHIER_GENRES\fR
+.TP
+.B \-t \fIFICHIER_GENRES\fR, \-\-genres \fIFICHIER_GENRES\fR
 Utiliser comme fichier de description des genres \fIFICHIER_GENRES\fR, au lieux de celui par défaut. Voir la section 
 .B listOfGenres.json
 
+.TP
 .B \-\-layout \fIDISPOSITION\fR
-Utiliser des raccourcis dactyliques adaptés à la disposition de clavier \fIDISPOSITION\fR.
+Utiliser des raccourcis dactyliques adaptés à la disposition de clavier \fIDISPOSITION\fR. Valeurs possibles : bepo, azerty, qwerty. Voir la section
+.B ATTRIBUTION DES TOUCHES
+affin de modifier les associations par défaut.
+
 
 .SS Ajout de donnée
+.TP
 .B \-\-add\-game \fIDESCRIPTEUR_JEU\fR
 Ajouter un nouveau jeu. Voir la section
 .B Descripteurs des jeux
 .
 
+.TP
 .B \-\-add\-licence \fILICENCE\fR
 Ajouter une nouvelle licence. Voir la section
 .B Descripteurs des licences
 .
 
+.TP
 .B \-\-add\-genre \fIGENRE\fR
 Ajouter un nouveau genre de jeu. Voir la section
 .B Descripteurs des genres
 .
 
+.TP
 .B \-\-add\-platform \fIPLATFORM\fR
 Ajouter une nouvelle plateforme. Voir la section
 .B Descripteurs des plateforme
 .
 
 .SS Suppression de donnée
+.TP
 .B \-\-del\-game \fIJEU\fR
 Supprimer un jeu.
 
+.TP
 .B \-\-del\-licence \fILICENCE\fR
 Supprimer une licence.
 
+.TP
 .B \-\-del\-genre \fIGENRE\fR
 Supprimer un genre de jeu.
 
+.TP
 .B \-\-del\-platform \fIPLATEFORME\fR
 Supprimer une plateforme.
 
 .SS Commandes utiles à l’auto-complétion
+.TP
 .B \-\-ag
 Lister les codes des jeux.
 
+.TP
 .B \-\-al
 Lister les codes des licences.
 
+.TP
 .B \-\-at
 Lister les codes des genres de jeu.
 
+.TP
 .B \-\-ap
 Lister les codes des plateformes.
-.SH EXAMPLES
-To display the help information:
+.SH INTERFACE TUI
+
+À l’ouverture, l’interface se présente sous la forme de quatre zones principales.
+.nf
++----------------------------------------------------------------+
+|Barre de titre                                                  |
++----------------------------------------------------------------+
+|                                                                |
+|                                                                |
+|                                                                |
+|                         Lite des jeux                          |
+|                                                                |
+|                                                                |
+|                                                                |
+|                                                                |
++----------------------------------------------------------------+
+|Statu                                              Récapitulatif|
++----------------------------------------------------------------+
+|Zone de saisie de commande                                      |
++----------------------------------------------------------------+
+.fi
+
+.TP
+.B Barre de titre
+Elle ne sert à rien sinon pour faire joli et présenter le nom du logiciel.
+
+.TP
+.B Liste des jeux
+La liste des jeux à proprement parler qui est interactive.
+
+.TP
+.B Barre de statu
+Elle même divisée en deux parties. À gauche sont présentées les messages affichés par Triumphum, et à droite un récapitulatif du temps cumulé de jeu de tous les jeux conofondus, sous la forme
+
 .IP
-.B example \-h
+ J: \fI<jour>\fR│S: \fI<semaine>\fR│M: \fI<mois>\fR│A: \fI<année>\fR
+
+Où les valeurs associées à J, S, M, et A, correspondent respectivement au temps de jeu cumulé écoulé durant le jour, la semaine, le mois, et l’année.
+
+.TP
+.B Zone de saisie de commande
+Lieu où s’affiche les commandes du shell interne saisies par l’utilisateur.
+
+
+Au sein de l’interface TUI, il est possible d’interagir avec au travers des différentes actions qui s’actionnent par les touches dédiées dans la section
+.B BINDINGS.
+
+.SH BINDINGS
+.TP
+.B  t
+Aller vers l’élément au dessous
+.TP
+.B  s
+Aller vers l’élément au dessus
+.TP
+.B  Enter
+Lancer le jeu ayant le focus
+.TP
+.B  e
+Éditer le jeu ayant le focus (expérimental)
+.TP
+.B  a
+Ouvrir le lien associé au jeu ayant le focus
+.TP
+.B  y
+Copier le lien associé au jeu dans le presse-papier
+.TP
+.B  c
+Ajouter un commentaire au jeu (expérimental)
+.TP
+.B  b
+Trier la liste des jeux par ordre alphabétique des titres
+.TP
+.B  é
+Trier la liste des jeux par permissivité des licences
+.TP
+.B  p
+Trier la liste des jeux par ordre alphabétique des genres
+.TP
+.B  o
+Trier la liste des jeux par date de sortie
+.TP
+.B  è
+Trier la liste des jeux par date de dernière ouverture
+.TP
+.B  v
+Trier la liste des jeux par durée de jeu cumulée
+.TP
+.B  P
+Trier la liste des jeux par ordre alphabétique des noms de plateformes
+.TP
+.B  L
+Rafraichir la liste
+.TP
+.B  l
+Montrer la licence du jeu ayant le focus
+.TP
+.B  x
+Faire un don (ouvre le lien de don dans le navigateur)
+.TP
+.B  q
+Quitter le jeu
+.TP
+.B  /
+Filtrer selon le motif (expérimental)
+.TP
+.B  h
+Afficher l’aide
+
 .SH DESCRIPTEURS
 Les descripteurs des objets (jeux, licences, plateformes, genre), permettent d’ajouter de nouveaux objets à ceux gérés par Triumphum. Ils se présentent simplement sous la forme d’une suite de clés-valeurs, où les clés, dépendent de chaque type, et où certaines sont obligatoires pour certains types d’objets.
 
@@ -178,7 +314,7 @@ Courte description du jeu.
 Année de sortie du jeu.
 .TP
 .B Exemple
-name="0 A. D." code=0ad command=0ad-pyrogenesis genre=rts licence=gpl url=https://play0ad.com studios="Wildfire Games" authors=Stanislas\ Dolcini shortdesc="Jeu de civilisation en temps réel" year=2010
+name="0 A. D." code=0ad command=0ad-pyrogenesis genre=rts licence=gpl url=https://play0ad.com studios="Wildfire Games" authors=Stanislas\ Dolcini shortdesc="RTS libre historique en 3D où s’affrontent diverses civilisations antiques." year=2010
 
 .SS Descripteurs des licence
 .TP
@@ -242,19 +378,247 @@ name="Jeu de rôle en ligne massivement multijoueur" code=mmorpg abbr=MMORPG
 
 .SH FICHIERS DE CONFIGURATION
 .SS triumphumrc
-Principal fichier de configuration portant essentiellement sur les racourcis claviers et les éléments graphiques de l’interface TUI.
+Principal fichier de configuration portant essentiellement sur les raccourcis claviers et les éléments graphiques de l’interface TUI.
 .SS games.json
-Fichier de configuration des jeux tels qu’ils appraissent dans la liste principale.
-.SS history.json
-Historique des parties jouées, avec heure de début, de fin, et temps de jeu.
+Fichier de configuration des jeux tels qu’ils apprissent dans la liste principale.
+Il se présente sous la forme d’une liste JSON, où chaque entrée est un dictionnaire JSON représentant un jeu. 
+
+Dans chaque dictionnaire les clés sont les mêmes que celles du descripteur dans la section
+.B Descripteurs des jeux.
+Toute fois, les clés authors et studios sont sensées recevoir des listes en valeurs, même si elles ne doivent contenir qu’une seule valeur.
+
+.TP
+.B Exemple
+.nf
+{
+	"games": [
+		{
+			"name": "0 A. D.",
+			"licence": "gpl",
+			"year": 2021,
+			"genre": "rts",
+			"command": "0ad",
+			"code": "0ad",
+			"url": "https://play0ad.com/",
+			"platform": "linux",
+			"studios": [
+				"Wildfire Games"
+			],
+			"authors": [
+				"Stanislas Dolcini"
+			],
+			"shortDesc": "RTS libre historique en 3D où s’affrontent diverses civilisations antiques."
+		},
+	…
+	]
+}
+.fi
 .SS listOfGenres.json
-Fichier contenant les déffinitions des genres reconnus par Triumphum.
+Fichier contenant les définitions des genres reconnus par Triumphum.
+Il se présente sous la forme d’une liste JSON, où chaque entrée est un dictionnaire JSON représentant un genre. 
+
+Dans chaque dictionnaire les clés sont les mêmes que celles du descripteur dans la section
+.B Descripteurs des genres.
+
+.TP
+.B Exemple
+.nf
+{
+	"genres": [
+		{
+			"name": "Action",
+			"abbr": "Act",
+			"code": "action"
+		},
+	…
+	]
+}
+.fi
+
 .SS listOfLicences.json
-Fichier contenant les déffinitions des licence reconnues par Triumphum.
+Fichier contenant les définitions des licence reconnues par Triumphum.
+Il se présente sous la forme d’une liste JSON, où chaque entrée est un dictionnaire JSON représentant une Licence. 
+
+Dans chaque dictionnaire les clés sont les mêmes que celles du descripteur dans la section
+.B Descripteurs des licences.
+
+.TP
+.B Exemple
+.nf
+{
+	"licences": [
+		{
+			"name": "GNU General Public License",
+			"abbr": "GPL",
+			"code": "gpl",
+			"url": "https://www.gnu.org/licenses/gpl-3.0.html",
+			"shortText": "La licence publique générale GNU est une licence de logiciel libre adoptée par la Free Software Foundation (FSF) pour le projet GNU.",
+			"freedomCoefficient": 0.8
+		},
+	…
+	]
+}
+.fi
+
 .SS listOfPlatforms.json
 Fichier contenant les plateformes des licence reconnues par Triumphum.
+Il se présente sous la forme d’une liste JSON, où chaque entrée est un dictionnaire JSON représentant une plateforme. 
 
-.SH Extraloquence
+Dans chaque dictionnaire les clés sont les mêmes que celles du descripteur dans la section
+.B Descripteurs des plateformes.
+
+.TP
+.B Exemple
+.nf
+{
+	"platforms":
+	[
+		{
+			"name": "Linux",
+			"code": "linux",
+			"abbr": "LIN"
+		},
+	…
+	]
+}
+.fi
+
+.SS history.json
+Historique des parties jouées, avec heure de début, de fin, et temps de jeu.
+Il se présente sous la forme d’une liste JSON où chaque entrée représente un jeu représenté par le code du dit jeu en tant que clé de l’entrée.
+
+En suite, à chaque entrée de jeu est associée comme valeur une liste où chaque entrée représente une session de jeu définie par les trois propriétés :
+.TP
+.B start_time
+Début de la session de jeu au format ISO. Exemple : 2024-04-20T18:36:35.
+.TP
+.B end_time
+Fin de la session de jeu au format ISO. Exemple : 2024-04-20T18:36:40.
+.TP
+.B duration
+Durée totale de la session, au format ISO. Exemple : 0:00:04.959013.
+
+.TP
+.B Exemple d’historique pour un jeu
+.nf
+"0ad": [
+    {
+        "start_time": "2024-04-20T17:40:22",
+        "end_time": "2024-04-20T17:40:27",
+        "duration": "0:00:04.967317"
+    },
+    {
+        "start_time": "2024-04-20T18:07:47",
+        "end_time": "2024-04-20T18:07:51",
+        "duration": "0:00:03.419640"
+    },
+    {
+        "start_time": "2024-04-21T16:13:58",
+        "end_time": "2024-04-21T16:14:02",
+        "duration": "0:00:03.594571"
+    },
+    {
+        "start_time": "2024-04-21T17:10:58",
+        "end_time": "2024-04-21T17:11:02",
+        "duration": "0:00:03.840515"
+    }
+]
+.fi
+
+.SH ATTRIBUTION DES TOUCHES
+Par défaut le mécanisme général prévoit d’utiliser la carte d’association définie par la disposition choisie avec
+.B --layout.
+Toutefois, il es possible de redéfinir de nouvelles associations de touches à travers le fichier
+.B triumphumrc
+en associant la clé d’une action donnée à la touche voulue, sous la forme :
+
+.IP
+\fI<clé>\fR=\fI<touche>\fR
+
+.P
+Et ce où \fI<clé>\fR est l’une des valeurs de 
+.B Liste des bindings de touches
+et où \fI<touche>\fR répond aux exigences de
+.B Codes des touches
+
+
+.SS Liste des bindings de touches
+.TP
+.B bind_down
+Aller vers l’élément au dessous (Défaut : t)
+.TP
+.B bind_up
+Aller vers l’élément au dessus (Défaut : s)
+.TP
+.B bind_play
+Lancer le jeu ayant le focus (Défaut : Enter)
+.TP
+.B bind_edit
+Éditer le jeu ayant le focus (expérimental) (Défaut : e)
+.TP
+.B bind_open_link
+Ouvrir le lien associé au jeu ayant le focus (Défaut : a)
+.TP
+.B bind_copy_link
+Copier le lien associé au jeu dans le presse-papier (Défaut : y)
+.TP
+.B bind_comment
+Ajouter un commentaire au jeu (expérimental) (Défaut : c)
+.TP
+.B bind_sort_title
+Trier la liste des jeux par ordre alphabétique des titres (Défaut : b)
+.TP
+.B bind_sort_licence
+Trier la liste des jeux par permissivité des licences (Défaut : é)
+.TP
+.B bind_sort_game_genre
+Trier la liste des jeux par ordre alphabétique des genres (Défaut : p)
+.TP
+.B bind_sort_year
+Trier la liste des jeux par date de sortie (Défaut : o)
+.TP
+.B bind_sort_last_opening
+Trier la liste des jeux par date de dernière ouverture (Défaut : è)
+.TP
+.B bind_sort_playing_duration
+Trier la liste des jeux par durée de jeu cumulée (Défaut : v)
+.TP
+.B bind_sort_playing_platform
+Trier la liste des jeux par ordre alphabétique des noms de plateformes (Défaut : P)
+.TP
+.B bind_refresh
+Rafraichir la liste (Défaut : L)
+.TP
+.B bind_show_licence
+Montrer la licence du jeu ayant le focus (Défaut : l)
+.TP
+.B bind_donate
+Faire un don (ouvre le lien de don dans le navigateur) (Défaut : x)
+.TP
+.B bind_quit
+Quitter le jeu (Défaut : q)
+.TP
+.B bind_filter
+Filtrer selon le motif (expérimental) (Défaut : /)
+.TP
+.B bind_help
+Afficher l’aide (Défaut : h)
+
+.SS Codes des touches
+De façon générale, toutes les touches sont représentées par la lettre qui leur est associée. Ainsi le code pour la touche A est A. Toutefois le mécanisme est sensible à la casse.
+
+À cela, s’ajoute les cas particuliers suivants
+.TP
+.B Enter
+Touche entrée
+.TP
+.B Space
+Touche espace
+.TP
+.B Return
+Touche de retour
+
+.SH EXTRALOQUENCE
 .SS Histoire
 .PP
 Cette section regroupe les propos additionnels ainsi que les réflexions connexes.
