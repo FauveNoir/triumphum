@@ -1,6 +1,5 @@
 .\" -*- coding: UTF-8 -*-
-
-.TH TRIUMPHUM 1 "2024-03-25" "1.0" "Triumphum"
+.TH TRIUMPHUM 6 "2024-03-25" "1.0" "Manuel du joueur sur Linux"
 .SH NOM
 triumphum \- Gestionnaire de ludothèque en Python et NCurses pour GNU/Linux
 .SH SYNOPSIS
@@ -13,20 +12,17 @@ triumphum \- Gestionnaire de ludothèque en Python et NCurses pour GNU/Linux
 
     | -r \fIJEU\fR
 
-    | [--add-game \fIDESCRIPTEUR_JEU\fR | --add-licence \fIDESCRIPTEUR_LICENCE\fR | --add-genre \fIDESCRIPTEUR_LICENCEGENRE\fR | --add-platform \fIDESCRIPTEUR_LICENCEPLATEFORME\fR | --del-game \fIJEU | --del-licence \fILICENCE\fR | --del-genre \fIGENRE\fR | --del-platform \fIPLATEFORM\EfR]
+    | [--add-game \fIDESCRIPTEUR_JEU\fR | --add-licence \fIDESCRIPTEUR_LICENCE\fR | --add-genre \fIDESCRIPTEUR_GENRE\fR | --add-platform \fIDESCRIPTEUR_PLATEFORME\fR | --del-game \fIJEU\fR | --del-licence \fILICENCE\fR | --del-genre \fIGENRE\fR | --del-platform \fIPLATEFORM\EfR]
 
     | [--list-games | --list-licences | --list-genres | --list-platforms]
 
     | [--ag | --al | --at | --ap] ]
-
 .SH DESCRIPTION
 Triumphum est un gestionnaire de collection de jeux pour GNU/Linux. Il permet d’avoir une liste des jeux disponibles (ou ayant été à un moment donné disponible), de les lancer, et aussi d’avoir un suivi du temps qui y a été consacré.
-
 Lorsqu’il est ouvert avec l’option
 .B --tui
 qui est le comportement par défaut,
 Triumphum présente l’interface en TUI où l’utilisateur peut interagir interactivement.
-
 .SH TERMINOLOGIE
 Dans la suite, sera utilisé le terme « genre » pour désigner ce qui ailleurs est appelé « type » de jeu (stratégie, temps réel, tour par tour, etc). « Genre » a été préféré à « type » dans la nomenclature de Triumphum car ce dernier a été jugé trop ambigüe.
 .SH OPTIONS
@@ -34,144 +30,110 @@ Dans la suite, sera utilisé le terme « genre » pour désigner ce qui ailleu
 .TP
 .B \-h, \-\-help
 Montre une aide succincte sur la ligne de commande
-
 .TP
 .B \-a, \-\-about
 Présente rapidement les informations sur la commande et son auteur
-
 .TP
 .B \-d, \-\-donate
 Ouvrir le lien de don sur le navigateur.
-
 .SS Comportement de l’interface
 .TP
 .B \-\-tui
 Ouvre l’interface interactive en TUI. Ceci est le comportement par défaut.
-
 .TP
 .B \-r \fIJEU\fR, \-\-run \fIJEU\fR
 Lancer le jeu de code \fIJEU\fR en traquant le temps qui y est consacré par Triumphum.
-
 .SS Options générales
 .TP
 .B \-v, \-\-verbose
 Mode verbeux. Donne des informations sur les configurations en cours.
-
 .TP
 .B \-\-no\-splash
 N’imprime pas la bannière en art ASCII sur la sortie standard. Comportement par défaut.
-
 .TP
 .B \-\-list\-games
 Afficher la liste détaillée des jeux.
-
 .TP
 .B \-\-list\-licences
 Afficher la liste détaillée des licences.
-
 .TP
 .B \-\-list\-genres
 Afficher la liste détaillée des genres de jeu.
-
 .TP
 .B \-\-list\-platforms
 Afficher la liste détaillée des genres des plateformes.
-
 .SS Options de configuration
 .TP
 .B \-c \fIFICHIER_CONF\fR, \-\-config\-file \fIFICHIER_CONF\fR
 Utiliser comme fichier de configuration générale \fIFICHIER_CONF\fR, au lieux de celui par défaut. Voir la section 
-.B triumphumrc
-.
+.B triumphumrc. 
 .TP
 .B \-g \fIFICHIER_JEUX\fR, \-\-games \fIFICHIER_JEUX\fR
 Utiliser comme fichier de description des jeux \fIFICHIER_JEUX\fR, au lieux de celui par défaut. Voir la section 
-.B games.json
-.
-
+.B games.json. 
 .TP
 .B \-p \fIFICHIER_PLATEFORMES\fR, \-\-platforms \fIFICHIER_PLATEFORMES\fR
 Utiliser comme fichier de description des jeux \fIFICHIER_PLATEFORMES\fR, au lieux de celui par défaut. Voir la section 
 .B listOfPlatforms.json
-
 .TP
 .B \-l \fIFICHIER_LICENCES\fR, \-\-licences \fIFICHIER_LICENCES\fR
 Utiliser comme fichier de description des licence \fIFICHIER_LICENCES\fR, au lieux de celui par défaut. Voir la section 
 .B listOfLicences.json
-
 .TP
 .B \-t \fIFICHIER_GENRES\fR, \-\-genres \fIFICHIER_GENRES\fR
 Utiliser comme fichier de description des genres \fIFICHIER_GENRES\fR, au lieux de celui par défaut. Voir la section 
 .B listOfGenres.json
-
 .TP
 .B \-\-layout \fIDISPOSITION\fR
 Utiliser des raccourcis dactyliques adaptés à la disposition de clavier \fIDISPOSITION\fR. Valeurs possibles : bepo, azerty, qwerty. Voir la section
 .B ATTRIBUTION DES TOUCHES
 affin de modifier les associations par défaut.
-
-
 .SS Ajout de donnée
 .TP
 .B \-\-add\-game \fIDESCRIPTEUR_JEU\fR
 Ajouter un nouveau jeu. Voir la section
-.B Descripteurs des jeux
-.
-
+.B Descripteurs des jeux.
 .TP
 .B \-\-add\-licence \fILICENCE\fR
 Ajouter une nouvelle licence. Voir la section
-.B Descripteurs des licences
-.
-
+.B Descripteurs des licences.
 .TP
 .B \-\-add\-genre \fIGENRE\fR
 Ajouter un nouveau genre de jeu. Voir la section
-.B Descripteurs des genres
-.
-
+.B Descripteurs des genres. 
 .TP
 .B \-\-add\-platform \fIPLATFORM\fR
 Ajouter une nouvelle plateforme. Voir la section
-.B Descripteurs des plateforme
-.
-
+.B Descripteurs des plateforme. 
 .SS Suppression de donnée
 .TP
 .B \-\-del\-game \fIJEU\fR
 Supprimer un jeu.
-
 .TP
 .B \-\-del\-licence \fILICENCE\fR
 Supprimer une licence.
-
 .TP
 .B \-\-del\-genre \fIGENRE\fR
 Supprimer un genre de jeu.
-
 .TP
 .B \-\-del\-platform \fIPLATEFORME\fR
 Supprimer une plateforme.
-
 .SS Commandes utiles à l’auto-complétion
 .TP
 .B \-\-ag
 Lister les codes des jeux.
-
 .TP
 .B \-\-al
 Lister les codes des licences.
-
 .TP
 .B \-\-at
 Lister les codes des genres de jeu.
-
 .TP
 .B \-\-ap
 Lister les codes des plateformes.
 .SH INTERFACE TUI
-
 À l’ouverture, l’interface se présente sous la forme de quatre zones principales.
+.ce 16
 .nf
 +----------------------------------------------------------------+
 |Barre de titre                                                  |
@@ -190,33 +152,25 @@ Lister les codes des plateformes.
 |Zone de saisie de commande                                      |
 +----------------------------------------------------------------+
 .fi
-
 .TP
 .B Barre de titre
 Elle ne sert à rien sinon pour faire joli et présenter le nom du logiciel.
-
 .TP
 .B Liste des jeux
 La liste des jeux à proprement parler qui est interactive.
-
 .TP
 .B Barre de statu
 Elle même divisée en deux parties. À gauche sont présentées les messages affichés par Triumphum, et à droite un récapitulatif du temps cumulé de jeu de tous les jeux conofondus, sous la forme
-
 .IP
  J: \fI<jour>\fR│S: \fI<semaine>\fR│M: \fI<mois>\fR│A: \fI<année>\fR
-
+.LP
 Où les valeurs associées à J, S, M, et A, correspondent respectivement au temps de jeu cumulé écoulé durant le jour, la semaine, le mois, et l’année.
-
 .TP
 .B Zone de saisie de commande
 Lieu où s’affiche les commandes du shell interne saisies par l’utilisateur.
-
-
 .P
 Au sein de l’interface TUI, il est possible d’interagir avec au travers des différentes actions qui s’actionnent par les touches dédiées dans la section
 .B BINDINGS.
-
 .SH BINDINGS
 .TP
 .B  t
@@ -278,10 +232,8 @@ Filtrer selon le motif (expérimental)
 .TP
 .B  h
 Afficher l’aide
-
 .SH DESCRIPTEURS
 Les descripteurs des objets (jeux, licences, plateformes, genre), permettent d’ajouter de nouveaux objets à ceux gérés par Triumphum. Ils se présentent simplement sous la forme d’une suite de clés-valeurs, où les clés, dépendent de chaque type, et où certaines sont obligatoires pour certains types d’objets.
-
 .SS Descripteurs des jeux
 .TP
 .B name
@@ -316,7 +268,6 @@ Année de sortie du jeu.
 .TP
 .B Exemple
 name="0 A. D." code=0ad command=0ad-pyrogenesis genre=rts licence=gpl url=https://play0ad.com studios="Wildfire Games" authors=Stanislas\ Dolcini shortdesc="RTS libre historique en 3D où s’affrontent diverses civilisations antiques." year=2010
-
 .SS Descripteurs des licence
 .TP
 .B name
@@ -327,66 +278,53 @@ Code à travers lequel la licence sera traitée et identifié par Triumphum. (Ob
 .TP
 .B abbr
 Abréviation sous laquelle apparaitra le nom de la licence dans les situations qui l’exigent.
-
 .TP
 .B url
 Lien de la licence.
-
 .TP
 .B freedomCoefficient
 Coefficient de liberté de la licence de 0 à 1, où 1 représente la licence la plus permissive (par exemple domaine public ou LPRAB) et 0 la licence la moins permissive.
-
 .TP
 .B shortDesc
 Courte description de la licence.
 .TP
 .B Exemple
 name="Licence Art Libre" code=lal abbr=LAL url=https://artlibre.org freedomCoefficient=0.5 shortDesc="La licence LAL (Licence Art Libre) permet la libre utilisation, modification et redistribution des œuvres, tant que la même liberté est préservée dans les œuvres dérivées."
-
 .SS Descripteurs des plateformes
 .TP
 .B name
 Nom littéral de la plateforme. (Obligatoire)
-
 .TP
 .B code
 Code à travers lequel la plateforme sera traitée et identifiée par Triumphum. (Obligatoire)
-
 .TP
 .B abbr
 Abréviation sous laquelle apparaitra le nom de la plateforme dans les situations qui l’exigent.
-
 .TP
 .B Exemple
 name=Linux code=linux abbr=LIN
-
 .SS Descripteurs des genres
 .TP
 .B name
 Nom littéral du genre. (Obligatoire)
-
 .TP
 .B code
 Code à travers lequel le genre sera traité et identifié par Triumphum. (Obligatoire)
-
 .TP
 .B abbr
 Abréviation sous laquelle apparaitra le nom du genre dans les situations qui l’exigent.
-
 .TP
 .B Exemple
 name="Jeu de rôle en ligne massivement multijoueur" code=mmorpg abbr=MMORPG
-
 .SH FICHIERS DE CONFIGURATION
 .SS triumphumrc
+.PP
 Principal fichier de configuration portant essentiellement sur les raccourcis claviers et les éléments graphiques de l’interface TUI.
-
+.LP
 Il est possible d’y configurer essentiellement deux aspects. D’une part les associations de touches, pour cela voir la section
 .B ATTRIBUTION DES TOUCHES ;
 et d’autre part les éléments graphiques apparaissant sur l’interface, pour cela voir la section
 .B ÉLÉMENTS GRAPHIQUES DE L’INTERFACE.
-
-
 .SS games.json
 Fichier de configuration des jeux tels qu’ils apprissent dans la liste principale.
 Il se présente sous la forme d’une liste JSON, où chaque entrée est un dictionnaire JSON représentant un jeu. 
@@ -394,7 +332,6 @@ Il se présente sous la forme d’une liste JSON, où chaque entrée est un dict
 Dans chaque dictionnaire les clés sont les mêmes que celles du descripteur dans la section
 .B Descripteurs des jeux.
 Toute fois, les clés authors et studios sont sensées recevoir des listes en valeurs, même si elles ne doivent contenir qu’une seule valeur.
-
 .TP
 .B Exemple
 .nf
@@ -422,12 +359,12 @@ Toute fois, les clés authors et studios sont sensées recevoir des listes en va
 }
 .fi
 .SS listOfGenres.json
+.PP
 Fichier contenant les définitions des genres reconnus par Triumphum.
 Il se présente sous la forme d’une liste JSON, où chaque entrée est un dictionnaire JSON représentant un genre. 
-
+.LP
 Dans chaque dictionnaire les clés sont les mêmes que celles du descripteur dans la section
 .B Descripteurs des genres.
-
 .TP
 .B Exemple
 .nf
@@ -442,14 +379,13 @@ Dans chaque dictionnaire les clés sont les mêmes que celles du descripteur dan
 	]
 }
 .fi
-
 .SS listOfLicences.json
+.PP
 Fichier contenant les définitions des licence reconnues par Triumphum.
 Il se présente sous la forme d’une liste JSON, où chaque entrée est un dictionnaire JSON représentant une Licence. 
-
+.LP
 Dans chaque dictionnaire les clés sont les mêmes que celles du descripteur dans la section
 .B Descripteurs des licences.
-
 .TP
 .B Exemple
 .nf
@@ -467,14 +403,13 @@ Dans chaque dictionnaire les clés sont les mêmes que celles du descripteur dan
 	]
 }
 .fi
-
 .SS listOfPlatforms.json
+.PP
 Fichier contenant les plateformes des licence reconnues par Triumphum.
 Il se présente sous la forme d’une liste JSON, où chaque entrée est un dictionnaire JSON représentant une plateforme. 
-
+.LP
 Dans chaque dictionnaire les clés sont les mêmes que celles du descripteur dans la section
 .B Descripteurs des plateformes.
-
 .TP
 .B Exemple
 .nf
@@ -490,11 +425,11 @@ Dans chaque dictionnaire les clés sont les mêmes que celles du descripteur dan
 	]
 }
 .fi
-
 .SS history.json
+.PP
 Historique des parties jouées, avec heure de début, de fin, et temps de jeu.
 Il se présente sous la forme d’une liste JSON où chaque entrée représente un jeu représenté par le code du dit jeu en tant que clé de l’entrée.
-
+.LP
 En suite, à chaque entrée de jeu est associée comme valeur une liste où chaque entrée représente une session de jeu définie par les trois propriétés :
 .TP
 .B start_time
@@ -505,7 +440,6 @@ Fin de la session de jeu au format ISO. Exemple : 2024-04-20T18:36:40.
 .TP
 .B duration
 Durée totale de la session, au format ISO. Exemple : 0:00:04.959013.
-
 .TP
 .B Exemple d’historique pour un jeu
 .nf
@@ -532,24 +466,19 @@ Durée totale de la session, au format ISO. Exemple : 0:00:04.959013.
     }
 ]
 .fi
-
 .SH ATTRIBUTION DES TOUCHES
 Par défaut le mécanisme général prévoit d’utiliser la carte d’association définie par la disposition choisie avec
 .B --layout.
 Toutefois, il es possible de redéfinir de nouvelles associations de touches à travers le fichier
 .B triumphumrc
 en associant la clé d’une action donnée à la touche voulue, sous la forme :
-
 .IP
 \fI<clé>\fR=\fI<touche>\fR
-
 .P
 Et ce où \fI<clé>\fR est l’une des valeurs de 
 .B Liste des bindings de touches
 et où \fI<touche>\fR répond aux exigences de
-.B Codes des touches
-
-
+.B Codes des touches.
 .SS Liste des bindings de touches
 .TP
 .B bind_down
@@ -611,10 +540,10 @@ Filtrer selon le motif (expérimental) (Défaut : /)
 .TP
 .B bind_help
 Afficher l’aide (Défaut : h)
-
 .SS Codes des touches
+.PP
 De façon générale, toutes les touches sont représentées par la lettre qui leur est associée. Ainsi le code pour la touche A est A. Toutefois le mécanisme est sensible à la casse.
-
+.LP
 À cela, s’ajoute les cas particuliers suivants
 .TP
 .B Enter
@@ -625,19 +554,16 @@ Touche espace
 .TP
 .B Return
 Touche de retour
-
+.P
 .SH ÉLÉMENTS GRAPHIQUES DE L’INTERFACE
 Dans le 
 .B triumphumrc
 il est possible de changer divers symboles apparaissant sur l’interface TUI en associant la clé du dit symbole au nouveau symbole voulu, sous la forme :
-
 .IP
 \fI<clé>\fR=\fI<symbole>\fR
-
 .P
 Et ce où \fI<clé>\fR est l’une des valeurs ci-dessous
 et où \fI<symbole>\fR est une chaine de caractères.
-
 .SS Éléments de la liste
 .TP
 .B general_void_symbol
@@ -669,7 +595,6 @@ Symbole remplaçant les auteurs manquants sur la liste (Défault : -)
 .TP
 .B studio_void_symbol
 Symbole remplaçant les studios manquants sur la liste (Défault : -)
-
 .SS Éléments du récapitulatif
 .TP
 .B cumulated_time_played_per_day
@@ -686,25 +611,22 @@ Symbole antécédent au temps de jeu cumulé par année (Défault : A)
 .TP
 .B cumulated_time_played_separator
 Séparateur entre les temps de jeux cumulés par périodes (Défault : │)
-
 .SH EXTRALOQUENCE
 .SS Histoire
 .PP
 Cette section regroupe les propos additionnels ainsi que les réflexions connexes.
 L’idée originelle de ce logiciel provint de deux courroies. La première fût que j’avais dans mes moments creux besoins d’une réponse à la question « À quoi puis-je jouer en ce moment ? ». Bien entendu, sur la plus part des systèmes GNU/Linux, l’on peut lister le contenu de \fI/usr/games\fR, mais enfin, quiconque l’a inspecté au moins une fois s’est rendu compte qu’il ne répond pas vraiment à cette question. Car d’une part il peut contenir aussi bien des émulateurs, des éditeurs de cartes de jeu, ou tout logiciel ayant trait aux jeux sans être un jeu lui même ; et parce que d’autre part, il ne liste évidement pas des jeux que l’utilisateur aurait configuré sur des émulateurs, voir même des jeux qui ne se jouent qu’à travers le web.
-.PP
+.LP
 La deuxième courroie était le fait que je rencontrais une amie, elle même joueuse invétérée, qui profitait de tous ses congés pour s’adonner aux jeux sortis dans l’année auxquels elle n’avait pas pu consacré du temps. Et il se trouvait qu’elle maintenait un long tableur de bureautique contenant environ cent-trente jeu. Et avec le zèle d’une bonne élève, elle commentait méticuleusement dans une colonne dédiée ce qu’elle avait pensé de chaque jeu. C’est pourquoi il est prévu dans la raison d’être de Triumphum d’intégrer la possibilité de tenir un historique de commentaires qui refléteront l’évolution de l’utilisateur de ses réflexions concernant chaque jeu. Aussi cette fonctionnalité ne saurait tarder à venir dans de prochaines versions.
-.PP
+.LP
 Il s’est alors trouvé que de la conjonction de ces deux facteurs, l’idée de Triumphum s’imposa presque aussitot comme une évidence.
-
 .SS Fonctionnalité de notation
 .PP
 Bien que dans l’industrie du jeu vidéo et l’univers qui y est associé, il est commun d’attribuer des notes aux jeu, j’ai décidé après mûre réflexion que jamais cette fonctionnalité ne sera intégrée à Triumphum.
-.PP
+.LP
 Le fait est que pareil usage n’a strictement aucune autre utilité que dans le contexte très particulier de l’industrie et plus encore des distributeurs. En d’autres termes, les notes de jeu attribuée par des magasines de connivence avec les éditeurs, n’a d’autre intérêt que de diriger le consommateur en lui disant qu’il doit acheter tel jeu car ayant une note de plus de huit ou neuf sur dix. Or, à priori, un utilisateur de Triumphum n’est pas ce père de famille qui, un 24 décembre à 20 h se demande désespérément quoi acheter comme jeu à ses enfants avant de se poser la même question dix minutes plus tard pour le parfum à acheter à sa femme. Triumphum ne vend rien à ses utilisateur, et n’a pas à reprendre à son compte les obsessions de l’industrie.
-
 .SH VOIR AUSSI
 .BR lutris (1),
 .BR gnome-games (1).
-.SH AUTHOR
+.SH AUTEUR
 Écrit par Fauve alias Idriss al Idrissi <contact@taniere.info>.
