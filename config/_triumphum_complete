@@ -1,0 +1,79 @@
+#(( $+functions[_triumphum_run_games] )) ||
+#_triumphum_run_games() {
+#  TMPLIST="Machin[Truc]
+#  Foo[Lorem]"
+#  #local playableGames; playableGames=($(triumphum --ag))
+#  local playableGames; playableGames=($(echo $TMPLIST))
+#  if [ ${#playableGames} -gt 0 ]; then
+#    _values -s , 'Available games' "${playableGames[@]}"
+#  else
+#    _message 'Available games (none found)'
+#  fi
+#}
+
+function _triumphum_run_games {
+  local games
+  games=("${(f@)$(_call_program triumphum-list-games ${(q)words[1]} --ag)}")
+  compadd -- $games
+}
+
+
+(( $+functions[_triumphum_list_licences] )) ||
+_triumphum_list_licences() {
+  local playableLicences; playableLicences=($(triumphum --al))
+  if [ ${#playableLicences} -gt 0 ]; then
+    _values -s , 'Available licences' "${playableLicences[@]}"
+  else
+    _message 'Available licences (none found)'
+  fi
+}
+
+(( $+functions[_triumphum_list_platforms] )) ||
+_triumphum_list_platforms() {
+  local playablePlatforms; playablePlatforms=($(triumphum --ap))
+  if [ ${#playablePlatforms} -gt 0 ]; then
+    _values -s , 'Available platforms' "${playablePlatforms[@]}"
+  else
+    _message 'Available platforms (none found)'
+  fi
+}
+
+(( $+functions[_triumphum_list_genres] )) ||
+_triumphum_list_genres() {
+  local playableGenres; playableGenres=($(triumphum --at))
+  if [ ${#playableGenres} -gt 0 ]; then
+    _values -s , 'Available genres' "${playableGenres[@]}"
+  else
+    _message 'Available genres (none found)'
+  fi
+}
+
+_triumphum_complete() {
+_arguments \
+  {-h,--help}'[show help options]' \
+  --tui'[Run the game selection interface]' \
+  {-r,--run}'[Run a given game and track playing time.]: :_triumphum_run_games' \
+  {-a,--about}'[Show about message.]' \
+  {-d,--donate}'[Open link to give a tip.]' \
+  --no-splash'[Do not show splash at opening.]' \
+  --list-games'[Afficher la liste des jeux.]' \
+  --list-licences'[Afficher la liste des licences.]' \
+  --list-genres'[Afficher la liste des genres de jeu.]' \
+  --list-platforms'[Afficher la liste des genres des plateformes.]' \
+  {-c,--config-file}'[Select different config file from default one.]' \
+  {-g,--games}'[Select different game file from default one.]' \
+  {-p,--platforms}'[Select different platform file from default one.]' \
+  {-l,--licences}'[Select different licence file from default one.]' \
+  {-t,--game-genres}'[Select different game genre file from default one.]' \
+  --layout'[Utiliser des raccourcis dactyliques adaptés à la disposition de clavier.]' \
+  --add-game'[Ajouter un nouveau jeu.]' \
+  --add-licence'[Ajouter une nouvelle licence.]' \
+  --add-genre'[Ajouter un nouveau genre de jeu.]' \
+  --add-platform'[Ajouter une nouvelle plateforme.]' \
+  --del-game'[Suprimer un jeu.]: :_triumphum_run_games' \
+  --del-licence'[Suprimer une licence.]: :_triumphum_list_licences' \
+  --del-genre'[Suprimer un genre de jeu.]: :_triumphum_list_genres' \
+  --del-platform'[Suprimer une plateforme.]: :_triumphum_list_platforms' \
+}
+
+compdef _triumphum_complete triumphum
