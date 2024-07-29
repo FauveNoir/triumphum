@@ -1,8 +1,12 @@
+html
+{
+	display: inline-block;
+}
 :root{
-	--first-tab: 3em;
-	--second-tab: 5em;
-	--second-tab: 4em;
-	--pre-margin: 2em;
+	--first-tab: 3ch;
+	--second-tab: 5ch;
+	--second-tab: 7ch;
+	--pre-margin: 2ch;
 }
 
 @font-face
@@ -14,6 +18,8 @@
 body
 {
 	font-family: "Anonymous Pro", monospace, "Monaco", "Courrier New";
+	display: inline-block;
+	width: 100%;
 }
 
 *
@@ -47,25 +53,15 @@ dt
 	font-weight: bold;
 }
 
-.externalCommand.usermanual:after
-{
-	content: "(1)";
-}
 
-
-.externalCommand.programmermanual:after
-{
-	content: "(3)";
-}
-
-h1
+h2
 {
 	font-weight: bold;
 	margin-top: 1em;
 	text-transform: uppercase;
 }
 
-h2, h3, h4, h5, h6
+h3, h4, h5, h6, h7
 {
 	margin-top: 1em;
 	font-weight: bold;
@@ -73,12 +69,21 @@ h2, h3, h4, h5, h6
 	margin-left: var(--first-tab);
 }
 
-h1 small, h2 small, h3 small, h4 small, h5 small, h6 small
+h2 small, h3 small, h4 small, h5 small, h6 small, h7 small
 {
 	text-transform: none;
 }
 
-p, dl, ol, ul
+
+pre, img
+{
+	margin-left: calc(var(--second-tab) + var(--pre-margin));
+	white-space: pre-wrap; /* Conserve les espaces et les retours à la ligne tout en permettant le repli du texte */
+	overflow-wrap: break-word;
+}
+
+p, dl, ol, ul,
+pre, img
 {
 	margin-left: var(--second-tab);
 }
@@ -86,11 +91,6 @@ p, dl, ol, ul
 p > ol, dd > ol
 {
 	margin-left: 2em;
-}
-
-pre, img
-{
-	margin-left: calc(var(--second-tab) + var(--pre-margin));
 }
 
 p > img
@@ -132,9 +132,14 @@ p
 	margin-bottom: 1em;
 }
 
-nav
+nav.header
 {
-	margin-bottom: 4em;
+	margin-bottom: 1em;
+}
+
+nav.footer
+{
+	margin-top: 1em;
 }
 
 a[href]
@@ -165,29 +170,31 @@ dd
 	padding-bottom: 1em;
 }
 
-nav > div
+nav
+{
+	position: relative;
+}
+
+nav > span
 {
 	position: absolute;
 	display: inline;
 }
 
-nav > div:first-of-type
+nav > span:first-of-type
 {
-	top: 0px;
 	left: 0px;
 	text-align: left;
 }
 
-nav > div:last-of-type
+nav > span:last-of-type
 {
-	top: 0px;
 	right: 0px;
 	text-align: right;
 }
 
-nav > div:nth-of-type(2)
+nav > span:nth-of-type(2)
 {
-	top: 0px;
 	right: 0px;
 	left: 0px;
 	text-align: center;
@@ -241,18 +248,18 @@ dd > blockquote, dd > pre, dd > img
 }
 
 
-h1+h2
+h2+h3
 {
 	margin-top: 1px;
 }
 
-h1 > a[href], h2 > a[href]
+h2 > a[href], h3 > a[href]
 {
 	color: inherit;
 	font-weight: inherit;
 }
 
-h1 > a[href]:hover, h2 > a[href]:hover
+h2 > a[href]:hover, h3 > a[href]:hover
 {
 	color: inherit;
 	text-shadow: 0 0 2px;
@@ -293,6 +300,24 @@ a.displayedLink[href]:before, a.displayedLink[href]:after
 {
 	content: "|";
 	font-weight: normal;
+}
+
+ul.inline li:before
+{
+	content: "";
+	margin-right: 0;
+}
+
+ul.inline li
+{
+	display: inline;
+}
+
+
+a:active
+{
+	transform: scale(0.8);
+	display: inline-block;
 }
 
 

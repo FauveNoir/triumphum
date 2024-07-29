@@ -4,44 +4,9 @@ body
 	background-color: #121212;
 }
 
-
-.constant
-{
-	color: #af5fff;
-}
-
-var
-{
-	text-decoration: underline;
-	text-transform: uppercase;
-	font-style: normal;
-}
-
-.externalCommand
-{
-	font-weight: normal;
-	color: #87ff00;
-}
-
-h1
-{
-	color: #d7005f;
-}
-
-h2, h3, h4, h5, h6
-{
-	font-weight: normal;
-	color: #87ff00;
-}
-
-nav
-{
-	color: #d75f00;
-}
-
 a[href]
 {
-	font-weight: normal;
+	font-weight: unset;
 	color: #007EDF;
 	transition: text-shadow 0.5s ease 0s;
 }
@@ -67,6 +32,52 @@ a.displayedLink:before, a.displayedLink:after
 	font-weight: normal;
 	color: #808080;
 }
+
+
+.constant
+{
+	color: #ff8700;
+}
+
+.option, a.option
+{
+	color: #af5fff;
+}
+
+var
+{
+	text-decoration: underline;
+	text-transform: uppercase;
+	font-style: normal;
+}
+
+.externalCommand
+{
+	font-weight: normal;
+	color: #87ff00;
+}
+nav
+{
+	color: #d75f00;
+}
+
+
+h2, a[href].ref-to-h2
+{
+	color: #d7005f;
+}
+h3, h4, h5, h6, h7,
+a[href].ref-to-h3, a[href].ref-to-h4, a[href].ref-to-h5, a[href].ref-to-h6, a[href].ref-to-h7
+{
+	font-weight: normal;
+	color: #87ff00;
+}
+
+nav.footer
+{
+	color: #87ff00;
+}
+
 
 .Function { color: #87ff00; font-weight: normal;}
 .Special { color: #5fd7ff; background-color: #080808; padding-bottom: 1px; }
