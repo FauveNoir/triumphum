@@ -7,15 +7,23 @@ triumphum \- Gestionnaire de ludothèque en Python et NCurses pour GNU/Linux
 
 .B triumphum
 [--config-file \fIFICHIER_CONF\fR] [--games \fIFICHIER_JEUX\fR] [--platforms \fIFICHIER_PLATEFORMES\fR] [--licences \fIFICHIER_LICENCES\fR] [--genres \fIFICHIERS_GENRES\fR] [-v]
-    [ [--tui] [--no-splash] [--layout \fILAYOUT\fR]
+[--tui] [--no-splash] [--layout \fILAYOUT\fR]
 
-    | -r \fIJEU\fR
+.B triumphum
+[--config-file \fIFICHIER_CONF\fR] [--games \fIFICHIER_JEUX\fR] [--platforms \fIFICHIER_PLATEFORMES\fR] [--licences \fIFICHIER_LICENCES\fR] [--genres \fIFICHIERS_GENRES\fR] [-v]
+-r \fIJEU\fR
 
-    | [--add-game \fIDESCRIPTEUR_JEU\fR | --add-licence \fIDESCRIPTEUR_LICENCE\fR | --add-genre \fIDESCRIPTEUR_GENRE\fR | --add-platform \fIDESCRIPTEUR_PLATEFORME\fR | --del-game \fIJEU\fR | --del-licence \fILICENCE\fR | --del-genre \fIGENRE\fR | --del-platform \fIPLATEFORM\EfR]
+.B triumphum
+[--config-file \fIFICHIER_CONF\fR] [--games \fIFICHIER_JEUX\fR] [--platforms \fIFICHIER_PLATEFORMES\fR] [--licences \fIFICHIER_LICENCES\fR] [--genres \fIFICHIERS_GENRES\fR] [-v]
+[--add-game \fIDESCRIPTEUR_JEU\fR | --add-licence \fIDESCRIPTEUR_LICENCE\fR | --add-genre \fIDESCRIPTEUR_GENRE\fR | --add-platform \fIDESCRIPTEUR_PLATEFORME\fR | --del-game \fIJEU\fR | --del-licence \fILICENCE\fR | --del-genre \fIGENRE\fR | --del-platform \fIPLATEFORME\fR]
 
-    | [--list-games | --list-licences | --list-genres | --list-platforms]
+.B triumphum
+[--config-file \fIFICHIER_CONF\fR] [--games \fIFICHIER_JEUX\fR] [--platforms \fIFICHIER_PLATEFORMES\fR] [--licences \fIFICHIER_LICENCES\fR] [--genres \fIFICHIERS_GENRES\fR] [-v]
+[--list-games | --list-licences | --list-genres | --list-platforms]
 
-    | [--ag | --al | --at | --ap] ]
+.B triumphum
+[--config-file \fIFICHIER_CONF\fR] [--games \fIFICHIER_JEUX\fR] [--platforms \fIFICHIER_PLATEFORMES\fR] [--licences \fIFICHIER_LICENCES\fR] [--genres \fIFICHIERS_GENRES\fR] [-v]
+[--ag | --al | --at | --ap]
 .SH DESCRIPTION
 Triumphum est un gestionnaire de collection de jeux pour GNU/Linux. Il permet d’avoir une liste des jeux disponibles (ou ayant été à un moment donné disponible), de les lancer, et aussi d’avoir un suivi du temps qui y a été consacré.
 Lorsqu’il est ouvert avec l’option
