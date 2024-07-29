@@ -245,7 +245,8 @@ pre, img
 img
 {
 	margin-right: 1em;
-	max-width: calc( 100% - var(--second-tab) - 1em );
+	max-width: calc( 100% - var(--second-tab) - 1ch );
+	max-height: calc( 100vh - 2em );
 }
 
 
