@@ -132,6 +132,12 @@ p
 	margin-bottom: 1em;
 }
 
+nav
+{
+	display: inline-block;
+	width: 100%;
+}
+
 nav.header
 {
 	margin-bottom: 1em;
