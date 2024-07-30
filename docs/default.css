@@ -128,6 +128,18 @@ ul li:before
 	margin-right: 4em
 }
 
+ul li.done:before
+{
+	content: "☑";
+	color: #87ff00;
+}
+
+ul li.undone:before
+{
+	content: "☐";
+	color: #d7005f;
+}
+
 
 p
 {
@@ -357,3 +369,4 @@ a:active
 {
 	white-space: pre;
 }
+
