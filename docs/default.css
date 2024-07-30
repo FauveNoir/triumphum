@@ -367,7 +367,7 @@ a:active
 {
 	width: 100%;
 	overflow-y: scroll;
-
+	width: calc( 100% - var(--second-tab) );
 }
 
 .full-view pre
