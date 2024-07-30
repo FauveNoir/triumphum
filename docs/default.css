@@ -54,19 +54,12 @@ dt
 }
 
 
-h2
+article h2
 {
 	font-weight: bold;
 	margin-top: 1em;
 	text-transform: uppercase;
-}
-
-h3, h4, h5, h6, h7
-{
-	margin-top: 1em;
-	font-weight: bold;
-	text-transform: uppercase;
-	margin-left: var(--first-tab);
+	margin-left: 0;
 }
 
 h2 small, h3 small, h4 small, h5 small, h6 small, h7 small
@@ -77,15 +70,21 @@ h2 small, h3 small, h4 small, h5 small, h6 small, h7 small
 
 pre, img
 {
-	margin-left: calc(var(--second-tab) + var(--pre-margin));
 	white-space: pre-wrap; /* Conserve les espaces et les retours à la ligne tout en permettant le repli du texte */
 	overflow-wrap: break-word;
 }
 
-p, dl, ol, ul,
-pre, img
+article > *
 {
 	margin-left: var(--second-tab);
+}
+
+article > h3, article > h4, article > h5, article > h6, article > h7
+{
+	margin-top: 1em;
+	font-weight: bold;
+	text-transform: uppercase;
+	margin-left: var(--first-tab);
 }
 
 p > ol, dd > ol
@@ -334,3 +333,20 @@ a:active
 .Type { font-weight:bold; }
 .String { font-style: italic; }
 .Identifier { font-weight: bold}
+
+.illustration
+{
+	max-width: calc( 100% - 1em )
+}
+
+.full-view
+{
+	width: 100%;
+	overflow-y: scroll;
+
+}
+
+.full-view pre
+{
+	white-space: pre;
+}
