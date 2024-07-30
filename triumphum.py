@@ -102,6 +102,11 @@ CONFIG_DIR = appdirs.user_config_dir(APP_CODE_NAME)
 
 listOfConfigurationFile={}
 class ConfigurationFile:
+	# Classe des fichiers de configuration, qui crée les variables globales désignant les fichiers
+	# code :
+	# baseName :
+	# path :
+	# minimalContent :
 	def __init__(self, code=None, baseName=None, path=CONFIG_DIR, minimalContent=None):
 		self.code=code
 		self.baseName=baseName
@@ -112,12 +117,15 @@ class ConfigurationFile:
 		globals()[self.code]=self
 
 	def fullPath(self):
+		# retourne le lien entier, path+baseName
 		return self.path + "/" + self.baseName
 
 	def isExisting(self):
+		# Test si le fichier est présent sur le disque
 		return os.path.exists(self.fullPath())
 
 	def createMinimalFile(self):
+		# Crée un fichier minimal avec du contenu
 		try:
 			with open(self.fullPath(), 'w') as f:
 				f.write(self.minimalContent)
