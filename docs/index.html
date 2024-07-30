@@ -402,30 +402,28 @@
 			<dl>
 				<dt>Exemple</dt>
 				<dd>
-					<pre>
-{
-	"games": [
-		{
-			"name": "0 A. D.",
-			"licence": "gpl",
-			"year": 2021,
-			"genre": "rts",
-			"command": "0ad",
-			"code": "0ad",
-			"url": "https://play0ad.com/",
-			"platform": "linux",
-			"studios": [
-				"Wildfire Games"
-			],
-			"authors": [
-				"Stanislas Dolcini"
-			],
-			"shortDesc": "RTS libre historique en 3D où s’affrontent diverses civilisations antiques."
-		},
-		…
-	]
-}
-					</pre>
+					<pre><span class="Delimiter">{</span>
+        &quot;<span class="Label">games</span>&quot;: <span class="Delimiter">[</span>
+                <span class="Delimiter">{</span>
+                        &quot;<span class="Label">name</span>&quot;: &quot;<span class="String">0 A. D.</span>&quot;,
+                        &quot;<span class="Label">licence</span>&quot;: &quot;<span class="String">gpl</span>&quot;,
+                        &quot;<span class="Label">year</span>&quot;: <span class="Number">2021</span>,
+                        &quot;<span class="Label">genre</span>&quot;: &quot;<span class="String">rts</span>&quot;,
+                        &quot;<span class="Label">command</span>&quot;: &quot;<span class="String">0ad</span>&quot;,
+                        &quot;<span class="Label">code</span>&quot;: &quot;<span class="String">0ad</span>&quot;,
+                        &quot;<span class="Label">url</span>&quot;: &quot;<span class="String"><a href="https://play0ad.com/">https://play0ad.com/</a></span>&quot;,
+                        &quot;<span class="Label">platform</span>&quot;: &quot;<span class="String">linux</span>&quot;,
+                        &quot;<span class="Label">studios</span>&quot;: <span class="Delimiter">[</span>
+                                &quot;<span class="String">Wildfire Games</span>&quot;
+                        <span class="Delimiter">]</span>,
+                        &quot;<span class="Label">authors</span>&quot;: <span class="Delimiter">[</span>
+                                &quot;<span class="String">Stanislas Dolcini</span>&quot;
+                        <span class="Delimiter">]</span>,
+                        &quot;<span class="Label">shortDesc</span>&quot;: &quot;<span class="String">RTS libre historique en 3D où s’affrontent diverses civilisations antiques.</span>&quot;
+                <span class="Delimiter">}</span>,
+                …
+        <span class="Delimiter">]</span>
+<span class="Delimiter">}</span></pre>
 				</dd>
 			</dl>
 			<h3><a name="listOfGenres.json"></a><a href="#listOfGenres.json">listOfGenres.json</a></h3>
@@ -440,16 +438,17 @@
 				<dt>Exemple</dt>
 				<dd>
 					<pre>
-{
-	"genres": [
-		{
-			"name": "Action",
-			"abbr": "Act",
-			"code": "action"
-		},
-		…
-	]
-}
+<span class="Delimiter">{</span>
+        &quot;<span class="Label">genres</span>&quot;: <span class="Delimiter">[</span>
+                <span class="Delimiter">{</span>
+                        &quot;<span class="Label">name</span>&quot;: &quot;<span class="String">Action</span>&quot;,
+                        &quot;<span class="Label">abbr</span>&quot;: &quot;<span class="String">Act</span>&quot;,
+                        &quot;<span class="Label">code</span>&quot;: &quot;<span class="String">action</span>&quot;
+                <span class="Delimiter">}</span>,
+                …
+        <span class="Delimiter">]</span>
+<span class="Delimiter">}</span>
+
 					</pre>
 				</dd>
 			</dl>
@@ -465,19 +464,20 @@
 				<dt>Exemple</dt>
 				<dd>
 					<pre>
-{
-	"licences": [
-		{
-			"name": "GNU General Public License",
-			"abbr": "GPL",
-			"code": "gpl",
-			"url": "https://www.gnu.org/licenses/gpl-3.0.html",
-			"shortText": "La licence publique générale GNU est une licence de logiciel libre adoptée par la Free Software Foundation (FSF) pour le projet GNU.",
-			"freedomCoefficient": 0.8
-		},
-		…
-	]
-}
+<span class="Delimiter">{</span>
+        &quot;<span class="Label">licences</span>&quot;: <span class="Delimiter">[</span>
+                <span class="Delimiter">{</span>
+                        &quot;<span class="Label">name</span>&quot;: &quot;<span class="String">GNU General Public License</span>&quot;,
+                        &quot;<span class="Label">abbr</span>&quot;: &quot;<span class="String">GPL</span>&quot;,
+                        &quot;<span class="Label">code</span>&quot;: &quot;<span class="String">gpl</span>&quot;,
+                        &quot;<span class="Label">url</span>&quot;: &quot;<span class="String"><a href="https://www.gnu.org/licenses/gpl-3.0.html">https://www.gnu.org/licenses/gpl-3.0.html</a></span>&quot;,
+                        &quot;<span class="Label">shortText</span>&quot;: &quot;<span class="String">La licence publique générale GNU est une licence de logiciel libre adoptée par la Free Software Foundation (FSF) pour le projet GNU.</span>&quot;,
+                        &quot;<span class="Label">freedomCoefficient</span>&quot;: <span class="Number">0.8</span>
+                <span class="Delimiter">}</span>,
+                …
+        <span class="Delimiter">]</span>
+<span class="Delimiter">}</span>
+
 					</pre>
 				</dd>
 			</dl>
@@ -493,17 +493,17 @@
 				<dt>Exemple</dt>
 				<dd>
 					<pre>
-{
-	"platforms":
-	[
-		{
-			"name": "Linux",
-			"code": "linux",
-			"abbr": "LIN"
-		},
-		…
-	]
-}
+<span class="Delimiter">{</span>
+        &quot;<span class="Label">platforms</span>&quot;:
+        <span class="Delimiter">[</span>
+                <span class="Delimiter">{</span>
+                        &quot;<span class="Label">name</span>&quot;: &quot;<span class="String">Linux</span>&quot;,
+                        &quot;<span class="Label">code</span>&quot;: &quot;<span class="String">linux</span>&quot;,
+                        &quot;<span class="Label">abbr</span>&quot;: &quot;<span class="String">LIN</span>&quot;
+                <span class="Delimiter">}</span>,
+                …
+        <span class="Delimiter">]</span>
+<span class="Delimiter">}</span>
 					</pre>
 				</dd>
 			</dl>
@@ -525,28 +525,28 @@
 				<dl>Exemple d’historique pour un jeu</dl>
 				<dd>
 					<pre>
-"0ad": [
-	{
-		"start_time": "2024-04-20T17:40:22",
-		"end_time": "2024-04-20T17:40:27",
-		"duration": "0:00:04.967317"
-	},
-	{
-		"start_time": "2024-04-20T18:07:47",
-		"end_time": "2024-04-20T18:07:51",
-		"duration": "0:00:03.419640"
-	},
-	{
-		"start_time": "2024-04-21T16:13:58",
-		"end_time": "2024-04-21T16:14:02",
-		"duration": "0:00:03.594571"
-	},
-	{
-		"start_time": "2024-04-21T17:10:58",
-		"end_time": "2024-04-21T17:11:02",
-		"duration": "0:00:03.840515"
-	}
-]
+&quot;<span class="Label">0ad</span>&quot;: <span class="Delimiter">[</span>
+        <span class="Delimiter">{</span>
+                &quot;<span class="Label">start_time</span>&quot;: &quot;<span class="String">2024-04-20T17:40:22</span>&quot;,
+                &quot;<span class="Label">end_time</span>&quot;: &quot;<span class="String">2024-04-20T17:40:27</span>&quot;,
+                &quot;<span class="Label">duration</span>&quot;: &quot;<span class="String">0:00:04.967317</span>&quot;
+        <span class="Delimiter">}</span>,
+        <span class="Delimiter">{</span>
+                &quot;<span class="Label">start_time</span>&quot;: &quot;<span class="String">2024-04-20T18:07:47</span>&quot;,
+                &quot;<span class="Label">end_time</span>&quot;: &quot;<span class="String">2024-04-20T18:07:51</span>&quot;,
+                &quot;<span class="Label">duration</span>&quot;: &quot;<span class="String">0:00:03.419640</span>&quot;
+        <span class="Delimiter">}</span>,
+        <span class="Delimiter">{</span>
+                &quot;<span class="Label">start_time</span>&quot;: &quot;<span class="String">2024-04-21T16:13:58</span>&quot;,
+                &quot;<span class="Label">end_time</span>&quot;: &quot;<span class="String">2024-04-21T16:14:02</span>&quot;,
+                &quot;<span class="Label">duration</span>&quot;: &quot;<span class="String">0:00:03.594571</span>&quot;
+        <span class="Delimiter">}</span>,
+        <span class="Delimiter">{</span>
+                &quot;<span class="Label">start_time</span>&quot;: &quot;<span class="String">2024-04-21T17:10:58</span>&quot;,
+                &quot;<span class="Label">end_time</span>&quot;: &quot;<span class="String">2024-04-21T17:11:02</span>&quot;,
+                &quot;<span class="Label">duration</span>&quot;: &quot;<span class="String">0:00:03.840515</span>&quot;
+        <span class="Delimiter">}</span>
+<span class="Delimiter">]</span>
 					</pre>
 					<dd>
 			</dl>

@@ -96,3 +96,7 @@ nav.footer
 .Identifier { color: #ff8700; font-weight: bold; }
 .String { font-style: normal; color: #afaf87; }
 .Ignore { color: #808080; background-color: #080808; }
+.Label { color: #ffffaf; }
+.Delimiter { color: #626262; }
+.String { color: #afaf87; }
+.Number { color: #af5fff; }
