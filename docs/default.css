@@ -272,7 +272,7 @@ h2 > a[href], h3 > a[href]
 h2 > a[href]:hover, h3 > a[href]:hover
 {
 	color: inherit;
-	text-shadow: 0 0 2px;
+	text-shadow: 0 0 4px;
 }
 
 a[href].h1-ref
@@ -283,7 +283,7 @@ a[href].h1-ref
 
 a[href].h1-ref:hover
 {
-	text-shadow: 0 0 2px;
+	text-shadow: 0 0 4px;
 }
 
 a[href].h2-ref
@@ -303,6 +303,11 @@ a.displayedLink[href]:hover
 {
 	color: inherit;
 	font-weight: bold;
+	text-shadow: 0 0 4px;
+}
+
+a[href]:hover
+{
 	text-shadow: 0 0 2px;
 }
 
