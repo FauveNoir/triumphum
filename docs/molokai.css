@@ -6,9 +6,14 @@ body
 
 a[href]
 {
+	color: inherit;
 	font-weight: unset;
-	color: #007EDF;
 	transition: text-shadow 0.5s ease 0s;
+}
+
+a[href].link
+{
+	color: #007EDF;
 }
 
 a[href]:hover
