@@ -683,9 +683,7 @@ ADD_LICENCE_STATEMENTS={
 #
 
 def splitDescriptorIntoList(inputChain):
-	writeInTmp(inputChain)
 	objectDescriptorList=shlex.split(inputChain)
-	writeInTmp(objectDescriptorList)
 	return objectDescriptorList
 
 def sanitizeDescriptorListFromKeysWithoutValues(inputChain):
@@ -2040,9 +2038,7 @@ def internalShellLayoutFunction(shellInput):
 	# TODO utiliser la fonction factorisée
 	matchedInput=re.match("(l|layout)\s+(?P<relevant>[a-z]+)", shellInput)
 	askedLayout=matchedInput.group("relevant")
-	writeInTmp('"' + askedLayout + '"' )
 	if askedLayout in listOfLayouts:
-		writeInTmp(listOfLayouts[askedLayout])
 		listOfLayouts[askedLayout].apply()
 		setBottomBarContent(f"{listOfLayouts[askedLayout].fancyName}")
 	else:
