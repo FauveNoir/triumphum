@@ -2,6 +2,9 @@ html
 {
 	display: inline-block;
 }
+body
+{
+}
 :root{
 	--first-tab: 3ch;
 	--second-tab: 5ch;
