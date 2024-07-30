@@ -7,4 +7,3 @@ Depends: python3, python3-pyperclip, python3-humanize, python-babel-localedata, 
 Maintainer: Fauve <contact@taniere.info>
 Description: Gestionnaire de ludothèque en Python et NCurses.
 Homepage: https://fauvenoir.github.io/triumphum
-
