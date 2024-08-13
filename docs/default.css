@@ -13,7 +13,7 @@ body
 :root{
 	--first-tab: 3ch;
 	--second-tab: 5ch;
-	--second-tab: 7ch;
+	--third-tab: 7ch;
 	--pre-margin: 2ch;
 }
 
@@ -84,7 +84,7 @@ pre, img
 
 article > *
 {
-	margin-left: var(--second-tab);
+	margin-left: var(--third-tab);
 }
 
 article > h3, article > h4, article > h5, article > h6, article > h7
@@ -93,6 +93,11 @@ article > h3, article > h4, article > h5, article > h6, article > h7
 	font-weight: bold;
 	text-transform: uppercase;
 	margin-left: var(--first-tab);
+}
+
+article > h4, article > h5, article > h6, article > h7
+{
+	margin-left: var(--second-tab);
 }
 
 p > ol, dd > ol
@@ -263,7 +268,7 @@ pre, img
 img
 {
 	margin-right: 1em;
-	max-width: calc( 100% - var(--second-tab) - 1ch );
+	max-width: calc( 100% - var(--third-tab) - 1ch );
 	max-height: calc( 100vh - 2em );
 }
 
@@ -367,7 +372,7 @@ a:active
 {
 	width: 100%;
 	overflow-y: scroll;
-	width: calc( 100% - var(--second-tab) );
+	width: calc( 100% - var(--third-tab) );
 }
 
 .full-view pre
