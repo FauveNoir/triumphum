@@ -107,7 +107,7 @@ p > ol, dd > ol
 
 p > img
 {
-	margin-left: var(--pre-margin);
+/*	margin-left: var(--pre-margin);*/
 }
 
 dl dl
