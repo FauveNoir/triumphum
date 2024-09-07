@@ -103,17 +103,19 @@ CONFIG_DIR = appdirs.user_config_dir(APP_CODE_NAME)
 listOfConfigurationFile={}
 class ConfigurationFile:
 	# Classe des fichiers de configuration, qui crée les variables globales désignant les fichiers
-	# code :
-	# baseName :
-	# path :
-	# minimalContent :
+	# code : Nom de la variable sous laquelle sera désigné le dit fichier
+	# baseName : Nom atomique du fichier (sans le lien complet)
+	# path : Lien vers le fichier dans l’arborescence sans le nom atomique
+	# minimalContent : Contenu de base du fichier, lorsque rien n’y a encore été inscrit
 	def __init__(self, code=None, baseName=None, path=CONFIG_DIR, minimalContent=None):
 		self.code=code
 		self.baseName=baseName
 		self.path=path
 		self.minimalContent=minimalContent
 
+		# Versement de l’objet à la liste de tous les objets du même type
 		listOfConfigurationFile[self.code]=self
+		# Versement de l’objet aux variables globales
 		globals()[self.code]=self
 
 	def fullPath(self):
@@ -134,18 +136,24 @@ class ConfigurationFile:
 			print(f"Erreur : Impossible de créer le fichier « {file_path} ».")
 
 	def testAndAskToCreateIfNone(self):
+		# Crée le fichier à l’emplacement associé si ce dernier n’y est pas déjà
 		if not self.isExisting():
 			if ask_yes_no_question(f"Créer le fichier « {self.fullPath()} » ?"):
 				self.createMinimalFile()
 
 	def setNew(self, newPath):
+		# Changer le lien vers le fichier
 		self.baseName=os.path.basename(newPath)
 		self.path=os.path.dirname(newPath)
 
 	def __str__(self):
+		# Traitement de l’objet en tant que chaine de caractère.
+		# Le comportement en tant que conversion vers les chaines de caractères est d’afficher le lien complet vers le fichier.
 		return self.fullPath()
 
 def ask_yes_no_question(question):
+	# Queestion Oui-Non à la aptitude
+	# question : la question littérale qui apparaitra à l’utilisateur
 	while True:
 		user_input = input(f"{question} (Y/n): ").strip().lower()
 		if user_input in ['y', 'yes']:
@@ -156,15 +164,22 @@ def ask_yes_no_question(question):
 			print("Veuillez répondre par 'Y' ou 'n'.")
 
 def makeFileConfigMinimalContent():
+	# Préparation du contenu minimal du fichier de configuration
+
+	# Déffinition de la langue
 	fileConfigMinimalContent="language=fre"
+
+	# Collecte des symboles graphiques
 	for aGraphicalSymbol in listOfGraphicalSymbols:
 		fileConfigMinimalContent+="\n" + aGraphicalSymbol.fileConfigName + "=" + aGraphicalSymbol.value
+	# Collecte des formations de touches
 	for aBinding in listOfBindings:
 		fileConfigMinimalContent+="\n" + aBinding.makeDefaultConfigEntry()
 
 	return fileConfigMinimalContent
 
 def prepareConfigFiles():
+	# Préparation de tous les fichiers de configuration et de donnée
 	ConfigurationFile(code="GAME_FILE",     minimalContent="""{"games":[]}""",      baseName="games.json")
 	ConfigurationFile(code="GENRE_FILE",    minimalContent="""{"genres":[]}""",     baseName="listOfGenres.json")
 	ConfigurationFile(code="LICENCE_FILE",  minimalContent="""{"licences":[]}""",   baseName="listOfLicences.json")
@@ -173,6 +188,7 @@ def prepareConfigFiles():
 	ConfigurationFile(code="CONFIG_FILE",   minimalContent=makeFileConfigMinimalContent(),    baseName="triumphumrc", path=appdirs.user_config_dir())
 
 def verifyConfigFileExistence():
+	# Vérifie l’éxistence des fichiers de configuration et les crée sinon.
 	for aFile in listOfConfigurationFile:
 		listOfConfigurationFile[aFile].testAndAskToCreateIfNone()
 
