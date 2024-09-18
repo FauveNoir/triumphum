@@ -353,7 +353,7 @@ ul.inline li
 
 a:active
 {
-	transform: scale(0.8);
+	transform: scale(0.9);
 	display: inline-block;
 }
 
