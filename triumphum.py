@@ -259,9 +259,9 @@ args = parser.parse_args()
 # Classe des symbols graphiques
 ########################################################################
 
-# *Explication*
+#
+## Explication
 # Les symboles graphiques sont l’ensemble des éléments d’interface qui se présente sous la forme d’ùn caractère typographique, comme les lignes permettant de dessiner les boites, ou encore les symboles servant à designant des informations manquantes.
-
 
 listOfGraphicalSymbols=[]
 class GraphicalSymbol:
@@ -293,7 +293,11 @@ class GraphicalSymbol:
 		else:
 			return NotImplemented
 
+#
+## Déclaration des symboles graphiques
+#
 
+### Symboles de déclaration d’asbcence de donnée
 GraphicalSymbol(localName="GENERAL_VOID_SYMBOL", value="-", description="Symbole d’absecnce de donnée par défaut")
 
 GraphicalSymbol(localName="NAME_VOID_SYMBOL", value=GENERAL_VOID_SYMBOL.value, description="Symbole d’abscence de nom connu")
@@ -306,6 +310,7 @@ GraphicalSymbol(localName="AUTHOR_VOID_SYMBOL", value=GENERAL_VOID_SYMBOL.value,
 GraphicalSymbol(localName="STUDIO_VOID_SYMBOL", value=GENERAL_VOID_SYMBOL.value, description="Symbole d’abscence de studio connu")
 GraphicalSymbol(localName="PLATFORM_VOID_SYMBOL", value=" ", description="Symbole d’abscence de plateforme connue")
 
+### Symbole de désignation des durées cumulées
 GraphicalSymbol(localName="CUMULATED_TIME_PLAYED_PER_DAY", value="D", description="Symbole de temps de jeu cumulé durant la journée")
 GraphicalSymbol(localName="CUMULATED_TIME_PLAYED_PER_WEEK", value="W", description="Symbole de temps de jeu cumulé durant la semaine")
 GraphicalSymbol(localName="CUMULATED_TIME_PLAYED_PER_MONTH", value="M", description="Symbole de temps de jeu cumulé durant le mois")
@@ -320,7 +325,7 @@ def getListOfKeyBindingsCodes():
 	global listOfBindings
 	listOfKeyBindingsStrokes=[]
 	for aBinding in listOfBindings:
-		listOfKeyBindingsStrokes.append((aBinding.key))
+		listOfKeyBindingsStrokes.append(aBinding.key)
 	return listOfKeyBindingsStrokes
 
 def returnBindingAfterKeyStroke(key):
