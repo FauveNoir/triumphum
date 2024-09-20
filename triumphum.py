@@ -321,12 +321,6 @@ GraphicalSymbol(localName="CUMULATED_TIME_PLAYED_SEPARATOR", value="│", descri
 # Classe des racoucris dactyliques
 ########################################################################
 
-def getListOfKeyBindingsCodes():
-	global listOfBindings
-	listOfKeyBindingsStrokes=[]
-	for aBinding in listOfBindings:
-		listOfKeyBindingsStrokes.append(aBinding.key)
-	return listOfKeyBindingsStrokes
 
 def returnBindingAfterKeyStroke(key):
 	for aBinding in listOfBindings:
@@ -2192,9 +2186,10 @@ def main(stdscr):
 		key = transform_key_to_character(stdscr.get_wch())
 #		setBottomBarContent(f"Touche préssée {key}")
 
-		if (key) == transform_key_to_character('q'):  # Quitter si la touche 'q' est pressée
+		if (key) == transform_key_to_character('q'):  # Quitter si la touche 'q' est pressée # TODO factoriser
 			break
-		elif (key) in getListOfKeyBindingsCodes():
+		elif any(key == aBinding.key for aBinding in listOfBindings):
+			# Teste si la touche préssé correspond à l’attribut key d’un des élements de listOfBindings
 			setBottomBarContent("")
 			returnBindingAfterKeyStroke(key).executeInstructions()
 
