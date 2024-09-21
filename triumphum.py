@@ -360,27 +360,40 @@ def transform_character_to_key(character_name):
 
 listOfBindings=[]
 class Binding:
+	# Classe des racourcis dactyliques.
+	# key : touche associée
+	# code : nom de la variable de l’objet créé
+	# description : Description de l’usage tel qu’elle apparaitra à l’utilisateur dans les interfaces d’aide
+	# configFileName : Nom de la fonction à utiliser par le fichier de configuration. Par défaut c’est code qui est utilisé afin de maintenir la plus grande homogénéité entre le code python et le fichier de configuration.
+	#                 /!\ Ne déclarer éxplicitement une valeur pour `configFileName` que s’il éxiste une raison valable.
+	# instructions : Nom de la fonction à déclencher lors de la pression sur le binding.
 	def __init__(self, key=None, code=None, description=None, configFileName=None, instructions=None):
 		self.key = None
 		self.setKey(key)
 		self.description = description
 		self.code = code
+
 		if configFileName == None:
 			self.configFileName = self.code
 		else:
 			self.configFileName = configFileName
 		globals()[code] = self # Déclaration de la variable globale pérmétant d’atteindre directement le genre voulu
+
 		if instructions:
 			setattr(self, 'executeInstructions', instructions)
 
 		listOfBindings.append(self) # Adjonction à la liste des genres de jeux
+
 	def setKey(self, key):
+		# Transforme les codes lisibles en caractères
 		self.key = transformKeyToCharacter(key)
 
 	def executeInstructions(self):
+		# Éxectue la fontion associée au binding
 		setBottomBarContent(f"{self.key} : Aucune action associée.")
 
 	def makeDefaultConfigEntry(self):
+		# Renvoit la ligne de fichier de configuration apropriée
 		configEntry=self.configFileName + "=" + transform_character_to_key(self.key)
 		return configEntry
 
