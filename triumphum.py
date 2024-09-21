@@ -630,6 +630,8 @@ def applyFileConfigurationsBindings():
 		# TODO chercher la clé si elle existe
 		if config.has_option("General", aConfigKey):
 			configValues[aConfigKey]=config.get("General", aConfigKey)
+
+			# ↓ Trouver au sein de `listOfBindings` l’élément ayant dans son paramettre « configFileName` la valeure contenue dans `value`, et en lui attribue aussitôt la valeur de `aConfigKey`.
 			getElementHavingParameterWithValue(givenList=listOfBindings, parameter="configFileName", value=aConfigKey).setKey(configValues[aConfigKey])
 
 def applyFileConfigurationsGraphicalSymbols():
