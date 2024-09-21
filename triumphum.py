@@ -333,6 +333,7 @@ def getElementHavingParameterWithValue(givenList=None, parameter=None, value=Non
 
 ########################################################################
 
+# Cas particuliers des mapings où le keycode ne correspond pas au symbole produit.
 KEY_MAPPING = {
 	"Enter": "\n",
 	"Return": "\r",
@@ -340,6 +341,7 @@ KEY_MAPPING = {
 }
 
 def reverseDictionnary(dictionnary):
+	# Inverse les clés et valeurs du dictionnaire
 	return {v: k for k, v in dictionnary.items()}
 
 def transform_key_to_character(key_name):
