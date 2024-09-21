@@ -329,13 +329,6 @@ def returnBindingAfterKeyStroke(key):
 
 ########################################################################
 
-def getListOfConfigKeyCodes():
-	global listOfBindings
-	listOfConfigKeyCodes=[]
-	for aBinding in listOfBindings:
-		listOfConfigKeyCodes.append(aBinding.configFileName)
-	return listOfConfigKeyCodes
-
 def returnBindingAfterConfigKeyCode(configKeyCode):
 	for aBinding in listOfBindings:
 		if configKeyCode == aBinding.configFileName:
