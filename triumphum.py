@@ -336,7 +336,7 @@ def getElementHavingParameterWithValue(givenList=None, parameter=None, value=Non
 	return None
 
 def getListOfAParametterFromAListOfObjects(givenList=None, parameter=None):
-	if parameter is None or value is None:
+	if parameter is None or parameter is None:
 		return None
 
 	outputList=[]
@@ -503,8 +503,6 @@ def returnBindingAfterCode(code):
 
 ########################################################################
 
-listOfBindingsCode=getListOfBindingsCode()
-attributs = {attr: None for attr in listOfBindingsCode}
 listOfLayouts={}
 class Layout:
 	def __init__(self, fancyName=None, code=None, **attributs):
@@ -519,8 +517,7 @@ class Layout:
 
 	def apply(self):
 		# ↓ Parcour `listOfBindings` pour ittérer sur chacun des paramettres `.code` des éléments qu’elle contient.
-		for aBinding in listOfBindings:
-			aKey=aBinding.key
+		for aKey in getListOfAParametterFromAListOfObjects(givenList=listOfBindings, parameter="code"):
 			if hasattr(self, aKey):
 				value = getattr(self, aKey)
 				returnBindingAfterCode(aKey).setKey(value)
