@@ -595,8 +595,17 @@ Layout(fancyName="QWERTY", code="qwerty",
 # Classe du shell interne
 ########################################################################
 
+#
+### Constructeurs des expressions regex les plus courantes
+#
+
 def getPaternToMatchAllCodesInDictionnary(dictionnary):
 	# Primitive de construction des regex
+	# Prend en entrée une liste de srt et en fait une regex d’alternatives.
+	# 
+	# Exemple :
+	# Input = ["foo", "bar", "baz"]
+	# Output = "(foo|bar|baz)"
 	patern=""
 	for aCode in dictionnary:
 		patern=patern+aCode+"|"
@@ -604,22 +613,33 @@ def getPaternToMatchAllCodesInDictionnary(dictionnary):
 	return patern
 
 def getPaternToMatchAllLayoutCodes():
+	# Returne une chaine de regex d’alternative des codes de dispositions possibles
+	# Exemple : "(bepo|azerty|qwerty)"
 	patern=getPaternToMatchAllCodesInDictionnary(listOfLayouts)
 	return patern
 
 def getPaternToMatchAllLicencesCodes():
+	# Returne une chaine de regex d’alternative des codes de licences possibles
+	# Exemple : "(unknownlicence|gpl|dp|c|mit|apache|bsd"
 	patern=getPaternToMatchAllCodesInDictionnary(listOfLicences)
 	return patern
 
 #
-###
+## Classe des commandes du shell interne
 #
-
-def unactivatedInternallShellInstruction():
-	setBottomBarContent("Fonction non implémentée dans la version actuelle")
 
 ListOfInternalShellCommand={}
 class InternalShellCommand:
+	# Classe des commandes du shell intrne
+	# code : Commande à executer par l’utilisateur (et aussi clé de l’objet au sein de la liste)
+	# patern : patern permettant de matcher la commande
+	# description : Descrption telle que lisible par l’utilisateur dans les interfaces d’aide
+	# options : Alors là, aucune idée, mais probablement prévu en cas d’évolution de commandes prenant des paramettres mais n’éxistant pas dans la version actuelle 2024-10-21
+	# synopsis : Description, telle que visible par l’utilisateur dans les documentations et interface d’aide, des différentes varientes d’appel de la commande
+	# fulldesc : Description complette et exaustive
+	# wrongMatch : Probablement lié à `options` et décrit comment utiliser… non en vrais je sais pas.
+	# instructions : Fonction associée à l’execution de la commande
+	# activated : Si mis sur False alors la fonction est encore expérimentale et sa mise en œuvre est incomplette
 	def __init__(self, code=None, patern=None, description=None, options=None, synopsis=None, fulldesc=None, wrongMatch=None, instructions=None, activated=True):
 		self.code=code
 		self.patern="^"+patern+"\s*$"
@@ -631,29 +651,46 @@ class InternalShellCommand:
 		self.activated=activated
 
 		if instructions:
+		# Si pas d’instruction car la commande est expérimentale, lui attribuer le comportement idoine avec `unactivatedInternallShellInstruction()`
+		# Autrement lui attribuer la fonction donnée en entrée
 			if not self.activated:
 				setattr(self, 'executeInstructions', unactivatedInternallShellInstruction)
 			else:
 				setattr(self, 'executeInstructions', instructions)
 
 		ListOfInternalShellCommand[code]=self
+
 	def executeInstructions(self, shellInput):
+		# Éxecuter la fonction associée lors de l’appel à la commande
+		# /!\ Même si dans la version actuelle aucune commande n’a de fonction utilisant le paramettre `shellInput`, il faut le conserver. Car il servira ultérieurement à parser les paramettres des commandes qui en auront.
 		setBottomBarContent(self.description)
 
+#
+## Fonctinos générales liées au shell interne
+#
+
+def unactivatedInternallShellInstruction():
+	# Que faire lorsque la fonction éxiste mais n’est pas encore implémentée
+	setBottomBarContent("Fonction non implémentée dans la version actuelle")
 
 def whatTodoWhenShellInputIsWrong(shellInput):
+	# Que faire lorsque la fonction  n’éxiste pas du tout
 	setBottomBarContent(f"La commande « {shellInput} » est invalide.")
 
 
 def whatToDoWithShellInput(shellInput):
+	# Traitement de la saisie du shell
 	isShellInputValid=False
 	for anInternalCommand in ListOfInternalShellCommand:
+	# Recherche une correpsondance eventuelle de la saisie du shell avec un patern valide
 		match = re.match(ListOfInternalShellCommand[anInternalCommand].patern, shellInput)
 		if match:
+			# Si le paterne est trouvé, alors execute la commande associée
 			isShellInputValid=True
 			ListOfInternalShellCommand[anInternalCommand].executeInstructions(shellInput)
 
 	if isShellInputValid == False:
+		# Si le paterne n’est pas trouvé, alors renvoit le message d’erreur
 		whatTodoWhenShellInputIsWrong(shellInput)
 
 ########################################################################
@@ -2321,4 +2358,3 @@ elif args.tui == True:
 		layout.apply()
 	printSplash()
 	curses.wrapper(main)
-
