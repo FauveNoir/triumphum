@@ -322,20 +322,13 @@ GraphicalSymbol(localName="CUMULATED_TIME_PLAYED_SEPARATOR", value="│", descri
 ########################################################################
 
 def getElementHavingParameterWithValue(givenList=None, parameter=None, value=None):
+	# Parcourt la liste `givenList` pour y trouver un élément ayant un paramettre nomé `parameter` et ayant pour valeur `value`.
 	if parameter is None or value is None:
 		return None
 
 	for anElement in givenList:
 		if hasattr(anElement, parameter) and getattr(anElement, parameter) == value:
 				return anElement
-	return None
-
-########################################################################
-
-def returnBindingAfterConfigKeyCode(configKeyCode):
-	for aBinding in listOfBindings:
-		if configKeyCode == aBinding.configFileName:
-			return aBinding
 	return None
 
 ########################################################################
@@ -637,7 +630,7 @@ def applyFileConfigurationsBindings():
 		# TODO chercher la clé si elle existe
 		if config.has_option("General", aConfigKey):
 			configValues[aConfigKey]=config.get("General", aConfigKey)
-			returnBindingAfterConfigKeyCode(aConfigKey).setKey(configValues[aConfigKey])
+			getElementHavingParameterWithValue(givenList=listOfBindings, parameter="configFileName", value=aConfigKey).setKey(configValues[aConfigKey])
 
 def applyFileConfigurationsGraphicalSymbols():
 	config = configparser.ConfigParser()
@@ -2186,6 +2179,8 @@ def main(stdscr):
 		elif any(key == aBinding.key for aBinding in listOfBindings):
 			# Teste si la touche préssé correspond à l’attribut key d’un des élements de listOfBindings
 			setBottomBarContent("")
+
+			# ↓ Trouver au sein de `listOfBindings` l’élément ayant dans son paramettre « key » la valeure contenue dans `value`, et en éxecute aussitôt les instructions.
 			getElementHavingParameterWithValue(givenList=listOfBindings, parameter="key", value=key).executeInstructions()
 
 ########################################################################
