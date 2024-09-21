@@ -321,10 +321,13 @@ GraphicalSymbol(localName="CUMULATED_TIME_PLAYED_SEPARATOR", value="│", descri
 # Classe des racoucris dactyliques
 ########################################################################
 
-def returnBindingAfterKeyStroke(key):
-	for aBinding in listOfBindings:
-		if key == aBinding.key:
-			return aBinding
+def getElementHavingParameterWithValue(givenList=None, parameter=None, value=None):
+	if parameter is None or value is None:
+		return None
+
+	for anElement in givenList:
+		if hasattr(anElement, parameter) and getattr(anElement, parameter) == value:
+				return anElement
 	return None
 
 ########################################################################
@@ -2183,7 +2186,7 @@ def main(stdscr):
 		elif any(key == aBinding.key for aBinding in listOfBindings):
 			# Teste si la touche préssé correspond à l’attribut key d’un des élements de listOfBindings
 			setBottomBarContent("")
-			returnBindingAfterKeyStroke(key).executeInstructions()
+			getElementHavingParameterWithValue(givenList=listOfBindings, parameter="key", value=key).executeInstructions()
 
 ########################################################################
 # Que faire
