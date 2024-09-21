@@ -488,39 +488,36 @@ def bindRefreshScreenFunction():
 # Dispositions de clavier
 ########################################################################
 
-def getListOfBindingsCode():
-	listOfBindingsCode=[]
-	for aBinding in listOfBindings:
-		listOfBindingsCode.append(aBinding.code)
-	return listOfBindingsCode
-
-
-def returnBindingAfterCode(code):
-	for aBinding in listOfBindings:
-		if code == aBinding.code:
-			return aBinding
-	return None
-
-########################################################################
-
 listOfLayouts={}
 class Layout:
+	# Classe des disposition de clavier ayant chacune son propre jeu de binding
+	# fancyName : Nom littéral tel qu’il apparaitra à l’utilisateur lorsqu’une représentation linguistique est permise
+	# code : code de la disposition qui sert 1. dans la variable locale de l’objet 2. Que l’utilisateur utilesra lors de ses configurations et appels à la ligne de commande
+	# **attributs : Autres paramettres sensés être générés d’après la liste des racourcis actyliques disponibles
 	def __init__(self, fancyName=None, code=None, **attributs):
 		self.fancyName=fancyName
 		self.code=code
 
-		# Enregistrer tous les attributs supplémentaires de **attributs
+		# Enregistrer tous les attributs supplémentaires de **attributs comme autant de paramettres
+		# TODO limiter les attributs à la liste des racourcis dactyliques disponibles
 		for attributName, value in attributs.items():
 			setattr(self, attributName, value)
 
 		listOfLayouts[self.code]=self
 
 	def apply(self):
-		# ↓ Parcour `listOfBindings` pour ittérer sur chacun des paramettres `.code` des éléments qu’elle contient.
+	# Appliquer les associations de la disposition et utiliser ses racourcis dactyliques
 		for aKey in getListOfAParametterFromAListOfObjects(givenList=listOfBindings, parameter="code"):
+		# Parcour `listOfBindings` pour ittérer sur chacun des paramettres `.code` des éléments qu’elle contient.
 			if hasattr(self, aKey):
 				value = getattr(self, aKey)
-				returnBindingAfterCode(aKey).setKey(value)
+				# ↓ Récupére le Binding ayant pour `.code` la valeur de `aKey`
+				theBinding=getElementHavingParameterWithValue(givenList=listOfBindings, parameter="code", value=aKey)
+				theBinding.setKey(value)
+
+#
+## Déffinition des dispositions disponibles
+#
 
 Layout(fancyName="BÉPO", code="bepo",
 	bindGoDown="t",
