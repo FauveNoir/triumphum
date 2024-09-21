@@ -321,7 +321,6 @@ GraphicalSymbol(localName="CUMULATED_TIME_PLAYED_SEPARATOR", value="│", descri
 # Classe des racoucris dactyliques
 ########################################################################
 
-
 def returnBindingAfterKeyStroke(key):
 	for aBinding in listOfBindings:
 		if key == aBinding.key:
@@ -634,11 +633,11 @@ def whatToDoWithShellInput(shellInput):
 
 def applyFileConfigurationsBindings():
 	config = configparser.ConfigParser()
-
 	config.read(CONFIG_FILE.fullPath())
-	configValues={}
 
-	for aConfigKey in getListOfConfigKeyCodes():
+	configValues={}
+	for aBinding in listOfBindings:
+		aConfigKey=aBinding.configFileName
 		# TODO chercher la clé si elle existe
 		if config.has_option("General", aConfigKey):
 			configValues[aConfigKey]=config.get("General", aConfigKey)
