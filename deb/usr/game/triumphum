@@ -321,6 +321,10 @@ GraphicalSymbol(localName="CUMULATED_TIME_PLAYED_SEPARATOR", value="│", descri
 # Classe des racoucris dactyliques
 ########################################################################
 
+#
+## Diverses fonctions utiles à la gestion des racourcis dactyliques
+#
+
 def getElementHavingParameterWithValue(givenList=None, parameter=None, value=None):
 	# Parcourt la liste `givenList` pour y trouver un élément ayant un paramettre nomé `parameter` et ayant pour valeur `value`.
 	if parameter is None or value is None:
@@ -331,10 +335,9 @@ def getElementHavingParameterWithValue(givenList=None, parameter=None, value=Non
 				return anElement
 	return None
 
-########################################################################
-
 # Cas particuliers des mapings où le keycode ne correspond pas au symbole produit.
 KEY_MAPPING = {
+	# label, caractère
 	"Enter": "\n",
 	"Return": "\r",
 	"Space": " ",
@@ -344,10 +347,12 @@ def reverseDictionnary(dictionnary):
 	# Inverse les clés et valeurs du dictionnaire
 	return {v: k for k, v in dictionnary.items()}
 
-def transform_key_to_character(key_name):
+def transformKeyToCharacter(key_name):
+	# Transformee les codes lisibles en caractères
 	return KEY_MAPPING.get(key_name, key_name)
 
 def transform_character_to_key(character_name):
+	# Transformes les caractères reçus au claviers en labels lisibles
 	reverseKeyMapping=reverseDictionnary(KEY_MAPPING)
 	return reverseKeyMapping.get(character_name, character_name)
 
@@ -370,7 +375,7 @@ class Binding:
 
 		listOfBindings.append(self) # Adjonction à la liste des genres de jeux
 	def setKey(self, key):
-		self.key = transform_key_to_character(key)
+		self.key = transformKeyToCharacter(key)
 
 	def executeInstructions(self):
 		setBottomBarContent(f"{self.key} : Aucune action associée.")
@@ -379,50 +384,61 @@ class Binding:
 		configEntry=self.configFileName + "=" + transform_character_to_key(self.key)
 		return configEntry
 
+########################################################################
+
+#
+## Fonctions dédiées aux actions des caractères dactyliques
+#
+
 def bindGoDownFunction():
+	# Focale sur l’élément suivant de la liste visuelle
 	THE_VISUAL_LIST_OF_GAMES.goDown()
+
 def bindGoUpFunction():
+	# Focale sur l’élément précédent de la liste visuelle
 	THE_VISUAL_LIST_OF_GAMES.goUp()
 
 def bindSortByNameFunction():
-	global THE_VISUAL_LIST_OF_GAMES
+	# Trie la liste par ordre alphabétique
 	THE_VISUAL_LIST_OF_GAMES.sortBy("name")
 	setBottomBarContent(f"Tri par ordre alphabétique.")
 
 def bindSortByLicenceFunction():
-	global THE_VISUAL_LIST_OF_GAMES
+	# Trie la liste par coeficient de liberté des licences
 	THE_VISUAL_LIST_OF_GAMES.sortBy("licence")
 	setBottomBarContent(f"Tri par permissivité des licences.")
 
 def bindSortByGenreFunction():
-	global THE_VISUAL_LIST_OF_GAMES
+	# Trie la liste par genre
 	THE_VISUAL_LIST_OF_GAMES.sortBy("genre")
 	setBottomBarContent(f"Tri par genre de jeu.")
 
 def bindSortByDateFunction():
-	global THE_VISUAL_LIST_OF_GAMES
+	# Trie la liste par genre
 	THE_VISUAL_LIST_OF_GAMES.sortBy("year")
 	setBottomBarContent(f"Tri par année de sortie.")
 
 def bindSortByLastOpeningFunction():
-	global THE_VISUAL_LIST_OF_GAMES
+	# Trie la liste par date de dernière ouverture
 	THE_VISUAL_LIST_OF_GAMES.sortBy("latest_opening_date_value")
 	setBottomBarContent(f"Tri par date de dernière ouverture.")
 
 def bindSortByPlayingDurationFunction():
-	global THE_VISUAL_LIST_OF_GAMES
+	# Trie la liste par dérée de jeu cumulée
 	THE_VISUAL_LIST_OF_GAMES.sortBy("playing_duration")
 	setBottomBarContent(f"Tri par durée de jeu cumulée.")
 
 def bindSortByPlatformFunction():
-	global THE_VISUAL_LIST_OF_GAMES
+	# Trie la liste par plateforme
 	THE_VISUAL_LIST_OF_GAMES.sortBy("platform")
 	setBottomBarContent(f"Tri par plateforme.")
 
 def bindRunGameFunction():
+	# Execute la commande associée à l’item ayant le focus
 	THE_VISUAL_LIST_OF_GAMES.openCurrent()
 
 def bindDeleteGameFunction():
+	# Suprime le jeu ayant le focus
 	currentGame=THE_VISUAL_LIST_OF_GAMES.currentGame().name
 	if questionMode(f"Supprimer « {currentGame} » ?"):
 		THE_VISUAL_LIST_OF_GAMES.deleteCurrent()
@@ -430,16 +446,20 @@ def bindDeleteGameFunction():
 		setBottomBarContent(f"« {currentGame} est conservé. Rien n’est altéré.")
 
 def bindOpenLinkFunction():
+	# Ouvrir le lien associé à l’item ayant le focus
 	THE_VISUAL_LIST_OF_GAMES.openLink()
 
 def bindCopyLinkFunction():
+	# Copier le lien associé à l’item ayant le focus dans le presse papier
 	THE_VISUAL_LIST_OF_GAMES.copyLinkToClipBoard()
 
 def bindMakeDonationFunction():
+	# Ouvrir le lien pour faire un don
 	setBottomBarContent(f"Merci de me faire un don sur « {APP_AUTHOR_DONATION_LINK} » (^.^)")
 	threading.Thread(target=webbrowser.open, args=(APP_AUTHOR_DONATION_LINK,)).start()
 
 def bindRefreshScreenFunction():
+	# Rafraichir la vue
 	THE_VISUAL_LIST_OF_GAMES.refresh()
 
 ########################################################################
@@ -1823,7 +1843,7 @@ def drawAboutScreen():
 		centeredMessage(STDSCR,APP_SPLASH)
 		drawBothBars(STDSCR)
 		# Lecture de la touche pressée
-		key = transform_key_to_character(STDSCR.get_wch())
+		key = transformKeyToCharacter(STDSCR.get_wch())
 		if key == "x":
 			bindMakeDonationFunction()
 		else:
@@ -2045,7 +2065,7 @@ def questionMode(question):
 	draw_bottom_bar(STDSCR)
 	STDSCR.refresh()
 	while True:
-		key = transform_key_to_character(STDSCR.get_wch())
+		key = transformKeyToCharacter(STDSCR.get_wch())
 		if key in ['y', 'yes']:
 			return True
 		elif key in ['n', 'no']:
@@ -2175,10 +2195,10 @@ def main(stdscr):
 		stdscr.refresh()
 
 		# Lecture de la touche pressée
-		key = transform_key_to_character(stdscr.get_wch())
+		key = transformKeyToCharacter(stdscr.get_wch())
 #		setBottomBarContent(f"Touche préssée {key}")
 
-		if (key) == transform_key_to_character('q'):  # Quitter si la touche 'q' est pressée # TODO factoriser
+		if (key) == transformKeyToCharacter('q'):  # Quitter si la touche 'q' est pressée # TODO factoriser
 			break
 		elif any(key == aBinding.key for aBinding in listOfBindings):
 			# Teste si la touche préssé correspond à l’attribut key d’un des élements de listOfBindings

@@ -15,6 +15,8 @@ Triumphum est un gestionnaire de ludothèque. Il permet aux joueurs de gérer le
 
 
 # Prochaines fonctionnalités
+- [ ] Déffinir une doctrine de classement des licences
+    - [ ] Établir conséquement une liste coéficionnée des licences
 - [ ] Modularisation des des différentes parties
 - [ ] Gestion de la locale
 - [ ] Graphique du temps et des dates de jeu
