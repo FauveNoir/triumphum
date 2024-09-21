@@ -335,6 +335,15 @@ def getElementHavingParameterWithValue(givenList=None, parameter=None, value=Non
 				return anElement
 	return None
 
+def getListOfAParametterFromAListOfObjects(givenList=None, parameter=None):
+	if parameter is None or value is None:
+		return None
+
+	outputList=[]
+	for anElement in givenList:
+		outputList.append(getattr(anElement, parameter))
+	return outputList
+
 # Cas particuliers des mapings où le keycode ne correspond pas au symbole produit.
 KEY_MAPPING = {
 	# label, caractère
@@ -509,7 +518,9 @@ class Layout:
 		listOfLayouts[self.code]=self
 
 	def apply(self):
-		for aKey in getListOfBindingsCode():
+		# ↓ Parcour `listOfBindings` pour ittérer sur chacun des paramettres `.code` des éléments qu’elle contient.
+		for aBinding in listOfBindings:
+			aKey=aBinding.key
 			if hasattr(self, aKey):
 				value = getattr(self, aKey)
 				returnBindingAfterCode(aKey).setKey(value)
