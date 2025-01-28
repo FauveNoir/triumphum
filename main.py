@@ -26,12 +26,12 @@ import numpy as np
 
 from triumphum.__init__ import *
 from triumphum.global_variables import *
-import triumphum.global_variables as global_variables
 from triumphum.config_file import prepareConfigFiles, verifyConfigFileExistence
 import triumphum.config_file as config_file
 from triumphum.cli_options import args
 from triumphum.symbols import *
 from triumphum.keybindings import *
+from triumphum.layouts import *
 from triumphum.debug import *
 
 

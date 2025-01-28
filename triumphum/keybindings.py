@@ -10,24 +10,6 @@ from triumphum.debug import * # TODO
 ## Diverses fonctions utiles à la gestion des racourcis dactyliques
 #
 
-def getElementHavingParameterWithValue(givenList=None, parameter=None, value=None):
-	# Parcourt la liste `givenList` pour y trouver un élément ayant un paramettre nomé `parameter` et ayant pour valeur `value`.
-	if parameter is None or value is None:
-		return None
-
-	for anElement in givenList:
-		if hasattr(anElement, parameter) and getattr(anElement, parameter) == value:
-				return anElement
-	return None
-
-def getListOfAParametterFromAListOfObjects(givenList=None, parameter=None):
-	if parameter is None or parameter is None:
-		return None
-
-	outputList=[]
-	for anElement in givenList:
-		outputList.append(getattr(anElement, parameter))
-	return outputList
 
 # Cas particuliers des mapings où le keycode ne correspond pas au symbole produit.
 KEY_MAPPING = {
