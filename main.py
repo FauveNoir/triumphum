@@ -6,7 +6,6 @@ import threading
 import json
 import webbrowser
 import pyperclip
-import appdirs
 import re
 from datetime import date, datetime, timedelta
 from tabulate import tabulate
@@ -26,119 +25,17 @@ import plotext as plt
 import numpy as np
 
 
-from triumphum.debug import *
 from triumphum.__init__ import *
+from triumphum.global_variables import *
+from triumphum.config_file import prepareConfigFiles, verifyConfigFileExistence
+import triumphum.config_file as config_file
+#from triumphum.config_file import GAME_FILE, GENRE_FILE, LICENCE_FILE, PLATFORM_FILE, HISTORY_FILE, CONFIG_FILE
+from triumphum.debug import *
 
 
-########################################################################
-# Variables globales
-########################################################################
-
-
-########################################################################
-# Répertoire de configuration
-########################################################################
-
-# Obtenez le répertoire de configuration de l'application
-CONFIG_DIR = appdirs.user_config_dir(APP_CODE_NAME)
-
-########################################################################
-# Initialisation
-########################################################################
-
-listOfConfigurationFile={}
-class ConfigurationFile:
-	# Classe des fichiers de configuration, qui crée les variables globales désignant les fichiers
-	# code : Nom de la variable sous laquelle sera désigné le dit fichier
-	# baseName : Nom atomique du fichier (sans le lien complet)
-	# path : Lien vers le fichier dans l’arborescence sans le nom atomique
-	# minimalContent : Contenu de base du fichier, lorsque rien n’y a encore été inscrit
-	def __init__(self, code=None, baseName=None, path=CONFIG_DIR, minimalContent=None):
-		self.code=code
-		self.baseName=baseName
-		self.path=path
-		self.minimalContent=minimalContent
-
-		# Versement de l’objet à la liste de tous les objets du même type
-		listOfConfigurationFile[self.code]=self
-		# Versement de l’objet aux variables globales
-		globals()[self.code]=self
-
-	def fullPath(self):
-		# retourne le lien entier, path+baseName
-		return self.path + "/" + self.baseName
-
-	def isExisting(self):
-		# Test si le fichier est présent sur le disque
-		return os.path.exists(self.fullPath())
-
-	def createMinimalFile(self):
-		# Crée un fichier minimal avec du contenu
-		try:
-			with open(self.fullPath(), 'w') as f:
-				f.write(self.minimalContent)
-			print(f"Le fichier « {self.fullPath()} » a été créé avec succès.")
-		except IOError:
-			print(f"Erreur : Impossible de créer le fichier « {file_path} ».")
-
-	def testAndAskToCreateIfNone(self):
-		# Crée le fichier à l’emplacement associé si ce dernier n’y est pas déjà
-		if not self.isExisting():
-			if ask_yes_no_question(f"Créer le fichier « {self.fullPath()} » ?"):
-				self.createMinimalFile()
-
-	def setNew(self, newPath):
-		# Changer le lien vers le fichier
-		self.baseName=os.path.basename(newPath)
-		self.path=os.path.dirname(newPath)
-
-	def __str__(self):
-		# Traitement de l’objet en tant que chaine de caractère.
-		# Le comportement en tant que conversion vers les chaines de caractères est d’afficher le lien complet vers le fichier.
-		return self.fullPath()
-
-def ask_yes_no_question(question):
-	# Queestion Oui-Non à la aptitude
-	# question : la question littérale qui apparaitra à l’utilisateur
-	while True:
-		user_input = input(f"{question} (Y/n): ").strip().lower()
-		if user_input in ['y', 'yes']:
-			return True
-		elif user_input in ['n', 'no']:
-			return False
-		else:
-			print("Veuillez répondre par 'Y' ou 'n'.")
-
-def makeFileConfigMinimalContent():
-	# Préparation du contenu minimal du fichier de configuration
-
-	# Déffinition de la langue
-	fileConfigMinimalContent="language=fre"
-
-	# Collecte des symboles graphiques
-	for aGraphicalSymbol in listOfGraphicalSymbols:
-		fileConfigMinimalContent+="\n" + aGraphicalSymbol.fileConfigName + "=" + aGraphicalSymbol.value
-	# Collecte des formations de touches
-	for aBinding in listOfBindings:
-		fileConfigMinimalContent+="\n" + aBinding.makeDefaultConfigEntry()
-
-	return fileConfigMinimalContent
-
-def prepareConfigFiles():
-	# Préparation de tous les fichiers de configuration et de donnée
-	ConfigurationFile(code="GAME_FILE",     minimalContent="""{"games":[]}""",      baseName="games.json")
-	ConfigurationFile(code="GENRE_FILE",    minimalContent="""{"genres":[]}""",     baseName="listOfGenres.json")
-	ConfigurationFile(code="LICENCE_FILE",  minimalContent="""{"licences":[]}""",   baseName="listOfLicences.json")
-	ConfigurationFile(code="PLATFORM_FILE", minimalContent="""{"platforms":[]}""",  baseName="listOfPlatforms.json")
-	ConfigurationFile(code="HISTORY_FILE",  minimalContent="""{"history":[]}""",    baseName="history.json")
-	ConfigurationFile(code="CONFIG_FILE",   minimalContent=makeFileConfigMinimalContent(),    baseName="triumphumrc", path=appdirs.user_config_dir())
-
-def verifyConfigFileExistence():
-	# Vérifie l’éxistence des fichiers de configuration et les crée sinon.
-	for aFile in listOfConfigurationFile:
-		listOfConfigurationFile[aFile].testAndAskToCreateIfNone()
 
 verifyConfigFileExistence()
+
 
 ########################################################################
 # Options de la ligne de commande
@@ -209,7 +106,6 @@ args = parser.parse_args()
 ## Explication
 # Les symboles graphiques sont l’ensemble des éléments d’interface qui se présente sous la forme d’ùn caractère typographique, comme les lignes permettant de dessiner les boites, ou encore les symboles servant à designant des informations manquantes.
 
-listOfGraphicalSymbols=[]
 class GraphicalSymbol:
 	# Classe des symboles symboles graphiques, qui crée les variables globales désignants les dits symbols
 	def __init__(self, localName=None, fileConfigName=None, description=None, value=None):
@@ -313,7 +209,6 @@ def transform_character_to_key(character_name):
 
 ########################################################################
 
-listOfBindings=[]
 class Binding:
 	# Classe des racourcis dactyliques.
 	# key : touche associée
@@ -434,7 +329,6 @@ def bindRefreshScreenFunction():
 # Dispositions de clavier
 ########################################################################
 
-listOfLayouts={}
 class Layout:
 	# Classe des disposition de clavier ayant chacune son propre jeu de binding
 	# fancyName : Nom littéral tel qu’il apparaitra à l’utilisateur lorsqu’une représentation linguistique est permise
@@ -574,7 +468,6 @@ def getPaternToMatchAllLicencesCodes():
 ## Classe des commandes du shell interne
 #
 
-ListOfInternalShellCommand={}
 class InternalShellCommand:
 	# Classe des commandes du shell intrne
 	# code : Commande à executer par l’utilisateur (et aussi clé de l’objet au sein de la liste)
@@ -804,7 +697,6 @@ def addNewPlatformAfterInterativeDescriptor(newPlatformDescriptor, isSplited=Fal
 ########################################################################
 
 # défffinition de classe
-listOfPlatforms={}
 class Platform:
 	def __init__(self, name=None, code=None, abbr=None, includeInSorting=True):
 		self.name = name
@@ -878,7 +770,6 @@ def formatDataListToLitteralList(list_, voidSymbol):
 		return f"{elements}, et {list_[-1]}"
 
 # Défffinition de classe
-listOfGenres={}
 class Genre:
 	def __init__(self, name=None, code=None, abbr=None, includeInSorting=True):
 		self.name = name
@@ -957,7 +848,6 @@ def printSplash():
 ########################################################################
 
 # Défffinition de classe
-listOfLicences={}
 class Licence:
 	def __init__(self, name=None, abbr=None, code=None, url=None, shortText=None, fullText=None, freedomCoefficient=0, includeInSorting=True):
 		self.name = name
@@ -1183,7 +1073,6 @@ def retrive_history_of_a_game(game):
 ########################################################################
 
 # Défffinition de classe
-listOfGames={}
 class Game:
 	def __init__(self, name=None, code=None, licence=None, url=None, year=None, genre=None, authors=None, studios=[], command=None, comments=None, platform=None):
 		self.name = name
@@ -1498,7 +1387,6 @@ def deletePlatformFromDatabase(givenObject):
 # Classe des colones de la liste visuelle
 ########################################################################
 
-listOfPossibleColumns=[]
 class VisuaColumn:
 	def __init__(self, label=None, property_=None):
 		self.label=label
@@ -1536,7 +1424,6 @@ ListMove(label="Go down", code="goDown")
 # Classe de la liste visuelle
 ########################################################################
 
-listOflistSorting=[]
 class Sort:
 	def __init__(self, label=None, code=None, command=None):
 		self.label = label
@@ -1866,7 +1753,6 @@ titles = [" ", "Titre", "Licence", "Genre", "Date", "Dernière ouverture", "Temp
 
 SORTING_COLUMN=0
 
-items=[]
 def makeItemsList():
 	global items
 	items=[]
@@ -2147,6 +2033,14 @@ Binding(key="g", code="bindShowPlot", description=f"Montrer le graphique du jeu"
 prepareConfigFiles()
 
 # /!\ Il est imporatnt que VisualListOfGames() vienne après prepareConfigFiles() car ce dernier décalre des variables globales dont VisualListOfGames() a besoin
+
+
+GAME_FILE=config_file.GAME_FILE
+GENRE_FILE=config_file.GENRE_FILE
+LICENCE_FILE=config_file.LICENCE_FILE
+PLATFORM_FILE=config_file.PLATFORM_FILE
+HISTORY_FILE=config_file.HISTORY_FILE
+CONFIG_FILE=config_file.CONFIG_FILE
 VisualListOfGames()
 
 ########################################################################

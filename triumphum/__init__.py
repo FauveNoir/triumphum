@@ -1,5 +1,10 @@
+########################################################################
+# Variables globales
+########################################################################
+
 import pendulum
 import humanize
+
 APP_CODE_NAME="triumphum"
 APP_FANCY_NAME="Triumphum"
 APP_DESCRIPTION="Gestionnaire de ludothèque en Python et NCurses pour GNU/Linux"
