@@ -35,6 +35,7 @@ from triumphum.internal_shell_class import *
 from triumphum.descriptors import addNewGameAfterInterativeDescriptor, addNewGenreAfterInterativeDescriptor, addNewLicenceAfterInterativeDescriptor, addNewPlatformAfterInterativeDescriptor
 from triumphum.platforms_classes import create_platform_objects, get_platform_object_after_code
 from triumphum.genres_classes import create_game_genre_objects, get_genre_object_after_code
+from triumphum.cli_functions import *
 from triumphum.debug import *
 
 
@@ -50,12 +51,6 @@ verifyConfigFileExistence()
 
 
 
-########################################################################
-# AUtres classes de la console interactive
-########################################################################
-
-def printSplash():
-	print(SPLASH_MESSAGE)
 
 ########################################################################
 # Classe des licences de jeux
@@ -479,7 +474,7 @@ def listOfAllPlatformsCodePerLine():
 	return listAllObjectsCodeOfClassCodePerLine(listOfPlatforms)
 
 ########################################################################
-# Fonction de lestage
+# Fonction de listage
 ########################################################################
 
 GAME_HEADERS=["Plateforme", "Titre", "Licence", "Genre", "Date", "Dernière ouverture", "Temps cumulé", "Auteur", "Studio"]
