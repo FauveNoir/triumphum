@@ -34,6 +34,7 @@ from triumphum.layouts import *
 from triumphum.internal_shell_class import *
 from triumphum.descriptors import addNewGameAfterInterativeDescriptor, addNewGenreAfterInterativeDescriptor, addNewLicenceAfterInterativeDescriptor, addNewPlatformAfterInterativeDescriptor
 from triumphum.platforms_classes import create_platform_objects, get_platform_object_after_code
+from triumphum.genres_classes import create_game_genre_objects, get_genre_object_after_code
 from triumphum.debug import *
 
 
@@ -48,91 +49,6 @@ verifyConfigFileExistence()
 
 
 
-########################################################################
-# Classe des genres de jeux
-########################################################################
-
-def formatDataListToLitteralList(list_, voidSymbol):
-	try:
-		n = len(list_)
-	except:
-		n = 0
-	if n == 0:
-		return voidSymbol # TODO
-	elif n == 1:
-		return list_[0]
-	elif n == 2:
-		return f"{list_[0]} et {list_[1]}"
-	else:
-		elements = ", ".join(list_[:-1])
-		return f"{elements}, et {list_[-1]}"
-
-# Défffinition de classe
-class Genre:
-	def __init__(self, name=None, code=None, abbr=None, includeInSorting=True):
-		self.name = name
-		self.code = code
-		self.abbr = abbr
-		self.includeInSorting = includeInSorting
-
-		listOfGenres[self.code]=self # Adjonction à la liste des genres de jeux
-
-		def shortName(self):
-			# Recherche d’un nom abbrégé
-			if self.abbr != None:
-				return self.abbr
-			return self.name
-
-	def __eq__(self, other):
-		if isinstance(other, Genre):
-			return self.abbr == other.abbr
-		return NotImplemented
-
-	def __lt__(self, other):
-		if isinstance(other, Genre):
-			return self.abbr <  other.abbr
-		return NotImplemented
-
-	def __gt__(self, other):
-		if isinstance(other, Genre):
-			return self.abbr > other.abbr
-		return NotImplemented
-
-	def asciiRow(self):
-		# Préparation de la ligne de tableau
-
-		# Vérifier chaque clé pour une éventuelle valeur vide et remplacer par "-"
-		asciiRow = [
-			self.name or GENERAL_VOID_SYMBOL,
-			self.abbr or GENERAL_VOID_SYMBOL,
-		]
-		return asciiRow
-
-def create_game_genre_objects():
-	# Extraction des genres de jeux
-
-	# Réinitialisation de la liste des jeux
-	global listOfGenres
-	listOfGenres={}
-
-	# Extraction des genres de jeux du fichier
-	with open(GENRE_FILE.fullPath()) as f:
-		listOfGenresData = json.load(f)["genres"]
-
-	# Déploiment des objet de genre de jeux
-	for aGenre in listOfGenresData:
-		Genre(
-			name=aGenre.get("name"),
-			code=aGenre.get("code"),
-			abbr=aGenre.get("abbr")
-		)
-
-unknowngenre=Genre(name="Genre inconu", abbr=GENRE_VOID_SYMBOL.value, code="unknowngenre", includeInSorting=False)
-
-def get_genre_object_after_code(code):
-	if code in listOfGenres:
-		return listOfGenres[code]
-	return unknowngenre
 
 ########################################################################
 # AUtres classes de la console interactive
@@ -369,6 +285,21 @@ def retrive_history_of_a_game(game):
 ########################################################################
 # Classe des jeux
 ########################################################################
+
+def formatDataListToLitteralList(list_, voidSymbol):
+	try:
+		n = len(list_)
+	except:
+		n = 0
+	if n == 0:
+		return voidSymbol # TODO
+	elif n == 1:
+		return list_[0]
+	elif n == 2:
+		return f"{list_[0]} et {list_[1]}"
+	else:
+		elements = ", ".join(list_[:-1])
+		return f"{elements}, et {list_[-1]}"
 
 # Défffinition de classe
 class Game:
