@@ -2,6 +2,7 @@
 # Classe du shell interne
 ########################################################################
 
+from triumphum.global_variables import *
 #
 ### Constructeurs des expressions regex les plus courantes
 #
