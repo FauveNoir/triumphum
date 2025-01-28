@@ -1,6 +1,8 @@
 import appdirs
+import configparser
 from triumphum.__init__ import *
 from triumphum.global_variables import *
+from triumphum.misc import *
 
 ########################################################################
 # Répertoire de configuration
@@ -105,3 +107,29 @@ def verifyConfigFileExistence():
 	for aFile in listOfConfigurationFile:
 		listOfConfigurationFile[aFile].testAndAskToCreateIfNone()
 
+########################################################################
+# Traitement du fichier de configuration
+########################################################################
+
+def applyFileConfigurationsBindings():
+	config = configparser.ConfigParser()
+	config.read(CONFIG_FILE.fullPath())
+
+	configValues={}
+	for aBinding in listOfBindings:
+		aConfigKey=aBinding.configFileName
+		# TODO chercher la clé si elle existe
+		if config.has_option("General", aConfigKey):
+			configValues[aConfigKey]=config.get("General", aConfigKey)
+
+			# ↓ Trouver au sein de `listOfBindings` l’élément ayant dans son paramettre « configFileName` la valeure contenue dans `value`, et en lui attribue aussitôt la valeur de `aConfigKey`.
+			getElementHavingParameterWithValue(givenList=listOfBindings, parameter="configFileName", value=aConfigKey).setKey(configValues[aConfigKey])
+
+def applyFileConfigurationsGraphicalSymbols():
+	config = configparser.ConfigParser()
+
+	config.read(CONFIG_FILE.fullPath())
+
+	for aConfigiGrahpicalSymbol in listOfGraphicalSymbols:
+		if config.has_option("General", aConfigiGrahpicalSymbol.fileConfigName):
+			aConfigiGrahpicalSymbol.value=config.get("General", aConfigiGrahpicalSymbol.fileConfigName)

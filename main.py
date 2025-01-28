@@ -13,7 +13,6 @@ import humanize
 #import pendulum
 import locale
 import time
-import configparser
 import shlex
 from Xlib import XK
 from Xlib.display import Display
@@ -26,13 +25,15 @@ import numpy as np
 
 from triumphum.__init__ import *
 from triumphum.global_variables import *
-from triumphum.config_file import prepareConfigFiles, verifyConfigFileExistence
+from triumphum.config_file import prepareConfigFiles, verifyConfigFileExistence, applyFileConfigurationsBindings, applyFileConfigurationsGraphicalSymbols
 import triumphum.config_file as config_file
 from triumphum.cli_options import args
 from triumphum.symbols import *
 from triumphum.keybindings import *
 from triumphum.layouts import *
 from triumphum.internal_shell_class import *
+from triumphum.descriptors import addNewGameAfterInterativeDescriptor, addNewGenreAfterInterativeDescriptor, addNewLicenceAfterInterativeDescriptor, addNewPlatformAfterInterativeDescriptor
+from triumphum.platforms_classes import create_platform_objects, get_platform_object_after_code
 from triumphum.debug import *
 
 
@@ -44,224 +45,8 @@ verifyConfigFileExistence()
 
 
 
-########################################################################
-# Traitement du fichier de configuration
-########################################################################
-
-def applyFileConfigurationsBindings():
-	config = configparser.ConfigParser()
-	config.read(CONFIG_FILE.fullPath())
-
-	configValues={}
-	for aBinding in listOfBindings:
-		aConfigKey=aBinding.configFileName
-		# TODO chercher la clé si elle existe
-		if config.has_option("General", aConfigKey):
-			configValues[aConfigKey]=config.get("General", aConfigKey)
-
-			# ↓ Trouver au sein de `listOfBindings` l’élément ayant dans son paramettre « configFileName` la valeure contenue dans `value`, et en lui attribue aussitôt la valeur de `aConfigKey`.
-			getElementHavingParameterWithValue(givenList=listOfBindings, parameter="configFileName", value=aConfigKey).setKey(configValues[aConfigKey])
-
-def applyFileConfigurationsGraphicalSymbols():
-	config = configparser.ConfigParser()
-
-	config.read(CONFIG_FILE.fullPath())
-
-	for aConfigiGrahpicalSymbol in listOfGraphicalSymbols:
-		if config.has_option("General", aConfigiGrahpicalSymbol.fileConfigName):
-			aConfigiGrahpicalSymbol.value=config.get("General", aConfigiGrahpicalSymbol.fileConfigName)
-
-########################################################################
-# Fonctions des options de la ligne de commande
-########################################################################
-
-#
-# Classe
-#
-
-class promptStatement:
-	def __init__(self, name=None, patern=None, isNecessary=False, isLabelNecessary=True, multipleValues=False):
-		self.name=name
-		self.patern=f"{name}=(?P<relevant>{patern})"
-		if isNecessary:
-			self.patern=f"(?P<relevant>{patern})"
-		self.isNecessary=isNecessary
-		self.isLabelNecessary=isLabelNecessary
-		self.multipleValues=multipleValues
-
-	def add_to_dict(self, dictionary):
-		dictionary[self.name] = self
-
-	def getRelevant(self, inputStatement):
-		match = re.match(self.patern, anInputStatement)
-		if self.multipleValues:
-			return match.group("relevant").split(',')
-		return match.group("relevant")
-
-#
-# Shémats
-#
-
-ADD_GAME_STATEMENTS={
-	"name": promptStatement(name="name", patern=".*", isNecessary=True, isLabelNecessary=False),
-	"code": promptStatement(name="code", patern="[a-z0-9]*", isNecessary=True),
-	"genre": promptStatement(name="genre", patern="[a-z0-9]*"),
-	"licence": promptStatement(name="licence", patern="[a-z0-9]*"),
-	"command": promptStatement(name="command", patern='.*'),
-	"url": promptStatement(name="url", patern="\S+"),
-	"studios": promptStatement(name="studios", patern=".*", multipleValues=True),
-	"authors": promptStatement(name="authors", patern=".*", multipleValues=True),
-	"shortDesc":promptStatement(name="shortDesc", patern=".*"),
-	"year":promptStatement(name="year", patern="[0-9]*"),
-}
-# TODO YEAR
 
 
-ADD_GENRE_STATEMENTS={
-	"name": promptStatement(name="name", patern=".*", isNecessary=True, isLabelNecessary=False),
-	"code": promptStatement(name="code", patern="[a-z0-9]*", isNecessary=True),
-	"abbr": promptStatement(name="abbr", patern="[a-z0-9]*"),
-}
-
-ADD_PLATFORM_STATEMENTS={
-	"name": promptStatement(name="name", patern=".*", isNecessary=True, isLabelNecessary=False),
-	"code": promptStatement(name="code", patern="[a-z0-9]*", isNecessary=True),
-	"abbr": promptStatement(name="abbr", patern="[a-z0-9]*"),
-}
-
-ADD_LICENCE_STATEMENTS={
-	"name": promptStatement(name="name", patern=".*", isNecessary=True, isLabelNecessary=False),
-	"code": promptStatement(name="code", patern="[a-z0-9]*", isNecessary=True),
-	"abbr": promptStatement(name="abbr", patern="[a-z0-9]*"),
-	"url": promptStatement(name="url", patern="\S+"),
-	"freedomCoefficient": promptStatement(name="freedomCoefficient", patern="(0(\.\d*)?|1(\.0*)?|\.\d+)"),
-	"shortDesc":promptStatement(name="shortDesc", patern=".*"),
-}
-
-#
-# Fonctions
-#
-
-def splitDescriptorIntoList(inputChain):
-	objectDescriptorList=shlex.split(inputChain)
-	return objectDescriptorList
-
-def sanitizeDescriptorListFromKeysWithoutValues(inputChain):
-	# Expurger le descripteur des clés n’étant associées à aucune valeur
-	sanitizedObjectDescriptorList=[]
-	wrongStatements=[]
-	for aStatement in inputChain:
-		if "=" in aStatement:
-			sanitizedObjectDescriptorList.append(aStatement)
-		else:
-			wrongStatements.append(aStatement)
-	return sanitizedObjectDescriptorList, wrongStatements
-
-def descriptorIntoDict(inputChain):
-	dictConfig={}
-	for aStatement in inputChain:
-		statementName, statementValue = aStatement.split("=")
-		dictConfig[statementName] = statementValue
-
-	return dictConfig
-
-def canonicalizeDescriptorChain(inputChain, objectSchema):
-	outputChain={}
-	for aStatementName, aStatementValue in inputChain.items():
-		if aStatementName in objectSchema:
-			if objectSchema[aStatementName].multipleValues:
-				outputChain[aStatementName] = aStatementValue.split(",")
-			else:
-				outputChain[aStatementName] = aStatementValue
-	return outputChain
-
-def interactiveDescriptorIntoDictionnary(newObjectDescriptor, objectSchema, isSplited=False):
-	if not isSplited:
-		outputChain=splitDescriptorIntoList(newObjectDescriptor)
-	else:
-		outputChain=newObjectDescriptor
-	outputChain, wrongStatements=sanitizeDescriptorListFromKeysWithoutValues(outputChain)
-	outputChain=descriptorIntoDict(outputChain)
-	outputChain=canonicalizeDescriptorChain(outputChain, objectSchema)
-	return outputChain
-
-#
-# Fonctions par objet
-#
-
-def addNewGameAfterInterativeDescriptor(newGameDescriptor, isSplited=False):
-	dictionnaryDescriptor=interactiveDescriptorIntoDictionnary(newGameDescriptor, ADD_GAME_STATEMENTS, isSplited)
-	addGameToDataBase(dictionnaryDescriptor)
-
-def addNewGenreAfterInterativeDescriptor(newGenreDescriptor, isSplited=False):
-	dictionnaryDescriptor=interactiveDescriptorIntoDictionnary(newGenreDescriptor, ADD_GENRE_STATEMENTS, isSplited)
-	addGenreToDataBase(dictionnaryDescriptor)
-
-def addNewLicenceAfterInterativeDescriptor(newLicenceDescriptor, isSplited=False):
-	dictionnaryDescriptor=interactiveDescriptorIntoDictionnary(newLicenceDescriptor, ADD_LICENCE_STATEMENTS, isSplited)
-	addLicenceToDataBase(dictionnaryDescriptor)
-
-def addNewPlatformAfterInterativeDescriptor(newPlatformDescriptor, isSplited=False):
-	dictionnaryDescriptor=interactiveDescriptorIntoDictionnary(newPlatformDescriptor, ADD_PLATFORM_STATEMENTS, isSplited)
-	addPlatformToDataBase(dictionnaryDescriptor)
-
-########################################################################
-# classe des plateformes
-########################################################################
-
-# défffinition de classe
-class Platform:
-	def __init__(self, name=None, code=None, abbr=None, includeInSorting=True):
-		self.name = name
-		self.code = code
-		self.abbr = abbr
-		self.includeInSorting = includeInSorting
-
-		listOfPlatforms[self.code]=self
-	def __eq__(self, other):
-		if isinstance(other, Platform):
-			return self.abbr == other.abbr
-		return NotImplemented
-
-	def __lt__(self, other):
-		if isinstance(other, Platform):
-			return self.abbr <  other.abbr
-		return NotImplemented
-
-	def __gt__(self, other):
-		if isinstance(other, Platform):
-			return self.abbr > other.abbr
-		return NotImplemented
-
-	def asciiRow(self):
-		# Vérifier chaque clé pour une éventuelle valeur vide et remplacer par "-"
-		asciiRow = [
-			self.name or GENERAL_VOID_SYMBOL,
-			self.abbr or GENERAL_VOID_SYMBOL,
-		]
-		return asciiRow
-
-def create_platform_objects():
-	# Création de la liste des plateformes disponibles
-
-	# Extraction des plateformes
-	with open(PLATFORM_FILE.fullPath()) as f:
-		listOfPlatformsData = json.load(f)["platforms"]
-
-	# Déploiment des objet de licence
-	for aPlatform in listOfPlatformsData:
-		Platform(
-			name=aPlatform.get("name"),
-			code=aPlatform.get("code"),
-			abbr=aPlatform.get("abbr")
-		)
-
-unknownplatform=Platform(name="Plateforme inconue", code="unknownplatform", abbr="", includeInSorting=False)
-
-def get_platform_object_after_code(code):
-	if code in listOfPlatforms:
-		return listOfPlatforms[code]
-	return unknownplatform
 
 ########################################################################
 # Classe des genres de jeux
@@ -1298,55 +1083,6 @@ def draw_bottom_bar(stdscr):
 	stdscr.chgat(h-MAIN_SCREEN_MARGIN_BOTTOM, 0, w, curses.A_REVERSE)
 	stdscr.addstr(h-MAIN_SCREEN_MARGIN_BOTTOM, 0, bar_text, curses.A_REVERSE)
 
-def enteringExMode(stdscr):
-	# Activer la saisie de texte
-
-	h, w = bottomBarCoordinate(stdscr)
-	curses.curs_set(1)  # Afficher le curseur
-
-#	curses.init_pair(h-2, curses.COLOR_BLUE, curses.COLOR_BLACK)
-	# Position de départ pour la saisie de texte
-	stdscr.move(h-1, 0)
-
-	# Initialiser une liste pour stocker les caractères saisis
-	input_text = ""
-
-	stdscr.addch(":")  # Afficher le caractère saisi à l'écran
-	while True:
-		# Capturer un caractère
-		ch = stdscr.getch()
-
-		if ch == 27:  # Si ESC est pressé
-			break
-
-		elif ch == 263: # Si BSP est préssé
-			y, x = stdscr.getyx()
-
-			if x > 1:
-				input_text=input_text[:-1]
-				stdscr.move(y, x - 1)  # Déplace le curseur à la position juste avant
-				stdscr.delch()         # Supprime le caractère à cette position
-
-				stdscr.refresh()
-			else:
-				break
-
-		elif ch in [curses.KEY_ENTER, 10]:  # Si Entrée est pressé (curses.KEY_ENTER vaut 10)
-
-			whatToDoWithShellInput(input_text)
-			break  # Sortir de la boucle de saisie
-
-		else:
-			# Ajouter le caractère à la chaîne de texte
-			input_text += chr(ch)
-			stdscr.addch(ch)  # Afficher le caractère saisi à l'écran
-			stdscr.refresh()
-
-	curses.curs_set(0)  # Masquer le curseur
-
-def enteringExModeByBinding():
-	global STDSCR
-	enteringExMode(STDSCR)
 
 def prepareTextForRightIndicator(visualListOfGames):
 	global CUMULATED_TIME_PLAYED_PER_DAY
@@ -1504,38 +1240,6 @@ InternalShellCommand(code="donate", patern='(d|don|donate)', description="Faire 
 InternalShellCommand(code="layout", patern=f'(l|layout)\s+(?P<layout>{getPaternToMatchAllLayoutCodes()})', description="Changer de disposition de clavier", synopsis=":l :layout <layout>", instructions=internalShellLayoutFunction)
 InternalShellCommand(code="comment", patern='(c|comment)', description="Ajouter un commentaire", synopsis=":c :comment", activated=False)
 InternalShellCommand(code="viewComment", patern='(v|view)', description="Voir les commentaires", synopsis=":v :vew", activated=False)
-
-########################################################################
-# Déclaration des racoucis dactiliques
-########################################################################
-
-Binding(key="t", code="bindGoDown", description="Aller en haut", instructions=bindGoDownFunction, configFileName="bind_down")
-Binding(key="s", code="bindGoUp", description="Aller en bas", instructions=bindGoUpFunction, configFileName="bind_up")
-Binding(key="\n", code="bindRunGame", description="Lancer le jeu", instructions=bindRunGameFunction, configFileName="bind_play")
-
-Binding(key="b", code="bindSortByName", description="Trier par nom", instructions=bindSortByNameFunction, configFileName="bind_sort_title")
-Binding(key="é", code="bindSortByLicence", description="Trire par licence", instructions=bindSortByLicenceFunction, configFileName="bind_sort_licence")
-Binding(key="p", code="bindSortByGenre", description="Trier par genre", instructions=bindSortByGenreFunction, configFileName="bind_sort_game_genre")
-Binding(key="o", code="bindSortByDate", description="Trier par date", instructions=bindSortByDateFunction, configFileName="bind_sort_year")
-Binding(key="è", code="bindSortByLastOpening", description="Trier par date de dernière ouverture", instructions=bindSortByLastOpeningFunction, configFileName="bind_sort_last_opening")
-
-
-Binding(key="v", code="bindSortByPlayingDuration", description="Trier par heure cumulé", instructions=bindSortByPlayingDurationFunction, configFileName="bind_sort_playing_duration")
-Binding(key="!", code="bindSortByPlatform",instructions=bindSortByPlatformFunction, description="Trier par plateforme", configFileName="bind_sort_playing_platform")
-
-Binding(key="A", code="bindOpenLink", description="Ouvrir le site web associé", instructions=bindOpenLinkFunction, configFileName="bind_open_link")
-Binding(key="e", code="bindEditData", description="Éditer les données", configFileName="bind_edit")
-Binding(key="d", code="bindDelete", description="Suprimer le jeu de la liste", instructions=bindDeleteGameFunction, configFileName="bind_delete")
-Binding(key="i", code="bindComment", description="Commenter", configFileName="bind_comment")
-Binding(key="u", code="bindMakeDonation", description="Faire un don", instructions=bindMakeDonationFunction, configFileName="bind_donate")
-Binding(key="w", code="bindShowFullLicence", description="Afficher le texte de la licence", configFileName="bind_show_licence")
-Binding(key="/", code="bindFilter", description="Filtrer", configFileName="bind_filter")
-Binding(key="h", code="bindSeeBindingHelp", description="Montrer l’aide", configFileName="bind_help")
-Binding(key="y", code="bindCopyLink", description="Copier le lien dans le presse-papier", instructions=bindCopyLinkFunction, configFileName="bind_copy_link")
-Binding(key="l", code="bindRefreshScreen", description="Rafraichir l’écran", instructions=bindRefreshScreenFunction, configFileName="bind_refresh")
-Binding(key="q", code="bindQuit", description=f"Quitter {APP_FANCY_NAME}", configFileName="bind_quit")
-Binding(key=":", code="bindExMode", description=f"Mode Ex", configFileName="bind_exMode", instructions=enteringExModeByBinding)
-Binding(key="g", code="bindShowPlot", description=f"Montrer le graphique du jeu", configFileName="bind_plot") # TODO Ajouter l’instruction idoine
 
 ########################################################################
 # Éexecution des fichiers de configuration
