@@ -26,10 +26,12 @@ import numpy as np
 
 from triumphum.__init__ import *
 from triumphum.global_variables import *
+import triumphum.global_variables as global_variables
 from triumphum.config_file import prepareConfigFiles, verifyConfigFileExistence
 import triumphum.config_file as config_file
 from triumphum.cli_options import args
 from triumphum.symbols import *
+from triumphum.keybindings import *
 from triumphum.debug import *
 
 
@@ -39,23 +41,10 @@ verifyConfigFileExistence()
 
 
 
+
 ########################################################################
-# Classe des racoucris dactyliques
+# Dispositions de clavier
 ########################################################################
-
-#
-## Diverses fonctions utiles à la gestion des racourcis dactyliques
-#
-
-def getElementHavingParameterWithValue(givenList=None, parameter=None, value=None):
-	# Parcourt la liste `givenList` pour y trouver un élément ayant un paramettre nomé `parameter` et ayant pour valeur `value`.
-	if parameter is None or value is None:
-		return None
-
-	for anElement in givenList:
-		if hasattr(anElement, parameter) and getattr(anElement, parameter) == value:
-				return anElement
-	return None
 
 def getListOfAParametterFromAListOfObjects(givenList=None, parameter=None):
 	if parameter is None or parameter is None:
@@ -66,148 +55,6 @@ def getListOfAParametterFromAListOfObjects(givenList=None, parameter=None):
 		outputList.append(getattr(anElement, parameter))
 	return outputList
 
-# Cas particuliers des mapings où le keycode ne correspond pas au symbole produit.
-KEY_MAPPING = {
-	# label, caractère
-	"Enter": "\n",
-	"Return": "\r",
-	"Space": " ",
-}
-
-def reverseDictionnary(dictionnary):
-	# Inverse les clés et valeurs du dictionnaire
-	return {v: k for k, v in dictionnary.items()}
-
-def transformKeyToCharacter(key_name):
-	# Transformee les codes lisibles en caractères
-	return KEY_MAPPING.get(key_name, key_name)
-
-def transform_character_to_key(character_name):
-	# Transformes les caractères reçus au claviers en labels lisibles
-	reverseKeyMapping=reverseDictionnary(KEY_MAPPING)
-	return reverseKeyMapping.get(character_name, character_name)
-
-########################################################################
-
-class Binding:
-	# Classe des racourcis dactyliques.
-	# key : touche associée
-	# code : nom de la variable de l’objet créé
-	# description : Description de l’usage tel qu’elle apparaitra à l’utilisateur dans les interfaces d’aide
-	# configFileName : Nom de la fonction à utiliser par le fichier de configuration. Par défaut c’est code qui est utilisé afin de maintenir la plus grande homogénéité entre le code python et le fichier de configuration.
-	#                 /!\ Ne déclarer éxplicitement une valeur pour `configFileName` que s’il éxiste une raison valable.
-	# instructions : Nom de la fonction à déclencher lors de la pression sur le binding.
-	def __init__(self, key=None, code=None, description=None, configFileName=None, instructions=None):
-		self.key = None
-		self.setKey(key)
-		self.description = description
-		self.code = code
-
-		if configFileName == None:
-			self.configFileName = self.code
-		else:
-			self.configFileName = configFileName
-		globals()[code] = self # Déclaration de la variable globale pérmétant d’atteindre directement le genre voulu
-
-		if instructions:
-			setattr(self, 'executeInstructions', instructions)
-
-		listOfBindings.append(self) # Adjonction à la liste des genres de jeux
-
-	def setKey(self, key):
-		# Transforme les codes lisibles en caractères
-		self.key = transformKeyToCharacter(key)
-
-	def executeInstructions(self):
-		# Éxectue la fontion associée au binding
-		setBottomBarContent(f"{self.key} : Aucune action associée.")
-
-	def makeDefaultConfigEntry(self):
-		# Renvoit la ligne de fichier de configuration apropriée
-		configEntry=self.configFileName + "=" + transform_character_to_key(self.key)
-		return configEntry
-
-########################################################################
-
-#
-## Fonctions dédiées aux actions des caractères dactyliques
-#
-
-def bindGoDownFunction():
-	# Focale sur l’élément suivant de la liste visuelle
-	THE_VISUAL_LIST_OF_GAMES.goDown()
-
-def bindGoUpFunction():
-	# Focale sur l’élément précédent de la liste visuelle
-	THE_VISUAL_LIST_OF_GAMES.goUp()
-
-def bindSortByNameFunction():
-	# Trie la liste par ordre alphabétique
-	THE_VISUAL_LIST_OF_GAMES.sortBy("name")
-	setBottomBarContent(f"Tri par ordre alphabétique.")
-
-def bindSortByLicenceFunction():
-	# Trie la liste par coeficient de liberté des licences
-	THE_VISUAL_LIST_OF_GAMES.sortBy("licence")
-	setBottomBarContent(f"Tri par permissivité des licences.")
-
-def bindSortByGenreFunction():
-	# Trie la liste par genre
-	THE_VISUAL_LIST_OF_GAMES.sortBy("genre")
-	setBottomBarContent(f"Tri par genre de jeu.")
-
-def bindSortByDateFunction():
-	# Trie la liste par genre
-	THE_VISUAL_LIST_OF_GAMES.sortBy("year")
-	setBottomBarContent(f"Tri par année de sortie.")
-
-def bindSortByLastOpeningFunction():
-	# Trie la liste par date de dernière ouverture
-	THE_VISUAL_LIST_OF_GAMES.sortBy("latest_opening_date_value")
-	setBottomBarContent(f"Tri par date de dernière ouverture.")
-
-def bindSortByPlayingDurationFunction():
-	# Trie la liste par dérée de jeu cumulée
-	THE_VISUAL_LIST_OF_GAMES.sortBy("playing_duration")
-	setBottomBarContent(f"Tri par durée de jeu cumulée.")
-
-def bindSortByPlatformFunction():
-	# Trie la liste par plateforme
-	THE_VISUAL_LIST_OF_GAMES.sortBy("platform")
-	setBottomBarContent(f"Tri par plateforme.")
-
-def bindRunGameFunction():
-	# Execute la commande associée à l’item ayant le focus
-	THE_VISUAL_LIST_OF_GAMES.openCurrent()
-
-def bindDeleteGameFunction():
-	# Suprime le jeu ayant le focus
-	currentGame=THE_VISUAL_LIST_OF_GAMES.currentGame().name
-	if questionMode(f"Supprimer « {currentGame} » ?"):
-		THE_VISUAL_LIST_OF_GAMES.deleteCurrent()
-	else:
-		setBottomBarContent(f"« {currentGame} est conservé. Rien n’est altéré.")
-
-def bindOpenLinkFunction():
-	# Ouvrir le lien associé à l’item ayant le focus
-	THE_VISUAL_LIST_OF_GAMES.openLink()
-
-def bindCopyLinkFunction():
-	# Copier le lien associé à l’item ayant le focus dans le presse papier
-	THE_VISUAL_LIST_OF_GAMES.copyLinkToClipBoard()
-
-def bindMakeDonationFunction():
-	# Ouvrir le lien pour faire un don
-	setBottomBarContent(f"Merci de me faire un don sur « {APP_AUTHOR_DONATION_LINK} » (^.^)")
-	threading.Thread(target=webbrowser.open, args=(APP_AUTHOR_DONATION_LINK,)).start()
-
-def bindRefreshScreenFunction():
-	# Rafraichir la vue
-	THE_VISUAL_LIST_OF_GAMES.refresh()
-
-########################################################################
-# Dispositions de clavier
-########################################################################
 
 class Layout:
 	# Classe des disposition de clavier ayant chacune son propre jeu de binding
@@ -440,7 +287,8 @@ def applyFileConfigurationsGraphicalSymbols():
 			aConfigiGrahpicalSymbol.value=config.get("General", aConfigiGrahpicalSymbol.fileConfigName)
 
 ########################################################################
-# Fonctions des options de la ligne de commande ########################################################################
+# Fonctions des options de la ligne de commande
+########################################################################
 
 #
 # Classe
@@ -1338,7 +1186,7 @@ class VisualListOfGames:
 		self.lastMove=None
 
 		self.refresh()
-		globals()["THE_VISUAL_LIST_OF_GAMES"] = self # Le seul objet de cette classe est TheVisualListOfGames
+		global_variables.THE_VISUAL_LIST_OF_GAMES = self # Le seul objet de cette classe est TheVisualListOfGames
 
 	def isTheListEmpty(self):
 		if self.list in [None, []]:
@@ -1775,7 +1623,7 @@ def drawBothBars(stdscr):
 
 	# Dessiner la barre Inférieure
 	draw_bottom_bar(stdscr)
-	draw_bottom_right(stdscr, THE_VISUAL_LIST_OF_GAMES)
+	draw_bottom_right(stdscr, global_variables.THE_VISUAL_LIST_OF_GAMES)
 
 def display_centered_text(stdscr, text):
 	# Obtenir les dimensions de l'écran
@@ -1800,9 +1648,9 @@ def display_centered_text(stdscr, text):
 def drawListOfGames(stdscr):
 	#setBottomBarContent("Don:x  Quitter:q  Tri par nom:b  Par date:o  Par licence:é  Par genre:p Par date:o  Par durée de jeu:!") # TODO rendre automatique
 	makeItemsList()
-	THE_VISUAL_LIST_OF_GAMES.refresh()
+	global_variables.THE_VISUAL_LIST_OF_GAMES.refresh()
 	screenHeight, screenWidth = stdscr.getmaxyx()
-	if THE_VISUAL_LIST_OF_GAMES.isTheListEmpty():
+	if global_variables.THE_VISUAL_LIST_OF_GAMES.isTheListEmpty():
 		noGameFoundText="""Aucun jeu trouvé.
  Saissez :h ou consultez man triphum
 		"""
@@ -1815,17 +1663,17 @@ def drawListOfGames(stdscr):
 			stdscr.addstr(1, sum(col_widths[:row_number]) + row_number * 2, str(title), curses.color_pair(2) | curses.A_BOLD)
 
 		# Affichage des données de la liste
-		for row_number, item in enumerate(THE_VISUAL_LIST_OF_GAMES.getCurrentVisibleList(screenHeight)):
+		for row_number, item in enumerate(global_variables.THE_VISUAL_LIST_OF_GAMES.getCurrentVisibleList(screenHeight)):
 			for column_number, column in enumerate(item):
 				if column_number < HIDED_DATA_COLUMN:  # Masquer la colonne "commande"
 					stdscr.addstr(row_number + 2, sum(col_widths[:column_number]) + column_number * 2, str(column))
 
-		stdscr.addstr(THE_VISUAL_LIST_OF_GAMES.visualHighlightedLineNumber(screenHeight) + 2, 0, " " * curses.COLS, curses.color_pair(2))  # Effacer toute la ligne avec la couleur de fond
+		stdscr.addstr(global_variables.THE_VISUAL_LIST_OF_GAMES.visualHighlightedLineNumber(screenHeight) + 2, 0, " " * curses.COLS, curses.color_pair(2))  # Effacer toute la ligne avec la couleur de fond
 
 		# Affichage des données de la liste avec surbrillance pour la ligne sélectionnée
 		# Cas particulier de la ligne ayant le focus
-		for column_number, column in enumerate(THE_VISUAL_LIST_OF_GAMES.list[THE_VISUAL_LIST_OF_GAMES.selected_row][:HIDED_DATA_COLUMN]):  # Afficher seulement les 4 premières colonnes
-			stdscr.addstr(THE_VISUAL_LIST_OF_GAMES.visualHighlightedLineNumber(screenHeight) + 2, sum(col_widths[:column_number]) + column_number * 2, str(column), curses.color_pair(2) | curses.A_BOLD)
+		for column_number, column in enumerate(global_variables.THE_VISUAL_LIST_OF_GAMES.list[global_variables.THE_VISUAL_LIST_OF_GAMES.selected_row][:HIDED_DATA_COLUMN]):  # Afficher seulement les 4 premières colonnes
+			stdscr.addstr(global_variables.THE_VISUAL_LIST_OF_GAMES.visualHighlightedLineNumber(screenHeight) + 2, sum(col_widths[:column_number]) + column_number * 2, str(column), curses.color_pair(2) | curses.A_BOLD)
 
 def questionMode(question):
 	setBottomBarContent(question + " (Y/n)")
@@ -1921,6 +1769,7 @@ LICENCE_FILE=config_file.LICENCE_FILE
 PLATFORM_FILE=config_file.PLATFORM_FILE
 HISTORY_FILE=config_file.HISTORY_FILE
 CONFIG_FILE=config_file.CONFIG_FILE
+writeInTmp(global_variables.THE_VISUAL_LIST_OF_GAMES)
 VisualListOfGames()
 
 ########################################################################
@@ -1949,7 +1798,7 @@ def main(stdscr):
 	# Nom de l'application
 
 
-	global THE_VISUAL_LIST_OF_GAMES
+#	global global_variables.THE_VISUAL_LIST_OF_GAMES
 	global BOTTOM_BAR_TEXT
 	global bindSortByName
 	# Boucle principale

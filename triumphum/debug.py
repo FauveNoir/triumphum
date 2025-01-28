@@ -1,6 +1,8 @@
 ########################################################################
 # fonctions de test
 ########################################################################
+from datetime import  datetime
+
 def tprint(content):
 	# Éxactement la même chose que la fonction print mais utilisée lors des testes pour la retrouver vite avec un ctrl-f
 	print(content)
