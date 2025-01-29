@@ -1,6 +1,7 @@
 ########################################################################
 # Fonction de l’autocompletion
 ########################################################################
+from triumphum.global_variables import *
 
 def deleteBlancLines(chaine):
 	# Divise la chaîne en lignes individuelles

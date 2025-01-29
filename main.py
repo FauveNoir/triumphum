@@ -17,10 +17,10 @@ from Xlib import XK
 from Xlib.display import Display
 import curses.textpad
 import os
-from prettytable import PrettyTable
 import plotext as plt
 import numpy as np
 
+from triumphum.debug import * # TODO
 
 from triumphum.__init__ import *
 from triumphum.global_variables import *
@@ -38,8 +38,8 @@ from triumphum.licences_classes import create_licence_objects
 from triumphum.cli_functions import *
 from triumphum.history_classes import  History
 from triumphum.games_classes import  create_game_objects
-from triumphum.debug import * # TODO
 from triumphum.autocomplection import listOfAllGamesCodePerLine, listOfAllLicencesCodePerLine, listOfAllGenresCodePerLine, listOfAllPlatformsCodePerLine
+from triumphum.cli_list import printGamesTable, printLicencesTable, printPlatformsTable, printGenresTable
 
 
 verifyConfigFileExistence()
@@ -59,41 +59,6 @@ verifyConfigFileExistence()
 
 
 
-########################################################################
-# Fonction de listage
-########################################################################
-
-GAME_HEADERS=["Plateforme", "Titre", "Licence", "Genre", "Date", "Dernière ouverture", "Temps cumulé", "Auteur", "Studio"]
-LICENCE_HEADERS=["Titre", "URL", "Coeficient"]
-PLATFORM_HEADERS=["Titre", "Acronyme"]
-GENRES_HEADERS=["Titre", "Acronyme"]
-
-def printObjectsFromTypeTable(object_headers, listOfObjectsFromType):
-	table = PrettyTable()
-	table.field_names = object_headers
-
-	for anObject in listOfObjectsFromType:
-		# Ajout des données à la table
-		row=listOfObjectsFromType[anObject].asciiRow()
-		table.add_row(row)
-
-	for anElement in table.field_names:
-		table.align[anElement] = "l"
-
-	# Affichage de la table
-	print(table)
-
-def printGamesTable():
-	printObjectsFromTypeTable(GAME_HEADERS, listOfGames)
-
-def printLicencesTable():
-	printObjectsFromTypeTable(LICENCE_HEADERS, listOfLicences)
-
-def printPlatformsTable():
-	printObjectsFromTypeTable(PLATFORM_HEADERS, listOfPlatforms)
-
-def printGenresTable():
-	printObjectsFromTypeTable(GENRES_HEADERS, listOfGenres)
 
 ########################################################################
 # Éidition des bases de données (nouveau)

@@ -4,6 +4,7 @@
 import json
 from triumphum.global_variables import *
 import triumphum.config_file as config_file
+import triumphum.symbols as symbols
 
 # défffinition de classe
 class Platform:
@@ -32,8 +33,8 @@ class Platform:
 	def asciiRow(self):
 		# Vérifier chaque clé pour une éventuelle valeur vide et remplacer par "-"
 		asciiRow = [
-			self.name or GENERAL_VOID_SYMBOL,
-			self.abbr or GENERAL_VOID_SYMBOL,
+			self.name or symbols.GENERAL_VOID_SYMBOL,
+			self.abbr or symbols.GENERAL_VOID_SYMBOL,
 		]
 		return asciiRow
 

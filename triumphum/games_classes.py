@@ -72,15 +72,15 @@ class Game:
 	def asciiRow(self):
 		# Vérifier chaque clé pour une éventuelle valeur vide et remplacer par "-"
 		asciiRow = [
-			self.platform.abbr or config_file.PLATFORM_VOID_SYMBOL.value,
-			self.name or config_file.NAME_VOID_SYMBOL.value,
-			self.licence.abbr or config_file.LICENCE_VOID_SYMBOL.value,
-			self.genre.abbr or config_file.GENRE_VOID_SYMBOL.value,
-			self.year or config_file.DATE_VOID_SYMBOL.value,
-			self.human_latest_opening_duration() or config_file.LASTOPENING_VOID_SYMBOL.value,
-			self.human_cumulate_time() or config_file.CUMULATEDTIME_VOID_SYMBOL.value,
-			self.listOfAuthors() or config_file.AUTHOR_VOID_SYMBOL.value,
-			self.listOfStudios() or config_file.STUDIO_VOID_SYMBOL.value
+			self.platform.abbr or symbols.PLATFORM_VOID_SYMBOL.value,
+			self.name or symbols.NAME_VOID_SYMBOL.value,
+			self.licence.abbr or symbols.LICENCE_VOID_SYMBOL.value,
+			self.genre.abbr or symbols.GENRE_VOID_SYMBOL.value,
+			self.year or symbols.DATE_VOID_SYMBOL.value,
+			self.human_latest_opening_duration() or symbols.LASTOPENING_VOID_SYMBOL.value,
+			self.human_cumulate_time() or symbols.CUMULATEDTIME_VOID_SYMBOL.value,
+			self.listOfAuthors() or symbols.AUTHOR_VOID_SYMBOL.value,
+			self.listOfStudios() or symbols.STUDIO_VOID_SYMBOL.value
 		]
 		return asciiRow
 
