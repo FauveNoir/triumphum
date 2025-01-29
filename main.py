@@ -37,6 +37,7 @@ from triumphum.cli_list import printGamesTable, printLicencesTable, printPlatfor
 from triumphum.db_edition import addGameToDataBase, addGenreToDataBase, addLicenceToDataBase, addPlatformToDataBase
 from triumphum.db_edition import deleteGameFromDatabase, deleteLicenceFromDatabase, deleteGenreFromDatabase, deletePlatformFromDatabase
 from triumphum.tui_list import VisualListOfGames
+from triumphum.tui_functions import run_command_and_write_on_history
 
 verifyConfigFileExistence()
 
@@ -60,72 +61,6 @@ verifyConfigFileExistence()
 
 
 
-########################################################################
-# Fonctions foncitonnelles de l’interface interactive
-########################################################################
-
-# Fonction pour trier les jeux par titre
-def sort_by_title(items):
-	return sorted(items, key=lambda x: x[0].lower())
-
-# Fonction pour trier les jeux par licence
-def sort_by_license(items):
-	items_sorted_by_licence_name=sorted(items, key=lambda x: x[7].licence.name)
-	return sorted(items_sorted_by_licence_name, key=lambda x: x[7].licence)
-
-# Fonction pour trier les jeux par genre
-def sort_by_genre(items):
-	return sorted(items, key=lambda x: x[2].lower())
-
-# Fonction pour trier les jeux par date
-def sort_by_date(items):
-	return sorted(items, key=lambda x: str(x[3]))
-
-def history_data_with_current_game(game):
-	with open(HISTORY_FILE.fullPath()) as f:
-		data = json.load(f)
-
-	if 'history' not in data:
-		data['history'] = {}
-
-	if game.code not in data['history']:
-		data['history'][game.code] = []
-
-	return data
-
-def write_opening_date_on_history(game=None, start_time=None, end_time=None, duration=None):
-	try:
-		# Charger le JSON existant depuis un fichier
-		with open(HISTORY_FILE.fullPath()) as f:
-			data = json.load(f)
-
-		data = history_data_with_current_game(game)
-		history_entry=HistoryEntry(start_time=start_time, end_time=end_time, duration=duration)
-		data['history'][game.code].append(history_entry.make_data())
-
-		# Enregistrer la structure de données modifiée en tant que JSON
-		with open(HISTORY_FILE.fullPath(), 'w') as f:
-			json.dump(data, f, indent=4)
-	except:
-		pass
-
-def run_command_and_write_on_history(game):
-	# Enregistrement de l’heure de début
-	start_time = datetime.now()
-
-	# Lancement du procéssus
-	command_process = subprocess.Popen(game.command, stdin=subprocess.PIPE, stdout=subprocess.PIPE)
-	# Mise en atente pour la fin du processus
-	output, error = command_process.communicate()
-
-	# Récupération de l’heure de fin
-	end_time = datetime.now()
-
-	# Date
-	duration = end_time - start_time
-
-	# Inscription de l’évenement dans l’historique
-	write_opening_date_on_history(game, start_time=start_time, end_time=end_time, duration=duration)
 
 ########################################################################
 # Fonctions ésthétiques de l’interface interactive
