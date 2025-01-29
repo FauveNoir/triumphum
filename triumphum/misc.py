@@ -1,3 +1,4 @@
+from triumphum.global_variables import STDSCR
 
 def getElementHavingParameterWithValue(givenList=None, parameter=None, value=None):
 	# Parcourt la liste `givenList` pour y trouver un élément ayant un paramettre nomé `parameter` et ayant pour valeur `value`.
