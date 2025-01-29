@@ -1,8 +1,14 @@
 import appdirs
 import configparser
+
 from triumphum.__init__ import *
 from triumphum.global_variables import *
 from triumphum.misc import *
+
+from triumphum.platforms_classes import create_platform_objects
+from triumphum.genres_classes import create_game_genre_objects
+from triumphum.licences_classes import create_licence_objects
+from triumphum.games_classes import  create_game_objects
 
 ########################################################################
 # Répertoire de configuration
@@ -133,3 +139,17 @@ def applyFileConfigurationsGraphicalSymbols():
 	for aConfigiGrahpicalSymbol in listOfGraphicalSymbols:
 		if config.has_option("General", aConfigiGrahpicalSymbol.fileConfigName):
 			aConfigiGrahpicalSymbol.value=config.get("General", aConfigiGrahpicalSymbol.fileConfigName)
+
+########################################################################
+# Fonctions d’extraction des données
+########################################################################
+
+def retrive_datas():
+	# Déploiement des objets de plateforme
+	create_platform_objects()
+	# Déploiement des objets de genres de jeux
+	create_game_genre_objects()
+	# Déploiement des objets de licence
+	create_licence_objects()
+	# Déploiement des objets de jeux
+	create_game_objects()

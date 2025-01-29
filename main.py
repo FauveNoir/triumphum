@@ -24,7 +24,7 @@ from triumphum.debug import * # TODO
 
 from triumphum.__init__ import *
 from triumphum.global_variables import *
-from triumphum.config_file import prepareConfigFiles, verifyConfigFileExistence, applyFileConfigurationsBindings, applyFileConfigurationsGraphicalSymbols
+from triumphum.config_file import prepareConfigFiles, verifyConfigFileExistence, applyFileConfigurationsBindings, applyFileConfigurationsGraphicalSymbols, retrive_datas
 import triumphum.config_file as config_file
 from triumphum.cli_options import args
 from triumphum.symbols import *
@@ -32,12 +32,8 @@ from triumphum.keybindings import *
 from triumphum.layouts import *
 from triumphum.internal_shell_class import *
 from triumphum.descriptors import addNewGameAfterInterativeDescriptor, addNewGenreAfterInterativeDescriptor, addNewLicenceAfterInterativeDescriptor, addNewPlatformAfterInterativeDescriptor
-from triumphum.platforms_classes import create_platform_objects
-from triumphum.genres_classes import create_game_genre_objects
-from triumphum.licences_classes import create_licence_objects
 from triumphum.cli_functions import *
 from triumphum.history_classes import  History
-from triumphum.games_classes import  create_game_objects
 from triumphum.autocomplection import listOfAllGamesCodePerLine, listOfAllLicencesCodePerLine, listOfAllGenresCodePerLine, listOfAllPlatformsCodePerLine
 from triumphum.cli_list import printGamesTable, printLicencesTable, printPlatformsTable, printGenresTable
 from triumphum.db_edition import addGameToDataBase, addGenreToDataBase, addLicenceToDataBase, addPlatformToDataBase
@@ -73,20 +69,6 @@ class VisuaColumn:
 		self.property=property_
 
 		listOfPossibleColumns.append(self)
-
-########################################################################
-# Fonctions d’extraction des données
-########################################################################
-
-def retrive_datas():
-	# Déploiement des objets de plateforme
-	create_platform_objects()
-	# Déploiement des objets de genres de jeux
-	create_game_genre_objects()
-	# Déploiement des objets de licence
-	create_licence_objects()
-	# Déploiement des objets de jeux
-	create_game_objects()
 
 ########################################################################
 # Classe de la liste visuelle
