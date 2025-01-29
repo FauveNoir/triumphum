@@ -22,6 +22,7 @@ from triumphum.debug import * # TODO
 
 from triumphum.__init__ import *
 from triumphum.global_variables import *
+import triumphum.global_variables as global_variables
 from triumphum.config_file import prepareConfigFiles, verifyConfigFileExistence, applyFileConfigurationsBindings, applyFileConfigurationsGraphicalSymbols, retrive_datas
 import triumphum.config_file as config_file
 from triumphum.cli_options import args
@@ -58,35 +59,6 @@ verifyConfigFileExistence()
 
 
 
-########################################################################
-# Internal shell
-########################################################################
-
-addNewGamepatern='(n|new|newgame)\s+.*'
-
-def internalShelldrawAboutScreen(shellInput):
-	drawAboutScreen()
-
-def internalShellbindMakeDonationFunction(shellInput):
-	bindMakeDonationFunction()
-
-def internalShellLayoutFunction(shellInput):
-	# TODO utiliser la fonction factorisée
-	matchedInput=re.match("(l|layout)\s+(?P<relevant>[a-z]+)", shellInput)
-	askedLayout=matchedInput.group("relevant")
-	if askedLayout in listOfLayouts:
-		listOfLayouts[askedLayout].apply()
-		setBottomBarContent(f"{listOfLayouts[askedLayout].fancyName}")
-	else:
-		setBottomBarContent(f"Disposition « {askedLayout} » inconue")
-
-InternalShellCommand(code="addNewGame", patern=addNewGamepatern, description="Ajouter un nouveau jeu à la base de donnée", synopsis=":n :new :newgame name=<Game name> code=<code> [genre=<genre>] [licence=getPaternToMatchAllLicencesCodes()]", instructions=addNewGameAfterInterativeDescriptor)
-InternalShellCommand(code="about", patern='(a|about)', description="À propos", synopsis=":a :about", instructions=internalShelldrawAboutScreen)
-
-InternalShellCommand(code="donate", patern='(d|don|donate)', description="Faire un don", synopsis=":d :don :donate", instructions=internalShellbindMakeDonationFunction)
-InternalShellCommand(code="layout", patern=f'(l|layout)\s+(?P<layout>{getPaternToMatchAllLayoutCodes()})', description="Changer de disposition de clavier", synopsis=":l :layout <layout>", instructions=internalShellLayoutFunction)
-InternalShellCommand(code="comment", patern='(c|comment)', description="Ajouter un commentaire", synopsis=":c :comment", activated=False)
-InternalShellCommand(code="viewComment", patern='(v|view)', description="Voir les commentaires", synopsis=":v :vew", activated=False)
 
 ########################################################################
 # Éexecution des fichiers de configuration
@@ -105,18 +77,14 @@ LICENCE_FILE=config_file.LICENCE_FILE
 PLATFORM_FILE=config_file.PLATFORM_FILE
 HISTORY_FILE=config_file.HISTORY_FILE
 CONFIG_FILE=config_file.CONFIG_FILE
-writeInTmp(global_variables.THE_VISUAL_LIST_OF_GAMES)
 VisualListOfGames()
 
 ########################################################################
 # Fonctions main
 ########################################################################
 
-STDSCR=None
 def main(stdscr):
-	global STDSCR
-
-	STDSCR=stdscr
+	global_variables.STDSCR=stdscr
 	# Initialisation de ncurses
 	curses.curs_set(0)  # Masquer le curseur
 	screenHeight, screenWidth = stdscr.getmaxyx()
@@ -166,6 +134,7 @@ def main(stdscr):
 
 			# ↓ Trouver au sein de `listOfBindings` l’élément ayant dans son paramettre « key » la valeure contenue dans `value`, et en éxecute aussitôt les instructions.
 			getElementHavingParameterWithValue(givenList=listOfBindings, parameter="key", value=key).executeInstructions()
+		writeInTmp(global_variables.STDSCR)
 
 ########################################################################
 # Que faire

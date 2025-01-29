@@ -6,6 +6,7 @@ import humanize
 
 from triumphum.__init__ import *
 from triumphum.global_variables import *
+#from triumphum.global_variables import STDSCR as STDSCR
 import triumphum.global_variables as global_variables
 from triumphum.tui_fancy import getColWidths
 import triumphum.symbols as symbols
@@ -27,7 +28,7 @@ BOTTOM_BAR_TEXT=APP_MOTO
 def setBottomBarContent(newBottomBarText):
 	global BOTTOM_BAR_TEXT
 	BOTTOM_BAR_TEXT = newBottomBarText
-	STDSCR.refresh()
+	global_variables.STDSCR.refresh()
 
 def setBottomBarColor(color):
 	pass
@@ -70,15 +71,13 @@ def prepareTextForRightIndicator(visualListOfGames):
 	return rightIndicatorText
 
 MAIN_SCREEN_MARGIN_BOTTOM=2
-STDSCR=""
 # Barre inférieure
 def draw_bottom_right(stdscr, visualListOfGames):
-	global STDSCR
 	# Récupère les dimensions de l'écran
 
 	rightIndicatorText=prepareTextForRightIndicator(visualListOfGames)
 	h, w = stdscr.getmaxyx()
-	STDSCR=stdscr
+	global_variables.STDSCR=stdscr
 
 	# Définir le texte de la barre inférieure
 
@@ -156,15 +155,15 @@ def drawListOfGames(stdscr):
 
 def questionMode(question):
 	setBottomBarContent(question + " (Y/n)")
-	draw_bottom_bar(STDSCR)
-	STDSCR.refresh()
+	draw_bottom_bar(global_variables.STDSCR)
+	global_variables.STDSCR.refresh()
 	while True:
-		key = transformKeyToCharacter(STDSCR.get_wch())
+		key = transformKeyToCharacter(global_variables.STDSCR.get_wch())
 		if key in ['y', 'yes']:
 			return True
 		elif key in ['n', 'no']:
 			return False
 		else:
 			setBottomBarContent("Veuillez répondre par 'Y' ou 'n'.")
-			draw_bottom_bar(STDSCR)
-			STDSCR.refresh()
+			draw_bottom_bar(global_variables.STDSCR)
+			global_variables.STDSCR.refresh()

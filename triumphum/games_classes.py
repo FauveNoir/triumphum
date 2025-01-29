@@ -154,9 +154,6 @@ def create_game_objects():
 	with open(config_file.GAME_FILE.fullPath()) as f:
 		listOfGamesData = json.load(f)["games"]
 
-	writeInTmp(listOfGamesData)
-
-
 
 	## Déploiment des objet de jeux
 	for aGame in listOfGamesData:

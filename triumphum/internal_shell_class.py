@@ -3,6 +3,7 @@
 ########################################################################
 
 from triumphum.global_variables import *
+from triumphum.descriptors import addNewGameAfterInterativeDescriptor, addNewGenreAfterInterativeDescriptor, addNewLicenceAfterInterativeDescriptor, addNewPlatformAfterInterativeDescriptor
 #
 ### Constructeurs des expressions regex les plus courantes
 #
@@ -99,3 +100,33 @@ def whatToDoWithShellInput(shellInput):
 	if isShellInputValid == False:
 		# Si le paterne n’est pas trouvé, alors renvoit le message d’erreur
 		whatTodoWhenShellInputIsWrong(shellInput)
+
+########################################################################
+# Fonctions du shell interne
+########################################################################
+
+addNewGamepatern='(n|new|newgame)\s+.*'
+
+def internalShelldrawAboutScreen(shellInput):
+	drawAboutScreen()
+
+def internalShellbindMakeDonationFunction(shellInput):
+	bindMakeDonationFunction()
+
+def internalShellLayoutFunction(shellInput):
+	# TODO utiliser la fonction factorisée
+	matchedInput=re.match("(l|layout)\s+(?P<relevant>[a-z]+)", shellInput)
+	askedLayout=matchedInput.group("relevant")
+	if askedLayout in listOfLayouts:
+		listOfLayouts[askedLayout].apply()
+		setBottomBarContent(f"{listOfLayouts[askedLayout].fancyName}")
+	else:
+		setBottomBarContent(f"Disposition « {askedLayout} » inconue")
+
+InternalShellCommand(code="addNewGame", patern=addNewGamepatern, description="Ajouter un nouveau jeu à la base de donnée", synopsis=":n :new :newgame name=<Game name> code=<code> [genre=<genre>] [licence=getPaternToMatchAllLicencesCodes()]", instructions=addNewGameAfterInterativeDescriptor)
+InternalShellCommand(code="about", patern='(a|about)', description="À propos", synopsis=":a :about", instructions=internalShelldrawAboutScreen)
+
+InternalShellCommand(code="donate", patern='(d|don|donate)', description="Faire un don", synopsis=":d :don :donate", instructions=internalShellbindMakeDonationFunction)
+InternalShellCommand(code="layout", patern=f'(l|layout)\s+(?P<layout>{getPaternToMatchAllLayoutCodes()})', description="Changer de disposition de clavier", synopsis=":l :layout <layout>", instructions=internalShellLayoutFunction)
+InternalShellCommand(code="comment", patern='(c|comment)', description="Ajouter un commentaire", synopsis=":c :comment", activated=False)
+InternalShellCommand(code="viewComment", patern='(v|view)', description="Voir les commentaires", synopsis=":v :vew", activated=False)

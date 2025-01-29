@@ -1,4 +1,8 @@
-from triumphum.global_variables import STDSCR
+import curses
+
+from triumphum.tui import bottomBarCoordinate
+from triumphum.debug import * # TODO
+import triumphum.global_variables as global_variables
 
 def getElementHavingParameterWithValue(givenList=None, parameter=None, value=None):
 	# Parcourt la liste `givenList` pour y trouver un élément ayant un paramettre nomé `parameter` et ayant pour valeur `value`.
@@ -57,5 +61,5 @@ def enteringExMode(stdscr):
 	curses.curs_set(0)  # Masquer le curseur
 
 def enteringExModeByBinding():
-	global STDSCR
-	enteringExMode(STDSCR)
+	writeInTmp(global_variables.STDSCR)
+	enteringExMode(global_variables.STDSCR)
