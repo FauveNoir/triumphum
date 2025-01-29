@@ -9,6 +9,8 @@ import triumphum.global_variables as global_variables
 from triumphum.misc import getElementHavingParameterWithValue
 from triumphum.debug import * # TODO
 from triumphum.misc import bottomBarCoordinate
+from triumphum.internal_shell_class import whatToDoWithShellInput
+from triumphum.tui import  setBottomBarContent
 
 #
 ## Diverses fonctions utiles à la gestion des racourcis dactyliques

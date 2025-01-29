@@ -10,7 +10,6 @@ from triumphum.global_variables import *
 import triumphum.global_variables as global_variables
 from triumphum.tui_fancy import getColWidths
 import triumphum.symbols as symbols
-from triumphum.keybindings import transformKeyToCharacter
 from triumphum.misc import bottomBarCoordinate
 from triumphum.misc import getElementHavingParameterWithValue
 
@@ -158,6 +157,7 @@ def questionMode(question):
 	setBottomBarContent(question + " (Y/n)")
 	draw_bottom_bar(global_variables.STDSCR)
 	global_variables.STDSCR.refresh()
+	from triumphum.keybindings import transformKeyToCharacter
 	while True:
 		key = transformKeyToCharacter(global_variables.STDSCR.get_wch())
 		if key in ['y', 'yes']:
@@ -213,6 +213,7 @@ def main(stdscr):
 		stdscr.refresh()
 
 		# Lecture de la touche pressée
+		from triumphum.keybindings import transformKeyToCharacter
 		key = transformKeyToCharacter(stdscr.get_wch())
 #		setBottomBarContent(f"Touche préssée {key}")
 

@@ -2,8 +2,11 @@
 # Classe du shell interne
 ########################################################################
 
+import re
+
 from triumphum.global_variables import *
 from triumphum.descriptors import addNewGameAfterInterativeDescriptor, addNewGenreAfterInterativeDescriptor, addNewLicenceAfterInterativeDescriptor, addNewPlatformAfterInterativeDescriptor
+from triumphum.tui_screens import drawAboutScreen
 #
 ### Constructeurs des expressions regex les plus courantes
 #

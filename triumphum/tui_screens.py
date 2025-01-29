@@ -1,6 +1,12 @@
 ########################################################################
 # Autres écrans
 ########################################################################
+import locale
+import curses
+
+from triumphum.__init__ import *
+from triumphum.tui import  setBottomBarContent, drawBothBars
+import triumphum.global_variables as global_variables
 
 def centeredMessage(stdscr, text):
 	# Permettre à ncurses d'utiliser les caractères Unicode correctement
@@ -30,10 +36,11 @@ def centeredMessage(stdscr, text):
 def drawAboutScreen():
 	while True:
 		setBottomBarContent(f"Retour:q  Faire un don:x")
-		centeredMessage(STDSCR,APP_SPLASH)
-		drawBothBars(STDSCR)
+		centeredMessage(global_variables.STDSCR,APP_SPLASH)
+		drawBothBars(global_variables.STDSCR)
 		# Lecture de la touche pressée
-		key = transformKeyToCharacter(STDSCR.get_wch())
+		from triumphum.keybindings import transformKeyToCharacter
+		key = transformKeyToCharacter(global_variables.STDSCR.get_wch())
 		if key == "x":
 			bindMakeDonationFunction()
 		else:
