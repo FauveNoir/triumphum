@@ -3,8 +3,7 @@
 ########################################################################
 
 from triumphum.global_variables import listOfLayouts
-from triumphum.misc import *
-from triumphum.keybindings import *
+from triumphum.misc import getElementHavingParameterWithValue
 
 def getListOfAParametterFromAListOfObjects(givenList=None, parameter=None):
 	if parameter is None or parameter is None:
@@ -30,7 +29,7 @@ class Layout:
 		for attributName, value in attributs.items():
 			setattr(self, attributName, value)
 
-		global_variables.listOfLayouts[self.code]=self
+		listOfLayouts[self.code]=self
 
 	def apply(self):
 	# Appliquer les associations de la disposition et utiliser ses racourcis dactyliques

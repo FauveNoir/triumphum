@@ -10,6 +10,9 @@ from triumphum.global_variables import *
 import triumphum.global_variables as global_variables
 from triumphum.tui_fancy import getColWidths
 import triumphum.symbols as symbols
+from triumphum.keybindings import transformKeyToCharacter
+from triumphum.misc import bottomBarCoordinate
+from triumphum.misc import getElementHavingParameterWithValue
 
 # Titres des colonnes
 
@@ -33,8 +36,6 @@ def setBottomBarContent(newBottomBarText):
 def setBottomBarColor(color):
 	pass
 
-def bottomBarCoordinate(stdscr):
-	return stdscr.getmaxyx()
 
 # Barre inférieure
 def draw_bottom_bar(stdscr):
@@ -167,3 +168,63 @@ def questionMode(question):
 			setBottomBarContent("Veuillez répondre par 'Y' ou 'n'.")
 			draw_bottom_bar(global_variables.STDSCR)
 			global_variables.STDSCR.refresh()
+
+########################################################################
+# Main
+########################################################################
+
+def main(stdscr):
+	global_variables.STDSCR=stdscr
+	# Initialisation de ncurses
+	curses.curs_set(0)  # Masquer le curseur
+	screenHeight, screenWidth = stdscr.getmaxyx()
+
+	# Initialiser les couleurs
+	curses.start_color()
+	curses.use_default_colors()
+
+	curses.init_pair(1, curses.COLOR_BLACK, curses.COLOR_WHITE)  # Noir sur fond blanc
+	curses.init_pair(2, curses.COLOR_WHITE, curses.COLOR_BLACK)  # Blanc sur fond noir
+
+	# Définir la couleur du texte comme étant la même que la couleur du fond
+	curses.init_pair(1, -1, -1)  # Utilise la couleur par défaut du terminal
+
+	# Nom de l'application
+
+
+#	global global_variables.THE_VISUAL_LIST_OF_GAMES
+	global BOTTOM_BAR_TEXT
+	global bindSortByName
+	# Boucle principale
+	while True:
+
+		# Mise à jour de l’historique
+		#retrive_datas()
+		# Mise à jour de la liste des jeux
+
+		curses.noecho()  # Désactiver l'écho des touches
+		stdscr.clear()
+
+		drawListOfGames(stdscr)
+
+		drawBothBars(stdscr)
+
+		# Rafraîchir l'écran
+		stdscr.refresh()
+
+		# Lecture de la touche pressée
+		key = transformKeyToCharacter(stdscr.get_wch())
+#		setBottomBarContent(f"Touche préssée {key}")
+
+		if (key) == transformKeyToCharacter('q'):  # Quitter si la touche 'q' est pressée # TODO factoriser
+			break
+		elif any(key == aBinding.key for aBinding in listOfBindings):
+			# Teste si la touche préssé correspond à l’attribut key d’un des élements de listOfBindings
+			setBottomBarContent("")
+
+			# ↓ Trouver au sein de `listOfBindings` l’élément ayant dans son paramettre « key » la valeure contenue dans `value`, et en éxecute aussitôt les instructions.
+			getElementHavingParameterWithValue(givenList=listOfBindings, parameter="key", value=key).executeInstructions()
+
+
+def runTui():
+	curses.wrapper(main)
