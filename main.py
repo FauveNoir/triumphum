@@ -38,6 +38,7 @@ from triumphum.db_edition import addGameToDataBase, addGenreToDataBase, addLicen
 from triumphum.db_edition import deleteGameFromDatabase, deleteLicenceFromDatabase, deleteGenreFromDatabase, deletePlatformFromDatabase
 from triumphum.tui_list import VisualListOfGames
 from triumphum.tui_functions import run_command_and_write_on_history
+from triumphum.tui_fancy import getColWidths
 
 verifyConfigFileExistence()
 
@@ -62,19 +63,6 @@ verifyConfigFileExistence()
 
 
 
-########################################################################
-# Fonctions ésthétiques de l’interface interactive
-########################################################################
-
-def getColWidths():
-	global titles
-	global items
-
-	itemsMergedWithTitle = items[:]
-	itemsMergedWithTitle.append(titles)
-	col_widths = [max(len(str(column)) for column in col) for col in zip(*itemsMergedWithTitle)]
-
-	return col_widths
 
 ########################################################################
 # Autres écrans
@@ -135,7 +123,6 @@ SORTING_COLUMN=0
 
 def makeItemsList():
 	global items
-	items=[]
 	for aGame in listOfGames:
 		items.append(listOfGames[aGame].ncurseLine())
 	return items

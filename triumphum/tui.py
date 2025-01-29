@@ -1,10 +1,10 @@
-
 ########################################################################
 # Interface
 ########################################################################
+from triumphum.global_variables import *
+import triumphum.global_variables as global_variables
 
 # Titres des colonnes
-titles = [" ", "Titre", "Licence", "Genre", "Date", "Dernière ouverture", "Temps cumulé", "Auteur", "Studio"]
 
 SORTING_COLUMN=0
 
