@@ -1,8 +1,14 @@
 ########################################################################
 # Interface
 ########################################################################
+import curses
+import humanize
+
+from triumphum.__init__ import *
 from triumphum.global_variables import *
 import triumphum.global_variables as global_variables
+from triumphum.tui_fancy import getColWidths
+import triumphum.symbols as symbols
 
 # Titres des colonnes
 
@@ -42,28 +48,23 @@ def draw_bottom_bar(stdscr):
 
 
 def prepareTextForRightIndicator(visualListOfGames):
-	global CUMULATED_TIME_PLAYED_PER_DAY
-	global CUMULATED_TIME_PLAYED_PER_WEEK
-	global CUMULATED_TIME_PLAYED_PER_MONTH
-	global CUMULATED_TIME_PLAYED_PER_YEAR
-	global CUMULATED_TIME_PLAYED_SEPARATOR
 
-	rightIndicatorText=  CUMULATED_TIME_PLAYED_PER_DAY + ": "
+	rightIndicatorText=  symbols.CUMULATED_TIME_PLAYED_PER_DAY + ": "
 	rightIndicatorText+= humanize.naturaldelta(visualListOfGames.allHistoryEntries().cumulatedPlayingTimeFromNDays(1))
 
-	rightIndicatorText+= "" + str(CUMULATED_TIME_PLAYED_SEPARATOR) + ""
+	rightIndicatorText+= "" + str(symbols.CUMULATED_TIME_PLAYED_SEPARATOR) + ""
 
-	rightIndicatorText+= CUMULATED_TIME_PLAYED_PER_WEEK + ": "
+	rightIndicatorText+= symbols.CUMULATED_TIME_PLAYED_PER_WEEK + ": "
 	rightIndicatorText+= humanize.naturaldelta(visualListOfGames.allHistoryEntries().cumulatedPlayingTimeFromNDays(7))
 
-	rightIndicatorText+= "" + str(CUMULATED_TIME_PLAYED_SEPARATOR) + ""
+	rightIndicatorText+= "" + str(symbols.CUMULATED_TIME_PLAYED_SEPARATOR) + ""
 
-	rightIndicatorText+= CUMULATED_TIME_PLAYED_PER_MONTH + ": "
+	rightIndicatorText+= symbols.CUMULATED_TIME_PLAYED_PER_MONTH + ": "
 	rightIndicatorText+= humanize.naturaldelta(visualListOfGames.allHistoryEntries().cumulatedPlayingTimeFromNDays(30))
 
-	rightIndicatorText+= "" + str(CUMULATED_TIME_PLAYED_SEPARATOR) + ""
+	rightIndicatorText+= "" + str(symbols.CUMULATED_TIME_PLAYED_SEPARATOR) + ""
 
-	rightIndicatorText+= CUMULATED_TIME_PLAYED_PER_YEAR + ": "
+	rightIndicatorText+= symbols.CUMULATED_TIME_PLAYED_PER_YEAR + ": "
 	rightIndicatorText+= humanize.naturaldelta(visualListOfGames.allHistoryEntries().cumulatedPlayingTimeFromNDays(365))
 
 	return rightIndicatorText
