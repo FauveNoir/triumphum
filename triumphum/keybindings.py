@@ -2,6 +2,8 @@
 # Classe des racoucris dactyliques
 ########################################################################
 import curses
+import threading
+import webbrowser
 
 from triumphum.__init__ import *
 from triumphum.global_variables import listOfBindings
