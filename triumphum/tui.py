@@ -18,11 +18,10 @@ from triumphum.debug import *
 SORTING_COLUMN=0
 
 def makeItemsList():
-	global items
-	items=[]
+	global_variables.items=[]
 	for aGame in listOfGames:
-		items.append(listOfGames[aGame].ncurseLine())
-	return items
+		global_variables.items.append(listOfGames[aGame].ncurseLine())
+	return global_variables.items
 
 SPACE_COLUMN_SEPARATION_NUMBER=2
 
@@ -137,7 +136,7 @@ def drawListOfGames(stdscr):
 	else:
 		# Calcul de la largeur des colones
 		col_widths = getColWidths()
-		writeInTmp()
+		writeInTmp(col_widths)
 
 		for row_number, title in enumerate(titles):
 			stdscr.addstr(1, sum(col_widths[:row_number]) + row_number * 2, str(title), curses.color_pair(2) | curses.A_BOLD)

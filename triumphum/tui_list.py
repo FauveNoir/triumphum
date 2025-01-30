@@ -11,6 +11,8 @@ from triumphum.history_classes import  History
 from triumphum.tui import setBottomBarContent
 from triumphum.tui_functions import run_command_and_write_on_history
 
+from triumphum.debug import * # TODO
+
 class VisuaColumn:
 	# EXPERIMENTAL
 	def __init__(self, label=None, property_=None):
@@ -20,10 +22,8 @@ class VisuaColumn:
 		listOfPossibleColumns.append(self)
 
 def getColWidths():
-	global titles
-	global items
-
-	itemsMergedWithTitle = items[:]
+	writeInTmp(global_variables.items)
+	itemsMergedWithTitle = global_variables.items[:]
 	itemsMergedWithTitle.append(titles)
 	col_widths = [max(len(str(column)) for column in col) for col in zip(*itemsMergedWithTitle)]
 
