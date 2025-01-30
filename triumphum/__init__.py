@@ -8,7 +8,7 @@ import humanize
 APP_CODE_NAME="triumphum"
 APP_FANCY_NAME="Triumphum"
 APP_DESCRIPTION="Gestionnaire de ludothèque en Python et NCurses pour GNU/Linux"
-APP_VERSION="1.0.0"
+APP_VERSION="1.0.1"
 APP_AUTHOR="Fauve"
 APP_LICENCE=""
 APP_MOTO="LACRIMOSA·GAVDIVM·EST"
