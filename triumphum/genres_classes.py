@@ -52,7 +52,6 @@ def create_game_genre_objects():
 	# Extraction des genres de jeux
 
 	# Réinitialisation de la liste des jeux
-	global listOfGenres
 	listOfGenres={}
 
 	# Extraction des genres de jeux du fichier

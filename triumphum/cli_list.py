@@ -4,6 +4,7 @@
 from prettytable import PrettyTable
 
 from triumphum.global_variables import *
+from triumphum.debug import * # TODO
 
 GAME_HEADERS=["Plateforme", "Titre", "Licence", "Genre", "Date", "Dernière ouverture", "Temps cumulé", "Auteur", "Studio"]
 LICENCE_HEADERS=["Titre", "URL", "Coeficient"]
@@ -35,5 +36,6 @@ def printPlatformsTable():
 	printObjectsFromTypeTable(PLATFORM_HEADERS, listOfPlatforms)
 
 def printGenresTable():
+	writeInTmp(listOfGenres)
 	printObjectsFromTypeTable(GENRES_HEADERS, listOfGenres)
 
