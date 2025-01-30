@@ -1,0 +1,6 @@
+Package: triumphum
+Version: 1.0.1
+Architecture: all
+Maintainer: Fauve <contact@taniere.info>
+Depends: python3, python3-setuptools  # dépendances nécessaires
+Description: Gestionnaire de ludothèque en Python et NCurses pour GNU/Linux
