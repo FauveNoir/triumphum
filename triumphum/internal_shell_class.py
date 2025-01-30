@@ -8,7 +8,8 @@ from triumphum.global_variables import *
 import triumphum.global_variables as global_variables
 from triumphum.descriptors import addNewGameAfterInterativeDescriptor, addNewGenreAfterInterativeDescriptor, addNewLicenceAfterInterativeDescriptor, addNewPlatformAfterInterativeDescriptor
 from triumphum.tui_screens import drawAboutScreen
-#
+from triumphum.tui import  setBottomBarContent
+
 ### Constructeurs des expressions regex les plus courantes
 #
 
