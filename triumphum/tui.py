@@ -173,7 +173,7 @@ def questionMode(question):
 # Main
 ########################################################################
 
-def main(stdscr):
+def mainTui(stdscr):
 	global_variables.STDSCR=stdscr
 	# Initialisation de ncurses
 	curses.curs_set(0)  # Masquer le curseur
@@ -228,4 +228,4 @@ def main(stdscr):
 
 
 def runTui():
-	curses.wrapper(main)
+	curses.wrapper(mainTui)
