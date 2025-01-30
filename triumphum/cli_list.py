@@ -36,6 +36,5 @@ def printPlatformsTable():
 	printObjectsFromTypeTable(PLATFORM_HEADERS, listOfPlatforms)
 
 def printGenresTable():
-	writeInTmp(listOfGenres)
 	printObjectsFromTypeTable(GENRES_HEADERS, listOfGenres)
 

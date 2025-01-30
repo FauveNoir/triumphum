@@ -22,7 +22,6 @@ class VisuaColumn:
 		listOfPossibleColumns.append(self)
 
 def getColWidths():
-	writeInTmp(global_variables.items)
 	itemsMergedWithTitle = global_variables.items[:]
 	itemsMergedWithTitle.append(titles)
 	col_widths = [max(len(str(column)) for column in col) for col in zip(*itemsMergedWithTitle)]

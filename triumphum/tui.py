@@ -12,6 +12,7 @@ import triumphum.symbols as symbols
 from triumphum.misc import bottomBarCoordinate
 from triumphum.misc import getElementHavingParameterWithValue
 from triumphum.debug import *
+from triumphum.debug import * # TODO
 
 # Titres des colonnes
 
@@ -135,7 +136,6 @@ def drawListOfGames(stdscr):
 	else:
 		# Calcul de la largeur des colones
 		col_widths = getColWidths()
-		writeInTmp(col_widths)
 
 		for row_number, title in enumerate(titles):
 			stdscr.addstr(1, sum(col_widths[:row_number]) + row_number * 2, str(title), curses.color_pair(2) | curses.A_BOLD)
@@ -219,12 +219,12 @@ def main(stdscr):
 
 		if (key) == transformKeyToCharacter('q'):  # Quitter si la touche 'q' est pressée # TODO factoriser
 			break
-		elif any(key == aBinding.key for aBinding in listOfBindings):
+		elif any(key == aBinding.key for aBinding in global_variables.listOfBindings):
 			# Teste si la touche préssé correspond à l’attribut key d’un des élements de listOfBindings
 			setBottomBarContent("")
 
 			# ↓ Trouver au sein de `listOfBindings` l’élément ayant dans son paramettre « key » la valeure contenue dans `value`, et en éxecute aussitôt les instructions.
-			getElementHavingParameterWithValue(givenList=listOfBindings, parameter="key", value=key).executeInstructions()
+			getElementHavingParameterWithValue(givenList=global_variables.listOfBindings, parameter="key", value=key).executeInstructions()
 
 
 def runTui():

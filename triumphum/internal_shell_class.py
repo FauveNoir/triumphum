@@ -5,6 +5,7 @@
 import re
 
 from triumphum.global_variables import *
+import triumphum.global_variables as global_variables
 from triumphum.descriptors import addNewGameAfterInterativeDescriptor, addNewGenreAfterInterativeDescriptor, addNewLicenceAfterInterativeDescriptor, addNewPlatformAfterInterativeDescriptor
 from triumphum.tui_screens import drawAboutScreen
 #
@@ -27,7 +28,7 @@ def getPaternToMatchAllCodesInDictionnary(dictionnary):
 def getPaternToMatchAllLayoutCodes():
 	# Returne une chaine de regex d’alternative des codes de dispositions possibles
 	# Exemple : "(bepo|azerty|qwerty)"
-	patern=getPaternToMatchAllCodesInDictionnary(listOfLayouts)
+	patern=getPaternToMatchAllCodesInDictionnary(global_variables.listOfLayouts)
 	return patern
 
 def getPaternToMatchAllLicencesCodes():
@@ -120,9 +121,9 @@ def internalShellLayoutFunction(shellInput):
 	# TODO utiliser la fonction factorisée
 	matchedInput=re.match("(l|layout)\s+(?P<relevant>[a-z]+)", shellInput)
 	askedLayout=matchedInput.group("relevant")
-	if askedLayout in listOfLayouts:
-		listOfLayouts[askedLayout].apply()
-		setBottomBarContent(f"{listOfLayouts[askedLayout].fancyName}")
+	if askedLayout in global_variables.listOfLayouts:
+		global_variables.listOfLayouts[askedLayout].apply()
+		setBottomBarContent(f"{global_variables.listOfLayouts[askedLayout].fancyName}")
 	else:
 		setBottomBarContent(f"Disposition « {askedLayout} » inconue")
 

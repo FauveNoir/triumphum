@@ -14,11 +14,18 @@
 
 from triumphum.config_file import prepareConfigFiles, verifyConfigFileExistence
 import triumphum.config_file as config_file
+import triumphum.global_variables as global_variables
+from triumphum.keybindings import declareBindings
+from triumphum.layouts import makeLayoutsList
 from triumphum.cli_options import args
 from triumphum.tui_list import VisualListOfGames
 from triumphum.run import processArgs
 
 verifyConfigFileExistence()
+
+declareBindings()
+#makeLayoutsList()
+
 # /!\ Il est imporatnt que prepareConfigFiles() soit éxecutée après les déclarations de bindings car elle en a besoin pour générer les bindings par défaut.
 prepareConfigFiles()
 

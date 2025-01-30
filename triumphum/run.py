@@ -6,6 +6,7 @@ import webbrowser
 
 from triumphum.__init__ import *
 from triumphum.global_variables import *
+import triumphum.global_variables as global_variables
 import triumphum.config_file as config_file
 from triumphum.cli_functions import *
 
@@ -17,10 +18,12 @@ from triumphum.db_edition import deleteGameFromDatabase, deleteLicenceFromDataba
 from triumphum.tui import runTui
 from triumphum.tui_functions import run_command_and_write_on_history
 
+from triumphum.debug import * # TODO
 
 def processArgs(args):
 	if args.config_file != None:
 		config_file.CONFIG_FILE.setNew(args.config_file)
+
 
 	applyFileConfigurationsBindings()
 	applyFileConfigurationsGraphicalSymbols()
@@ -105,9 +108,7 @@ def processArgs(args):
 
 	elif args.tui == True:
 		if args.layout:
-			layout=listOfLayouts[args.layout]
-			print(layout.code)
-			print(layout.bindGoDown)
+			layout=global_variables.listOfLayouts[args.layout]
 			layout.apply()
 		printSplash()
 		runTui()

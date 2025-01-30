@@ -2,8 +2,9 @@
 # Dispositions de clavier
 ########################################################################
 
-from triumphum.global_variables import listOfLayouts
+import triumphum.global_variables as global_variables
 from triumphum.misc import getElementHavingParameterWithValue
+from triumphum.debug import * # TODO
 
 def getListOfAParametterFromAListOfObjects(givenList=None, parameter=None):
 	if parameter is None or parameter is None:
@@ -29,90 +30,93 @@ class Layout:
 		for attributName, value in attributs.items():
 			setattr(self, attributName, value)
 
-		listOfLayouts[self.code]=self
+		global_variables.listOfLayouts[self.code]=self
 
 	def apply(self):
 	# Appliquer les associations de la disposition et utiliser ses racourcis dactyliques
-		for aKey in getListOfAParametterFromAListOfObjects(givenList=listOfBindings, parameter="code"):
+		for aKey in getListOfAParametterFromAListOfObjects(givenList=global_variables.listOfBindings, parameter="code"):
 		# Parcour `listOfBindings` pour ittérer sur chacun des paramettres `.code` des éléments qu’elle contient.
 			if hasattr(self, aKey):
 				value = getattr(self, aKey)
 				# ↓ Récupére le Binding ayant pour `.code` la valeur de `aKey`
-				theBinding=getElementHavingParameterWithValue(givenList=listOfBindings, parameter="code", value=aKey)
+				theBinding=getElementHavingParameterWithValue(givenList=global_variables.listOfBindings, parameter="code", value=aKey)
 				theBinding.setKey(value)
 
 #
 ## Déffinition des dispositions disponibles
 #
 
-Layout(fancyName="BÉPO", code="bepo",
-	bindGoDown="t",
-	bindGoUp="s",
-	bindRunGame="\n",
-	bindSortByName="b",
-	bindSortByLicence="é",
-	bindSortByGenre="p",
-	bindSortByDate="o",
-	bindSortByLastOpening="è",
-	bindSortByPlayingDuration="v",
-	bindSortByPlatform="!",
-	bindOpenLink="A",
-	bindEditData="e",
-#	bindDelete="d",
-	bindComment="i",
-	bindMakeDonation="x",
-	bindShowFullLicence="w",
-	bindFilter="/",
-	bindSeeBindingHelp="h",
-	bindCopyLink="y",
-	bindRefreshScreen="l",
-	bindQuit="q"
-	)
+def makeLayoutsList():
+	Layout(fancyName="BÉPO", code="bepo",
+		bindGoDown="t",
+		bindGoUp="s",
+		bindRunGame="\n",
+		bindSortByName="b",
+		bindSortByLicence="é",
+		bindSortByGenre="p",
+		bindSortByDate="o",
+		bindSortByLastOpening="è",
+		bindSortByPlayingDuration="v",
+		bindSortByPlatform="!",
+		bindOpenLink="A",
+		bindEditData="e",
+	#	bindDelete="d",
+		bindComment="i",
+		bindMakeDonation="x",
+		bindShowFullLicence="w",
+		bindFilter="/",
+		bindSeeBindingHelp="h",
+		bindCopyLink="y",
+		bindRefreshScreen="l",
+		bindQuit="q"
+		)
 
-Layout(fancyName="AZERTY", code="azerty",
-	bindGoDown="j",
-	bindGoUp="k",
-	bindRunGame="\n",
-	bindSortByName="a",
-	bindSortByLicence="z",
-	bindSortByGenre="e",
-	bindSortByDate="r",
-	bindSortByLastOpening="t",
-	bindSortByPlayingDuration="y",
-	bindSortByPlatform="o",
-	bindOpenLink="A",
-	bindEditData="f",
-#	bindDelete="d",
-	bindComment="s",
-	bindMakeDonation="c",
-	bindShowFullLicence="p",
-	bindFilter="/",
-	bindSeeBindingHelp="h",
-	bindCopyLink="y",
-	bindRefreshScreen="l",
-	bindQuit="q"
-	)
+	Layout(fancyName="AZERTY", code="azerty",
+		bindGoDown="j",
+		bindGoUp="k",
+		bindRunGame="\n",
+		bindSortByName="a",
+		bindSortByLicence="z",
+		bindSortByGenre="e",
+		bindSortByDate="r",
+		bindSortByLastOpening="t",
+		bindSortByPlayingDuration="y",
+		bindSortByPlatform="o",
+		bindOpenLink="A",
+		bindEditData="f",
+	#	bindDelete="d",
+		bindComment="s",
+		bindMakeDonation="c",
+		bindShowFullLicence="p",
+		bindFilter="/",
+		bindSeeBindingHelp="h",
+		bindCopyLink="y",
+		bindRefreshScreen="l",
+		bindQuit="q"
+		)
 
-Layout(fancyName="QWERTY", code="qwerty",
-	bindGoDown="j",
-	bindGoUp="k",
-	bindRunGame="\n",
-	bindSortByName="q",
-	bindSortByLicence="w",
-	bindSortByGenre="e",
-	bindSortByDate="r",
-	bindSortByLastOpening="t",
-	bindSortByPlayingDuration="y",
-	bindSortByPlatform="u",
-	bindOpenLink="A",
-	bindEditData="f",
-#	bindDelete="d",
-	bindComment="s",
-	bindMakeDonation="c",
-	bindShowFullLicence="p",
-	bindFilter="/",
-	bindSeeBindingHelp="h",
-	bindCopyLink="y",
-	bindRefreshScreen="l",
-	bindQuit="x"
-	)
+	Layout(fancyName="QWERTY", code="qwerty",
+		bindGoDown="j",
+		bindGoUp="k",
+		bindRunGame="\n",
+		bindSortByName="q",
+		bindSortByLicence="w",
+		bindSortByGenre="e",
+		bindSortByDate="r",
+		bindSortByLastOpening="t",
+		bindSortByPlayingDuration="y",
+		bindSortByPlatform="u",
+		bindOpenLink="A",
+		bindEditData="f",
+	#	bindDelete="d",
+		bindComment="s",
+		bindMakeDonation="c",
+		bindShowFullLicence="p",
+		bindFilter="/",
+		bindSeeBindingHelp="h",
+		bindCopyLink="y",
+		bindRefreshScreen="l",
+		bindQuit="x"
+		)
+
+makeLayoutsList()

@@ -3,6 +3,7 @@ import configparser
 
 from triumphum.__init__ import *
 from triumphum.global_variables import *
+import triumphum.global_variables as global_variables
 from triumphum.misc import *
 
 from triumphum.platforms_classes import create_platform_objects
@@ -94,7 +95,7 @@ def makeFileConfigMinimalContent():
 	for aGraphicalSymbol in listOfGraphicalSymbols:
 		fileConfigMinimalContent+="\n" + aGraphicalSymbol.fileConfigName + "=" + aGraphicalSymbol.value
 	# Collecte des formations de touches
-	for aBinding in listOfBindings:
+	for aBinding in global_variables.listOfBindings:
 		fileConfigMinimalContent+="\n" + aBinding.makeDefaultConfigEntry()
 
 	return fileConfigMinimalContent
@@ -122,14 +123,14 @@ def applyFileConfigurationsBindings():
 	config.read(CONFIG_FILE.fullPath())
 
 	configValues={}
-	for aBinding in listOfBindings:
+	for aBinding in global_variables.listOfBindings:
 		aConfigKey=aBinding.configFileName
 		# TODO chercher la clé si elle existe
 		if config.has_option("General", aConfigKey):
 			configValues[aConfigKey]=config.get("General", aConfigKey)
 
 			# ↓ Trouver au sein de `listOfBindings` l’élément ayant dans son paramettre « configFileName` la valeure contenue dans `value`, et en lui attribue aussitôt la valeur de `aConfigKey`.
-			getElementHavingParameterWithValue(givenList=listOfBindings, parameter="configFileName", value=aConfigKey).setKey(configValues[aConfigKey])
+			getElementHavingParameterWithValue(givenList=global_variables.listOfBindings, parameter="configFileName", value=aConfigKey).setKey(configValues[aConfigKey])
 
 def applyFileConfigurationsGraphicalSymbols():
 	config = configparser.ConfigParser()
