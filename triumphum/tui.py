@@ -8,10 +8,10 @@ from triumphum.__init__ import *
 from triumphum.global_variables import *
 #from triumphum.global_variables import STDSCR as STDSCR
 import triumphum.global_variables as global_variables
-from triumphum.tui_fancy import getColWidths
 import triumphum.symbols as symbols
 from triumphum.misc import bottomBarCoordinate
 from triumphum.misc import getElementHavingParameterWithValue
+from triumphum.debug import *
 
 # Titres des colonnes
 
@@ -125,6 +125,7 @@ def display_centered_text(stdscr, text):
 
 def drawListOfGames(stdscr):
 	#setBottomBarContent("Don:x  Quitter:q  Tri par nom:b  Par date:o  Par licence:é  Par genre:p Par date:o  Par durée de jeu:!") # TODO rendre automatique
+	from triumphum.tui_list import getColWidths
 	makeItemsList()
 	global_variables.THE_VISUAL_LIST_OF_GAMES.refresh()
 	screenHeight, screenWidth = stdscr.getmaxyx()
@@ -136,6 +137,7 @@ def drawListOfGames(stdscr):
 	else:
 		# Calcul de la largeur des colones
 		col_widths = getColWidths()
+		writeInTmp()
 
 		for row_number, title in enumerate(titles):
 			stdscr.addstr(1, sum(col_widths[:row_number]) + row_number * 2, str(title), curses.color_pair(2) | curses.A_BOLD)
