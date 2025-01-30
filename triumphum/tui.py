@@ -23,8 +23,6 @@ def makeItemsList():
 		global_variables.items.append(listOfGames[aGame].ncurseLine())
 	return global_variables.items
 
-SPACE_COLUMN_SEPARATION_NUMBER=2
-
 BOTTOM_BAR_TEXT=APP_MOTO
 def setBottomBarContent(newBottomBarText):
 	global BOTTOM_BAR_TEXT
