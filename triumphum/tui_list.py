@@ -3,6 +3,7 @@
 ########################################################################
 import pyperclip
 import threading
+import webbrowser
 
 from triumphum.global_variables import *
 import triumphum.global_variables as global_variables
