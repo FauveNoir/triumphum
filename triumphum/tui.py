@@ -24,6 +24,7 @@ def makeItemsList():
 	return global_variables.items
 
 BOTTOM_BAR_TEXT=APP_MOTO
+
 def setBottomBarContent(newBottomBarText):
 	global BOTTOM_BAR_TEXT
 	BOTTOM_BAR_TEXT = newBottomBarText

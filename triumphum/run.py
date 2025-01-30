@@ -15,6 +15,8 @@ from triumphum.autocomplection import listOfAllGamesCodePerLine, listOfAllLicenc
 from triumphum.cli_list import printGamesTable, printLicencesTable, printPlatformsTable, printGenresTable
 from triumphum.db_edition import deleteGameFromDatabase, deleteLicenceFromDatabase, deleteGenreFromDatabase, deletePlatformFromDatabase
 from triumphum.tui import runTui
+from triumphum.tui_functions import run_command_and_write_on_history
+
 
 def processArgs(args):
 	if args.config_file != None:
