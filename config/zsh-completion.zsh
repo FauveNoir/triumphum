@@ -1,51 +1,32 @@
-#(( $+functions[_triumphum_run_games] )) ||
-#_triumphum_run_games() {
-#  TMPLIST="Machin[Truc]
-#  Foo[Lorem]"
-#  #local playableGames; playableGames=($(triumphum --ag))
-#  local playableGames; playableGames=($(echo $TMPLIST))
-#  if [ ${#playableGames} -gt 0 ]; then
-#    _values -s , 'Available games' "${playableGames[@]}"
-#  else
-#    _message 'Available games (none found)'
-#  fi
-#}
+
+function object_autocomplete_constructor() {
+	local title=$1
+	local error_message=$2
+	local command_option=$3
+
+	string_values="$(triumphum $command_option)"
+	eval "local -a values=($string_values)"
+	if [ ${#values} -gt 0 ]; then
+		_values  "${title}" $values
+	else
+		_message "${error_message}"
+	fi
+}
 
 function _triumphum_run_games {
-  local games
-  games=("${(f@)$(_call_program triumphum-list-games ${(q)words[1]} --ag)}")
-  compadd -- $games
+	object_autocomplete_constructor "Jeux disponibles"     "Aucun jeu ne semble être disponible"      "--ag"
 }
 
-
-(( $+functions[_triumphum_list_licences] )) ||
-_triumphum_list_licences() {
-  local playableLicences; playableLicences=($(triumphum --al))
-  if [ ${#playableLicences} -gt 0 ]; then
-    _values -s , 'Available licences' "${playableLicences[@]}"
-  else
-    _message 'Available licences (none found)'
-  fi
+function _triumphum_list_licences {
+	object_autocomplete_constructor "Licences disponibles" "Aucune licence ne semble être disponible" "--al"
 }
 
-(( $+functions[_triumphum_list_platforms] )) ||
-_triumphum_list_platforms() {
-  local playablePlatforms; playablePlatforms=($(triumphum --ap))
-  if [ ${#playablePlatforms} -gt 0 ]; then
-    _values -s , 'Available platforms' "${playablePlatforms[@]}"
-  else
-    _message 'Available platforms (none found)'
-  fi
+function _triumphum_list_platforms {
+	object_autocomplete_constructor "Plateformes disponibles" "Aucune plateforme ne semble être disponible" "--ap"
 }
 
-(( $+functions[_triumphum_list_genres] )) ||
-_triumphum_list_genres() {
-  local playableGenres; playableGenres=($(triumphum --at))
-  if [ ${#playableGenres} -gt 0 ]; then
-    _values -s , 'Available genres' "${playableGenres[@]}"
-  else
-    _message 'Available genres (none found)'
-  fi
+function _triumphum_list_genres {
+	object_autocomplete_constructor "Genres disponibles" "Aucun genre ne semble être disponible" "--at"
 }
 
 _triumphum_complete() {

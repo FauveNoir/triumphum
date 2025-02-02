@@ -19,7 +19,7 @@ def listAllObjectsCodeOfClassCodePerLine(listOfObjectsOfClass):
 	listOfCodes=""
 	for anObject in listOfObjectsOfClass:
 #		listOfCodes+="\n" + anObject
-		listOfCodes+="\n" + f"{anObject}[{listOfObjectsOfClass[anObject].name}]"
+		listOfCodes+=f"'{anObject}[{listOfObjectsOfClass[anObject].name}]' "
 	return deleteBlancLines(listOfCodes)
 
 def listOfAllGamesCodePerLine():
