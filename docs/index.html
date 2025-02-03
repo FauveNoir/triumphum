@@ -658,9 +658,9 @@
 			<h2><a name="installation"></a><a href="#installation">INSTALLATION</a></h2>
 			<h3><a name="installation-debian"></a><a href="#installation-debian">Debian, Ubuntu, et debianides</a></h3>
 			<p>
-			<pre>curl <span class="option">--location</span> <a class="link" href="https://github.com/FauveNoir/triumphum/raw/main/triumphum.deb">https://github.com/FauveNoir/triumphum/raw/main/triumphum.deb</a> | sudo dpkg <span class="option">--install</span> -
-sudo apt-get install <span class="option">--fix-broken</span> <span class="option">--assume-yes</span>
-			</pre>
+			<pre><span class="Statement">wget</span> <span class="option">--output-file=triumphum.deb</span> <a class="link" href="https://github.com/FauveNoir/triumphum/raw/main/triumphum.deb">https://github.com/FauveNoir/triumphum/raw/main/triumphum.deb</a> <span class="PreProc">&&</span> \
+<span class="Special">sudo</span> <span class="Statement">dpkg</span> <span class="option">--install</span> package.deb <span class="PreProc">&&</span> \
+<span class="Special">sudo</span> <span class="Statement">apt-get install</span> <span class="option">--fix-broken</span> <span class="option">--assume-yes</span></pre>
 			</p>
 			<h2><a name="extraloquence"></a><a href="#extraloquence">EXTRALOQUENCE</a></h2>
 			<p>
