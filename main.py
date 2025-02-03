@@ -22,13 +22,13 @@ from triumphum.tui_list import VisualListOfGames
 from triumphum.run import processArgs
 
 def main():
-	verifyConfigFileExistence()
 
 	declareBindings()
 	#makeLayoutsList()
 
 	# /!\ Il est imporatnt que prepareConfigFiles() soit éxecutée après les déclarations de bindings car elle en a besoin pour générer les bindings par défaut.
 	prepareConfigFiles()
+	verifyConfigFileExistence()
 
 	# /!\ Il est imporatnt que VisualListOfGames() vienne après prepareConfigFiles() car ce dernier décalre des variables globales dont VisualListOfGames() a besoin
 	VisualListOfGames()

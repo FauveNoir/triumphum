@@ -1,5 +1,6 @@
 import appdirs
 import configparser
+import os
 
 from triumphum.__init__ import *
 from triumphum.global_variables import *
