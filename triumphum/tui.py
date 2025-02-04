@@ -228,4 +228,8 @@ def mainTui(stdscr):
 
 
 def runTui():
-	curses.wrapper(mainTui)
+	try:
+		curses.wrapper(mainTui)
+	except curses.error as e:
+		height, width = global_variables.STDSCR.getmaxyx()
+		print(f"Le terminal est trop petit pour lancer {APP_FANCY_NAME}\nVeuillez utiliser un terminal d’au moins {height}×{width}.")
