@@ -118,5 +118,3 @@ def makeLayoutsList():
 		bindRefreshScreen="l",
 		bindQuit="x"
 		)
-
-makeLayoutsList()

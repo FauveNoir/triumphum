@@ -4,6 +4,9 @@
 import re
 import shlex
 
+from triumphum.db_edition import addGameToDataBase, addGenreToDataBase, addLicenceToDataBase, addPlatformToDataBase
+from triumphum.debug import *
+
 #
 # Classe
 #

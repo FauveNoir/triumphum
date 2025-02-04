@@ -4,16 +4,21 @@ from triumphum.config_file import prepareConfigFiles, verifyConfigFileExistence
 import triumphum.config_file as config_file
 import triumphum.global_variables as global_variables
 from triumphum.keybindings import declareBindings
-import triumphum.layouts
+from triumphum.layouts import makeLayoutsList
+from triumphum.internal_shell_class import setInternalShellCommands
 from triumphum.cli_options import args
 from triumphum.tui_list import VisualListOfGames
 from triumphum.run import processArgs
+from triumphum.debug import * # TODO
 
 
 def main():
 
+	makeLayoutsList()
+	setInternalShellCommands()
+	writeInTmp(global_variables.listOfLayouts)
 	declareBindings()
-	#makeLayoutsList()
+
 
 	# /!\ Il est imporatnt que prepareConfigFiles() soit éxecutée après les déclarations de bindings car elle en a besoin pour générer les bindings par défaut.
 	prepareConfigFiles()

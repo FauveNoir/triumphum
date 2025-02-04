@@ -42,6 +42,7 @@ def drawAboutScreen():
 		from triumphum.keybindings import transformKeyToCharacter
 		key = transformKeyToCharacter(global_variables.STDSCR.get_wch())
 		if key == "x":
+			from triumphum.keybindings import bindMakeDonationFunction
 			bindMakeDonationFunction()
 		else:
 			setBottomBarContent("")

@@ -12,6 +12,6 @@ def writeInTmp(text):
 	# Écrit les  résultats des points d’arret dans un fichier lorsque la sortie standard est cachée
 	stack = inspect.stack()
 	current_function = stack[1].function  # 
-	with open('/tmp/output', 'a') as f:
+	with open('/tmp/triumphum-output', 'a') as f:
 		f.write(f"[{datetime.now()}] [{current_function}] {text} \n")
 
