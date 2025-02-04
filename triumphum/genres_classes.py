@@ -38,6 +38,14 @@ class Genre:
 			return self.abbr > other.abbr
 		return NotImplemented
 
+	def makeFlatData(self):
+		flatData={
+			"name":self.name,
+			"code":self.code,
+			"abbr":self.abbr
+		}
+		return flatData
+
 	def asciiRow(self):
 		# Préparation de la ligne de tableau
 

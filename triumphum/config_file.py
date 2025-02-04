@@ -103,10 +103,14 @@ def makeFileConfigMinimalContent():
 
 def prepareConfigFiles():
 	# Préparation de tous les fichiers de configuration et de donnée
+	from triumphum.default_files_content import defaultGenresContent, defaultLicencesContent, defaultPlatformsContent
 	ConfigurationFile(code="GAME_FILE",     minimalContent="""{"games":[]}""",      baseName="games.json")
-	ConfigurationFile(code="GENRE_FILE",    minimalContent="""{"genres":[]}""",     baseName="listOfGenres.json")
-	ConfigurationFile(code="LICENCE_FILE",  minimalContent="""{"licences":[]}""",   baseName="listOfLicences.json")
-	ConfigurationFile(code="PLATFORM_FILE", minimalContent="""{"platforms":[]}""",  baseName="listOfPlatforms.json")
+#	ConfigurationFile(code="GENRE_FILE",    minimalContent="""{"genres":[]}""",     baseName="listOfGenres.json")
+#	ConfigurationFile(code="LICENCE_FILE",  minimalContent="""{"licences":[]}""",   baseName="listOfLicences.json")
+#	ConfigurationFile(code="PLATFORM_FILE", minimalContent="""{"platforms":[]}""",  baseName="listOfPlatforms.json")
+	ConfigurationFile(code="GENRE_FILE",    minimalContent=defaultGenresContent,    baseName="listOfGenres.json")
+	ConfigurationFile(code="LICENCE_FILE",  minimalContent=defaultLicencesContent,  baseName="listOfLicences.json")
+	ConfigurationFile(code="PLATFORM_FILE", minimalContent=defaultPlatformsContent, baseName="listOfPlatforms.json")
 	ConfigurationFile(code="HISTORY_FILE",  minimalContent="""{"history":[]}""",    baseName="history.json")
 	ConfigurationFile(code="CONFIG_FILE",   minimalContent=makeFileConfigMinimalContent(),    baseName="triumphumrc", path=appdirs.user_config_dir())
 
