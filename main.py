@@ -16,7 +16,6 @@ def main():
 
 	makeLayoutsList()
 	setInternalShellCommands()
-	writeInTmp(global_variables.listOfLayouts)
 	declareBindings()
 
 

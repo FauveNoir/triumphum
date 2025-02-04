@@ -150,7 +150,7 @@
 				<dt><a name="option--about"></a><a href="#option--about"><span class="option">-a</span>, <span class="option">--about</span></a></dt>
 				<dd>Présente rapidement les informations sur la commande et son auteur</dd>
 				<dt><a name="option--donate"></a><a href="#option--donate"><span class="option">-d</span>, <span class="option">--donate</span></a></dt>
-				<dd>Ouvrir le lien de don sur le navigateur.</dd>
+				<dd>Ouvrir le lien de don sur le navigateur. Voir la section <a class="ref-to-h3" href="#don">Don</a>.</dd>
 			</dl>
 			<h3><a name="comportement-interface"></a><a href="#comportement-interface">Comportement de l’interface</a></h3>
 			<dl>
@@ -272,7 +272,7 @@
 					Où les valeurs associées à J, S, M, et A, correspondent respectivement au temps de jeu cumulé écoulé durant le jour, la semaine, le mois, et l’année.
 				</dd>
 				<dt>Zone de saisie de commande</dt>
-				<dd>Lieu où s’affiche les commandes du shell interne saisies par l’utilisateur.</dd>
+				<dd>Lieu où s’affiche les commandes du shell interne saisies par l’utilisateur. (Voir <a class="ref-to-h2" href="#commandes-internes">COMMMANDES DU SHELL INTERNE</a>)</dd>
 			</dl>
 			<p>
 			Au sein de l’interface TUI, il est possible d’interagir avec au travers des différentes actions qui s’actionnent par les touches dédiées dans la section <b><a class="ref-to-h2" href="#bindings">BINDINGS</a></b>.
@@ -285,6 +285,8 @@
 				<dd>Aller vers l’élément au dessus</dd>
 				<dt> Enter</dt>
 				<dd>Lancer le jeu ayant le focus</dd>
+				<dt> :</dt>
+				<dd>Entrer dans le shell interne (Voir <a class="ref-to-h2" href="#commandes-internes">COMMMANDES DU SHELL INTERNE</a>)</dd>
 				<dt> e</dt>
 				<dd>Éditer le jeu ayant le focus (expérimental)</dd>
 				<dt> a</dt>
@@ -319,6 +321,20 @@
 				<dd>Filtrer selon le motif (expérimental)</dd>
 				<dt> h</dt>
 				<dd>Afficher l’aide</dd>
+			</dl>
+			<h2><a name="commandes-internes"></a><a href="#commandes-internes">COMMMANDES DU SHELL INTERNE</a></h2>
+			<p>
+			Les commandes du shell interne s’executent depuis l’interface TUI de Triumphum, et l’invite de commande est accessible par la touche deux-points (<kbd>:</kbd>). Dès lors que l’utilisateur a l’invite de commande du shell interne, il peut opérer les commandes suivantes :
+			</p>
+			<dl>
+				<dt><a name="internalshell-command-addgame"></a><a href="#internalshell-command-addgame">:a :add :addgame <var>DESCRIPTEUR_JEU</var></a></dt>
+				<dd>Ajouter un nouveau jeu. Voir la section <b><a class="ref-to-h3" class="ref-to-h3" href="#descripteurs-jeux">Descripteurs des jeux</a></b>.</dd>
+				<dt><a name="internalshell-command-about"></a><a href="#internalshell-command-about">:about</a></dt>
+				<dd>Présente rapidement les informations sur la commande et son auteur.</dd>
+				<dt><a name="internalshell-command-donate"></a><a href="#internalshell-command-donate">:donate</a></dt>
+				<dd>Ouvrir le lien de don sur le navigateur. Voir la section <a class="ref-to-h3" href="#don">Don</a>.</dd>
+				<dt><a name="internalshell-command-layout"></a><a href="#internalshell-command-layout">:l :layout <var>DISPOSITION</var></a></dt>
+				<dd>Utiliser des raccourcis dactyliques adaptés à la disposition de clavier <var>DISPOSITION</var>. Valeurs possibles : bepo, azerty, qwerty. Voir la section <b><a class="ref-to-h2" href="#attribution-des-touches">ATTRIBUTION DES TOUCHES</a></b> affin de modifier les associations par défaut.</dd>
 			</dl>
 			<h2><a name="descripteurs"></a><a href="#descripteurs">DESCRIPTEURS</a></h2>
 			<p>
@@ -592,7 +608,7 @@
 				<dt>bind_show_licence</dt>
 				<dd>Montrer la licence du jeu ayant le focus (Défaut : l)</dd>
 				<dt>bind_donate</dt>
-				<dd>Faire un don (ouvre le lien de don dans le navigateur) (Défaut : x)</dd>
+				<dd>Faire un don (Ouvre le lien de don dans le navigateur. Voir la section <a class="ref-to-h3" href="#don">Don</a>.) (Défaut : x)</dd>
 				<dt>bind_quit</dt>
 				<dd>Quitter le jeu (Défaut : q)</dd>
 				<dt>bind_filter</dt>

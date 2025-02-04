@@ -94,13 +94,10 @@ def whatTodoWhenShellInputIsWrong(shellInput):
 
 def whatToDoWithShellInput(shellInput):
 	# Traitement de la saisie du shell
-	writeInTmp(shellInput)
 	isShellInputValid=False
 	for anInternalCommand in ListOfInternalShellCommand:
 	# Recherche une correpsondance eventuelle de la saisie du shell avec un patern valide
 		match = re.match(ListOfInternalShellCommand[anInternalCommand].patern, shellInput)
-		writeInTmp(ListOfInternalShellCommand[anInternalCommand].patern)
-		writeInTmp(getPaternToMatchAllLayoutCodes())
 		if match:
 			# Si le paterne est trouvé, alors execute la commande associée
 			isShellInputValid=True
@@ -136,10 +133,7 @@ def internalShellLayoutFunction(shellInput):
 def setInternalShellCommands():
 	InternalShellCommand(code="addNewGame", patern=addNewGamepatern, description="Ajouter un nouveau jeu à la base de donnée", synopsis=":a :add :addgame name=<Game name> code=<code> [genre=<genre>] [licence=getPaternToMatchAllLicencesCodes()]", instructions=addNewGameAfterInterativeDescriptor)
 	InternalShellCommand(code="about", patern='about', description="À propos", synopsis=":about", instructions=internalShelldrawAboutScreen)
-
 	InternalShellCommand(code="donate", patern='(d|don|donate)', description="Faire un don", synopsis=":d :don :donate", instructions=internalShellbindMakeDonationFunction)
-	writeInTmp("internalshelcalss")
-	writeInTmp(getPaternToMatchAllLayoutCodes())
 	InternalShellCommand(code="layout", patern=f'(l|layout)\s+(?P<layout>{getPaternToMatchAllLayoutCodes()})', description="Changer de disposition de clavier", synopsis=":l :layout <layout>", instructions=internalShellLayoutFunction)
 	InternalShellCommand(code="comment", patern='(c|comment)', description="Ajouter un commentaire", synopsis=":c :comment", activated=False)
 	InternalShellCommand(code="viewComment", patern='(v|view)', description="Voir les commentaires", synopsis=":v :vew", activated=False)
