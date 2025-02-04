@@ -1,9 +1,9 @@
 Package: triumphum
-Version: 1.2.0
+Version: 1.4.0
 Architecture: all
 Maintainer: Fauve <contact@taniere.info>
 Depends: python3, python3-setuptools, python3-pyperclip, python3-humanize, python-babel-localedata, python3-xlib, python3-prettytable, python3-numpy, python3-appdirs, python3-humanize, python3-pendulum, python3-pyperclip, python3-prettytable, python3-tabulate
-Description: Gestionnaire de ludothèque en Python et NCurses pour GNU/Linux
+Description: gestionnaire de ludothèque en Python et NCurses
   Triumphum est un gestionnaire de collection de jeux pour GNU/Linux. Il permet d’avoir une liste des jeux disponibles en CURSES (ou ayant été à un moment donné disponible), de les lancer, et aussi d’avoir un suivi du temps qui y a été consacré.
 Priority: optional
 Section: games
