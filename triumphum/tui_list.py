@@ -137,10 +137,11 @@ class VisualListOfGames:
 		setBottomBarContent(f"Supression du jeu « {self.list[self.selected_row][HIDED_DATA_COLUMN].name} ».")
 		game = self.list[self.selected_row][HIDED_DATA_COLUMN]
 		if self.selected_row == len(self.list)-1:
-			
 			self.goUp()
 			game = self.list[self.selected_row+1][HIDED_DATA_COLUMN]
 		game.delete()
+		writeInTmp("deletion done")
+		self.list[self.selected_row]
 		self.refresh()
 
 	def copyLinkToClipBoard(self):
@@ -166,11 +167,11 @@ class VisualListOfGames:
 
 	def refresh(self):
 		retrive_datas()
-		global listOfGames
+		global_variables.listOfGames
 
 		self.list=[]
-		for aGame in listOfGames:
-			self.list.append(listOfGames[aGame].ncurseLine())
+		for aGame in global_variables.listOfGames:
+			self.list.append(global_variables.listOfGames[aGame].ncurseLine())
 		self.softSortBy(self.sortByProperty)
 
 	def shiftSortingState(self, property_):

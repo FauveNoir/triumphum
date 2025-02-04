@@ -12,7 +12,7 @@ from triumphum.misc import getElementHavingParameterWithValue
 from triumphum.debug import * # TODO
 from triumphum.misc import bottomBarCoordinate
 from triumphum.internal_shell_class import whatToDoWithShellInput
-from triumphum.tui import  setBottomBarContent
+from triumphum.tui import  setBottomBarContent, questionMode
 
 #
 ## Diverses fonctions utiles à la gestion des racourcis dactyliques
@@ -143,6 +143,7 @@ def bindDeleteGameFunction():
 	else:
 		setBottomBarContent(f"« {currentGame} est conservé. Rien n’est altéré.")
 
+
 def bindOpenLinkFunction():
 	# Ouvrir le lien associé à l’item ayant le focus
 	global_variables.THE_VISUAL_LIST_OF_GAMES.openLink()
@@ -232,7 +233,7 @@ def declareBindings():
 	Binding(key="e", code="bindEditData", description="Éditer les données", configFileName="bind_edit")
 	Binding(key="d", code="bindDelete", description="Suprimer le jeu de la liste", instructions=bindDeleteGameFunction, configFileName="bind_delete")
 	Binding(key="i", code="bindComment", description="Commenter", configFileName="bind_comment")
-	Binding(key="u", code="bindMakeDonation", description="Faire un don", instructions=bindMakeDonationFunction, configFileName="bind_donate")
+	Binding(key="x", code="bindMakeDonation", description="Faire un don", instructions=bindMakeDonationFunction, configFileName="bind_donate")
 	Binding(key="w", code="bindShowFullLicence", description="Afficher le texte de la licence", configFileName="bind_show_licence")
 	Binding(key="/", code="bindFilter", description="Filtrer", configFileName="bind_filter")
 	Binding(key="h", code="bindSeeBindingHelp", description="Montrer l’aide", configFileName="bind_help")

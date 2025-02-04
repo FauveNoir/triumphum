@@ -5,6 +5,7 @@ import json
 
 from triumphum.global_variables import *
 import triumphum.config_file as config_file
+from triumphum.debug import * # TODO
 
 # Fonctions primitives #################################################
 

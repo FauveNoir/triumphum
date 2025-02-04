@@ -12,6 +12,7 @@ from triumphum.history_classes import retrive_history_of_a_game
 from triumphum.licences_classes import  get_licence_object_after_code
 from triumphum.genres_classes import get_genre_object_after_code
 from triumphum.platforms_classes import get_platform_object_after_code
+from triumphum.db_edition import  deleteGameFromDatabase
 import triumphum.symbols as symbols
 
 from triumphum.debug import * # TODO
@@ -154,7 +155,7 @@ def create_game_objects():
 	with open(config_file.GAME_FILE.fullPath()) as f:
 		listOfGamesData = json.load(f)["games"]
 
-
+	listOfGames.clear()
 	## Déploiment des objet de jeux
 	for aGame in listOfGamesData:
 		Game(
