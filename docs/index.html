@@ -812,13 +812,26 @@
 	</body>
 	<script>
 	/* Faire en sorte que les descriptions dd se trouvant à droite de label dt suffisement soient hissés à la même hauteur.*/
-	const emToPx = em => em * parseFloat(getComputedStyle(document.documentElement).fontSize);
+
+	let maxWidthForSameLineDescription;
+
+	if (window.innerWidth < 600) {
+		maxWidthForSameLineDescription = 3;
+	} else {
+		maxWidthForSameLineDescription = 7;
+	}
+
+	function chToPx(ch) {
+		const fontSize = parseFloat(getComputedStyle(document.documentElement).fontSize); // Taille de la police en px
+		const chWidth = fontSize * 0.5; // Approximativement la largeur d'un "0" en ch, selon la police
+		return ch * chWidth;
+	}
 	document.querySelectorAll("dt").forEach(dt => {
 		console.log(dt)
-		if (dt.offsetWidth < emToPx(4) ) {
+		if (dt.offsetWidth < chToPx(maxWidthForSameLineDescription) ) {
 			const dd = dt.nextElementSibling;
 			if (dd && dd.tagName.toLowerCase() === "dd") {
-				dd.style.marginTop = "-1em";
+				dd.style.marginTop = "-1.1em";
 			}
 		}
 	});
