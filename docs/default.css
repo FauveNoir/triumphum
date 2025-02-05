@@ -280,9 +280,9 @@ dd > blockquote, dd > pre, dd > img
 }
 
 
-h2+h3
+h2+h3, h3+h4, h4+h5, h5+h6
 {
-	margin-top: 1px;
+	margin-top: 0px;
 }
 
 h2 > a[href], h3 > a[href]
