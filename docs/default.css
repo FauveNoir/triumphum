@@ -149,6 +149,7 @@ ul
 ul li:before
 {
 	content: ".";
+	margin-right: var(--second-tab);
 }
 
 ul li.done:before
