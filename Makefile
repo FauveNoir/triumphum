@@ -61,3 +61,5 @@ man:
 autocomplete:
 	echo "Nothing to do"
 
+images:
+	inkscape --export-text-to-path --export-filename=logo-blanc-version.vectorized.svg logo-blanc-version.svg
