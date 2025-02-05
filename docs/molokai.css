@@ -124,16 +124,107 @@ nav.footer
 }
 
 #sword  {
-	animation: swordTranslation 4s ease-in-out;
+	transform: scale(2) translateY(-30px)  ;
 	transform-origin: -30px 350px;
+	animation: swordTranslation 4s ease-in-out forwards;
+	animation-delay: 4s;
 }
 
 #sword > g {
-	animation: rotationTranslation 4s ease-in-out;
+	animation: rotationTranslation 4s ease-in-out forwards;
+	animation-delay: 4s;
 	transform-origin: -30px 350px;
 }
 
 svg, svg > g
 {
 	overflow: visible;
+}
+
+/************************************************************************
+* Opening sequence
+************************************************************************/
+
+#opening-sequence
+{
+	position: fixed;
+	left: 0;
+	top: 0;
+	width: 100vw;
+	pointer-events: none; 
+}
+
+#opening-sequence > div
+{
+	position: relative;
+	height: 100vh;
+}
+
+#opening-sequence  #left-side,
+#opening-sequence  #right-side
+{
+	background-color: #d7005f;
+	background-color: #bc041d;
+	width: 100vw;
+	height: 200vh;
+	position: absolute;
+	bottom: 0;
+}
+
+@keyframes openingsword {
+	0% {
+	transform: scale(3) translateY(-9vh)  rotate(30deg);
+	}
+	100% {
+	transform: scale(4) translateY(35vh)  rotate(130deg);
+	}
+}
+
+@keyframes left-side-movement {
+	0% {
+	transform:  translateX(0vw) rotate(0deg);
+	}
+	100% {
+	transform: translateX(50vw) rotate(-100deg);
+	}
+}
+
+@keyframes right-side-movement {
+	0% {
+	transform:  translateX(0vw) rotate(0deg);
+	}
+	100% {
+	transform: translateX(-50vw) rotate(100deg);
+	}
+}
+
+#opening-sequence  #left-side
+{
+	right: 50vw;
+	z-index: 50;
+	transform-origin: bottom right;
+	animation: left-side-movement 4s ease-in forwards;
+}
+
+#opening-sequence  #opening-sword
+{
+	position: absolute;
+	height: 33vh;
+	top: 0;
+	left: 50vw;
+	z-index: 51;
+	animation: openingsword 5s  cubic-bezier(0.85, 0.85, 0.3, 0.1) forwards;
+}
+
+#opening-sequence  #opening-sword div > svg
+{
+	filter: drop-shadow(10px 10px 20px rgba(0, 0, 0, 0.5)); /
+}
+
+#opening-sequence  #right-side
+{
+	left: 50vw;
+	z-index: 52;
+	transform-origin: bottom left;
+	animation: right-side-movement 4s ease-in forwards;
 }
