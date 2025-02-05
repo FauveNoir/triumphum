@@ -100,3 +100,40 @@ nav.footer
 .Delimiter { color: #626262; }
 .String { color: #afaf87; }
 .Number { color: #af5fff; }
+
+
+/************************************************************************
+ *
+ ***********************************************************************/
+@keyframes rotationTranslation {
+	0% {
+	transform: rotate(0deg)  ;
+	}
+	100% {
+	transform: rotate(-1080deg) ;
+	}
+}
+
+@keyframes swordTranslation {
+	0% {
+	transform: scale(2) translateY(-30px)  ;
+	}
+	100% {
+	transform: scale(1) translateY(0) ;
+	}
+}
+
+#sword  {
+	animation: swordTranslation 4s ease-in-out;
+	transform-origin: -30px 350px;
+}
+
+#sword > g {
+	animation: rotationTranslation 4s ease-in-out;
+	transform-origin: -30px 350px;
+}
+
+svg, svg > g
+{
+	overflow: visible;
+}
