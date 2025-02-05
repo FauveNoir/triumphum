@@ -1,3 +1,4 @@
+
 html
 {
 	display: inline-block;
@@ -10,11 +11,23 @@ body
 	overflow-x: hidden;
 	overflow-y: scroll;
 }
+
 :root{
 	--first-tab: 3ch;
 	--second-tab: 5ch;
 	--third-tab: 7ch;
+	--fourth-tab: 10ch;
 	--pre-margin: 2ch;
+}
+
+@media (max-width: 600px) {
+	:root{
+		--first-tab: 1ch;
+		--second-tab: 2ch;
+		--third-tab: 3ch;
+		--fourth-tab: 4ch;
+		--pre-margin: 2ch;
+	}
 }
 
 @font-face
@@ -103,7 +116,7 @@ article > h4, article > h5, article > h6, article > h7
 
 p > ol, dd > ol
 {
-	margin-left: 2em;
+	margin-left: var(--second-tab);
 }
 
 p > img
@@ -118,7 +131,7 @@ dl dl
 
 dd > p
 {
-	margin-left: 0em;
+	margin-left: 0;
 }
 
 pre
@@ -136,7 +149,6 @@ ul
 ul li:before
 {
 	content: ".";
-	margin-right: 4em
 }
 
 ul li.done:before
@@ -196,7 +208,7 @@ a.visible:after
 
 dd
 {
-	margin-left: 4em;
+	margin-left: var(--third-tab);
 	padding-bottom: 1em;
 }
 
@@ -277,13 +289,13 @@ img
 
 dd > blockquote, dd > pre, dd > img
 {
-	margin-left: 2em;
+	margin-left: var(--second-tab);
 	margin-bottom: 1em;
 }
 
 p + blockquote
 {
-	margin-left: 6em;
+	margin-left: var(--fourth-tab);
 }
 
 
@@ -387,3 +399,10 @@ a:active
 	white-space: pre;
 }
 
+@media (max-width: 600px) {
+	nav > span
+	{
+		position: relative;
+		display: block;
+	}
+}
