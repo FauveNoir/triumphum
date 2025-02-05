@@ -705,8 +705,8 @@
 			<blockquote>
 				Trop cool !<br />
 				« un long tableur de bureautique contenant environ cent-trente jeu »<br />
-				Comme c'est mignon 😂<br />
-				Si c'est de moi que tu parles c'est un peu plus 😆
+				Comme c’est mignon 😂<br />
+				Si c’est de moi que tu parles c’est un peu plus 😆
 			</blockquote>
 			<p>
 			Et de me montrer sa liste qui désormais en contenait plus d’un millier.
@@ -792,4 +792,17 @@
 			</span>
 		</nav>
 	</body>
+	<script>
+	/* Faire en sorte que les descriptions dd se trouvant à droite de label dt suffisement soient hissés à la même hauteur.*/
+	const emToPx = em => em * parseFloat(getComputedStyle(document.documentElement).fontSize);
+	document.querySelectorAll("dt").forEach(dt => {
+		console.log(dt)
+		if (dt.offsetWidth < emToPx(4) ) {
+			const dd = dt.nextElementSibling;
+			if (dd && dd.tagName.toLowerCase() === "dd") {
+				dd.style.marginTop = "-1em";
+			}
+		}
+	});
+	</script>
 </html>

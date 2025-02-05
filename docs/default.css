@@ -46,6 +46,7 @@ body
 dt
 {
 	font-weight: bold;
+	display: inline-block; /* Nécéssaire pour que la fonction js puisse en calculer la largeur pertinente */
 }
 
 * var
@@ -151,7 +152,7 @@ ul li.undone:before
 }
 
 
-p
+p, dl, pre, img, blockquote
 {
 	margin-bottom: 1em;
 }
@@ -197,6 +198,11 @@ dd
 {
 	margin-left: 4em;
 	padding-bottom: 1em;
+}
+
+dl > dd:last-of-type
+{
+	padding-bottom: 0;
 }
 
 nav
@@ -260,10 +266,6 @@ footer > div:nth-of-type(2)
 	text-align: center;
 }
 
-pre, img
-{
-	margin-bottom: 1em;
-}
 
 img
 {
@@ -277,6 +279,11 @@ dd > blockquote, dd > pre, dd > img
 {
 	margin-left: 2em;
 	margin-bottom: 1em;
+}
+
+p + blockquote
+{
+	margin-left: 6em;
 }
 
 
