@@ -22,6 +22,7 @@ builddeb:
 	mkdir --verbose --parent ${DEBDIRECTORY}/usr/share/bash-completion/completions
 	@echo "# Copie des fichiers de construction à leur emplacement idoine"
 	cp --verbose config/control ${DEBDIRECTORY}/DEBIAN/
+	./scripts/foldfiles.py ${DEBDIRECTORY}/DEBIAN/control ${DEBDIRECTORY}/DEBIAN/control
 	#fold -s -w 80 config/control > ${DEBDIRECTORY}/DEBIAN/control
 	cp --verbose config/copyright ${DEBDIRECTORY}/usr/share/doc/triumphum/
 	cp --verbose config/LICENSE ${DEBDIRECTORY}/usr/share/doc/triumphum/
