@@ -1,4 +1,5 @@
 import argparse
+import sys
 from triumphum.__init__ import *
 
 ########################################################################
@@ -39,9 +40,18 @@ configurationFile.add_argument("--layout", dest="layout", action="store", help =
 addingData = parser.add_argument_group('Adding data')
 addingDataGroup = addingData.add_mutually_exclusive_group()
 addingDataGroup.add_argument("--add-game", dest="newGameDescriptor", metavar="GAME_DESCRIPTOR", nargs='*', help = "Ajouter un nouveau jeu.")
+
 addingDataGroup.add_argument("--add-licence", dest="newLicenceDescriptor", metavar="LICENCE", nargs='*', help = "Ajouter une nouvelle licence.")
 addingDataGroup.add_argument("--add-genre", dest="newGenreDescriptor", nargs='*', metavar="GENRE", help = "Ajouter un nouveau genre de jeu.")
 addingDataGroup.add_argument("--add-platform", dest="newPlatformDescriptor", nargs='*', metavar="PLATFORM", help = "Ajouter une nouvelle plateforme.")
+
+# 3. Gestion du lanceur de jeux avec traqeur
+trakerLauncher = parser.add_argument_group('Game launcher with traking')
+trakerLauncherGroup = trakerLauncher.add_mutually_exclusive_group()
+trakerLauncherGroup.add_argument("--create-launcher", required='--add-game' in sys.argv, action="store_true", default=None, dest="shouldCreateTheLauncher", help = "Créer le lanceur de jeu avec le traqueur de pérformances.")
+trakerLauncherGroup.add_argument("--no-create-launcher", required='--add-game' in sys.argv, action="store_false", default=None, dest="shouldCreateTheLauncher", help = "Créer le lanceur de jeu sans le traqueur de pérformances.")
+trakerLauncherGroup.add_argument("--regenerate-launcher", metavar="GAME", action="store", help = "Regénérer le lanceur avec traqeur de performances de GAME.")
+trakerLauncherGroup.add_argument("--regenerate-all-launcher", action="store_true", help = "Regénérer le lanceur avec traqeur de performances pour tous les jeux.")
 
 # 2. Groupe de la délétion de donnée
 deletingData = parser.add_argument_group('Deleting data')
@@ -64,3 +74,12 @@ autocompletionFunctionsGroup.add_argument("--ap", action="store_true",  dest="au
 ########################################################################
 # Execution du pareur
 args = parser.parse_args()
+
+if args.newGameDescriptor == None:
+    if args.shouldCreateTheLauncher == True:
+        print("L’argument --create-launcher ne peut être appellé sans --new-game")
+        sys.exit()
+    elif args.shouldCreateTheLauncher == False:
+        print("L’argument --no-create-launcher ne peut être appellé sans --new-game")
+        sys.exit()
+
