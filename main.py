@@ -28,5 +28,7 @@ def main():
 
 	processArgs(args)
 
+	import triumphum.game_launcher
+
 
 main()

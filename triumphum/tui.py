@@ -196,6 +196,7 @@ def mainTui(stdscr):
 	global BOTTOM_BAR_TEXT
 	global bindSortByName
 	# Boucle principale
+	stdscr.timeout(1000)  # attend max 1000 ms (1 seconde) pour une touche
 	while True:
 
 		# Mise à jour de l’historique
@@ -213,9 +214,15 @@ def mainTui(stdscr):
 		stdscr.refresh()
 
 		# Lecture de la touche pressée
-		from triumphum.keybindings import transformKeyToCharacter
-		key = transformKeyToCharacter(stdscr.get_wch())
+		#from triumphum.keybindings import transformKeyToCharacter
+		#key = transformKeyToCharacter(stdscr.get_wch())
 #		setBottomBarContent(f"Touche préssée {key}")
+		from triumphum.keybindings import transformKeyToCharacter
+		try:
+			key = stdscr.get_wch()
+			key = transformKeyToCharacter(key)
+		except curses.error:
+			key = None  # aucune touche pressée pendant 1 seconde
 
 		if (key) == transformKeyToCharacter('q'):  # Quitter si la touche 'q' est pressée # TODO factoriser
 			break

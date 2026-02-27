@@ -13,7 +13,7 @@ interfaceBehaviour = parser.add_argument_group('Interface behaviour')
 interfaceBehaviourGroup = interfaceBehaviour.add_mutually_exclusive_group() # Rend les arguments du groupe mutuellement exlusifs
 
 interfaceBehaviourGroup.add_argument("--tui", action="store_true", default = True, help = "Run the game selection interface (default).")
-interfaceBehaviourGroup.add_argument("-r", "--run", metavar="GAME", help = "Run a given game and track playing time.")
+run_command=interfaceBehaviourGroup.add_argument("-r", "--run", metavar="GAME", help = "Run a given game and track playing time.")
 
 # 1. Groupe des arguments généraux
 generalArgument = parser.add_argument_group('General arguments')
