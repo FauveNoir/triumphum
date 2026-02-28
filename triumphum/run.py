@@ -17,7 +17,6 @@ from triumphum.cli_list import printGamesTable, printLicencesTable, printPlatfor
 from triumphum.db_edition import deleteGameFromDatabase, deleteLicenceFromDatabase, deleteGenreFromDatabase, deletePlatformFromDatabase
 from triumphum.tui import runTui
 from triumphum.tui_functions import run_command_and_write_on_history
-from triumphum.game_launcher import create_game_launcher
 
 from triumphum.debug import * # TODO
 
@@ -110,7 +109,7 @@ def processArgs(args):
     elif args.regenerate_launcher:
         try:
             theGame=listOfGames[args.regenerate_launcher]
-            create_game_launcher(theGame)
+            theGame.create_launcher()
         except:
             print(f"Aucun jeu ne correspond à l’identifiant « {args.regenerate_launcher} »")
 
