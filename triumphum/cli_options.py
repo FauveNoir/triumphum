@@ -48,8 +48,8 @@ addingDataGroup.add_argument("--add-platform", dest="newPlatformDescriptor", nar
 # 3. Gestion du lanceur de jeux avec traqeur
 trakerLauncher = parser.add_argument_group('Game launcher with traking')
 trakerLauncherGroup = trakerLauncher.add_mutually_exclusive_group()
-trakerLauncherGroup.add_argument("--create-launcher", required='--add-game' in sys.argv, action="store_true", default=None, dest="shouldCreateTheLauncher", help = "Créer le lanceur de jeu avec le traqueur de pérformances.")
-trakerLauncherGroup.add_argument("--no-create-launcher", required='--add-game' in sys.argv, action="store_false", default=None, dest="shouldCreateTheLauncher", help = "Créer le lanceur de jeu sans le traqueur de pérformances.")
+trakerLauncherGroup.add_argument("--create-launcher", action="store_true", default=None, dest="shouldCreateTheLauncher", help = "Créer le lanceur de jeu avec le traqueur de pérformances. (Défaut)")
+trakerLauncherGroup.add_argument("--no-create-launcher",  action="store_false", default=None, dest="shouldCreateTheLauncher", help = "Créer le lanceur de jeu sans le traqueur de pérformances.")
 trakerLauncherGroup.add_argument("--regenerate-launcher", metavar="GAME", action="store", help = "Regénérer le lanceur avec traqeur de performances de GAME.")
 trakerLauncherGroup.add_argument("--regenerate-all-launcher", action="store_true", help = "Regénérer le lanceur avec traqeur de performances pour tous les jeux.")
 
@@ -82,4 +82,8 @@ if args.newGameDescriptor == None:
     elif args.shouldCreateTheLauncher == False:
         print("L’argument --no-create-launcher ne peut être appellé sans --new-game")
         sys.exit()
+else:
+    if args.shouldCreateTheLauncher == None:
+        args.shouldCreateTheLauncher = True
+
 

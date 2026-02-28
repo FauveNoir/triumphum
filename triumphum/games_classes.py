@@ -1,11 +1,14 @@
 ########################################################################
 # Classe des jeux
 ########################################################################
+import sys
 import humanize
 from datetime import date, datetime, timedelta
 from tabulate import tabulate
 import json
 import os
+import stat
+import shlex
 
 from triumphum.global_variables import *
 import triumphum.config_file as config_file
@@ -26,6 +29,26 @@ from triumphum.debug import * # TODO
 # Fonctions de création du lanceur
 ########################################################################
 
+
+file_path = Path("mon_fichier.txt")
+content = "Contenu du fichier"
+
+def yesNoCreateFile(file_path=None, content=None):
+    file_path=Path(file_path)
+    if file_path.exists():
+        answer = input(f"Le fichier « {file_path} » existe déjà. Écraser ? [o/N] ").strip().lower()
+        if answer not in ("o", "oui", "y", "yes"):
+            print("Opération annulée.")
+            return False
+        else:
+            file_path.write_text(content)
+            print("Fichier écrasé.")
+            return True
+    else:
+        file_path.write_text(content)
+        print("Fichier créé.")
+        return True
+
 def commentText(theGame):
     return f"""#!/bin/sh
 # Ce script a été généré automatiquement par {APP_FANCY_NAME} {APP_VERSION} le {datetime.now()}.
@@ -34,9 +57,14 @@ def commentText(theGame):
 """
 
 def prepare_script_command(theGame):
-    script_path= os.path.abspath(__file__)
+    entry_point = " ".join(
+        [shlex.quote(sys.executable)] +
+        [shlex.quote(sys.argv[0])]
+    )
+    #entry_point = Path(sys.argv[0]).resolve()
+    entry_point=APP_CODE_NAME
     run_option=run_command.option_strings[0]
-    launcher_command= " ".join([script_path, run_option, theGame.code])
+    launcher_command= " ".join([str(entry_point), run_option, theGame.code])
     return launcher_command
 
 
@@ -180,16 +208,20 @@ class Game:
         pass
 
     def create_launcher(self):
-        directory = Path("~/.local/bin/triumphum_launchers").expanduser()
+        directory = Path("~/.local/bin").expanduser()
         file_name=self.code
         Path(directory) \
             .mkdir(parents=True, exist_ok=True)
         content=full_script_content(self)
         file_path = os.path.join(directory, file_name)
         try:
-            with open(file_path, 'x') as f:
-                f.write(content)
-            print(f"✔️ Lanceur généré pour « {self.name} »")
+            # Création
+            isFileCreated=yesNoCreateFile(file_path=file_path, content=content)
+            # Attribution des droits d’execution
+            if isFileCreated:
+                st = os.stat(file_path)
+                os.chmod(file_path, st.st_mode | stat.S_IEXEC | stat.S_IXGRP | stat.S_IXOTH)
+                print(f"✔️ Lanceur généré pour « {self.name} »")
         except:
             print(f"❌ Une érreur est survenue dans la génération du lanceur pour « {self.name} »")
 

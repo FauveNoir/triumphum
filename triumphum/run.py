@@ -50,7 +50,7 @@ def processArgs(args):
 
     # Section des adjonctions
     if args.newGameDescriptor :
-        addNewGameAfterInterativeDescriptor(args.newGameDescriptor, True)
+        addNewGameAfterInterativeDescriptor(descriptor=args.newGameDescriptor, isSplited=True, shouldCreateTheLauncher=args.shouldCreateTheLauncher)
     elif args.newGenreDescriptor :
         addNewGenreAfterInterativeDescriptor(args.newGenreDescriptor, True)
     elif args.newLicenceDescriptor :
@@ -80,13 +80,13 @@ def processArgs(args):
 
     # Section des suppresions
     elif args.delGame:
-        deleteGameFromDatabase(iargs.delGame)
+        deleteGameFromDatabase(args.delGame)
     elif args.delLicence:
-        deleteLicenceFromDatabase(iargs.delLicence)
+        deleteLicenceFromDatabase(args.delLicence)
     elif args.delGenre:
-        deleteGenreFromDatabase(iargs.delGenre)
+        deleteGenreFromDatabase(args.delGenre)
     elif args.delPlatform:
-        deletePlatformFromDatabase(iargs.delPlatform)
+        deletePlatformFromDatabase(args.delPlatform)
 
     # Execution d’un jeu
     elif args.run not in [None, False]:
@@ -112,6 +112,10 @@ def processArgs(args):
             theGame.create_launcher()
         except:
             print(f"Aucun jeu ne correspond à l’identifiant « {args.regenerate_launcher} »")
+
+    elif args.regenerate_all_launcher:
+        for aGameCode in listOfGames:
+            listOfGames[aGameCode].create_launcher()
 
     elif args.tui == True:
         if args.layout:
