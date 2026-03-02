@@ -114,7 +114,7 @@ def prepareNcurseRow(value=None, altValue=None, color=1):
         return (str(value), color)
     return (str(altValue), 1)
 
-def set_color_according_to_cumulate_time(delta):
+def set_color_according_to_last_opening_duration(delta):
     if delta == None:
         return 1
     if delta < timedelta(minutes=1):
@@ -131,6 +131,24 @@ def set_color_according_to_cumulate_time(delta):
         return PASSED_TIME_COLOR["m"]
     else:
         return PASSED_TIME_COLOR["y"]
+
+def set_color_according_to_cumulate_time(delta):
+    if delta == None:
+        return 1
+    if delta < timedelta(minutes=1):
+        return CUMULATED_TIME_COLOR["s"]
+    elif delta < timedelta(hours=1):
+        return CUMULATED_TIME_COLOR["min"]
+    elif delta < timedelta(days=1):
+        return CUMULATED_TIME_COLOR["h"]
+    elif delta < timedelta(days=7):
+        return CUMULATED_TIME_COLOR["d"]
+    elif delta < timedelta(days=30):
+        return CUMULATED_TIME_COLOR["w"]
+    elif delta < timedelta(days=365):
+        return CUMULATED_TIME_COLOR["m"]
+    else:
+        return CUMULATED_TIME_COLOR["y"]
 
 # Défffinition de classe
 class Game:
@@ -162,8 +180,8 @@ class Game:
             prepareNcurseRow(value=self.licence.abbr, altValue=symbols.LICENCE_VOID_SYMBOL.value),
             prepareNcurseRow(value=self.genre.abbr, altValue=symbols.GENRE_VOID_SYMBOL.value),
             prepareNcurseRow(value=self.year, altValue=symbols.DATE_VOID_SYMBOL.value, color=colorForTheYear(self.year)),
-            prepareNcurseRow(value=self.human_latest_opening_duration(), altValue=symbols.LASTOPENING_VOID_SYMBOL.value, color=set_color_according_to_cumulate_time(self.latest_opening_duration())),
-            prepareNcurseRow(value=self.human_cumulate_time(), altValue=symbols.CUMULATEDTIME_VOID_SYMBOL.value),
+            prepareNcurseRow(value=self.human_latest_opening_duration(), altValue=symbols.LASTOPENING_VOID_SYMBOL.value, color=set_color_according_to_last_opening_duration(self.latest_opening_duration())),
+            prepareNcurseRow(value=self.human_cumulate_time(), altValue=symbols.CUMULATEDTIME_VOID_SYMBOL.value, color=set_color_according_to_cumulate_time(self.cumulate_time())),
             prepareNcurseRow(value=self.listOfAuthors(), altValue=symbols.AUTHOR_VOID_SYMBOL.value),
             prepareNcurseRow(value=self.listOfStudios(), altValue=symbols.STUDIO_VOID_SYMBOL.value),
             self
