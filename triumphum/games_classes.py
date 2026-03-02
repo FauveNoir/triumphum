@@ -9,6 +9,7 @@ import json
 import os
 import stat
 import shlex
+import curses
 
 from triumphum.global_variables import *
 import triumphum.config_file as config_file
@@ -22,6 +23,7 @@ from triumphum.__init__ import *
 from triumphum.cli_options import run_command
 from datetime import datetime
 from pathlib import Path
+from triumphum.colors import *
 
 from triumphum.debug import * # TODO
 
@@ -92,6 +94,44 @@ def formatDataListToLitteralList(list_, voidSymbol):
         elements = ", ".join(list_[:-1])
         return f"{elements}, et {list_[-1]}"
 
+
+
+def floor_to_base(n, base=10):
+    return (n // base) * base
+
+def colorForTheYear(year):
+    if not isinstance(year, int):
+        return 1
+    decade=str(year)[-2:]
+    decade=int(decade)
+    decade=floor_to_base(decade)
+    decadeColor=YEAR_COLOR[decade]
+#    ncursesColorSlot=decadeColor.ncursesSlot
+    return decadeColor
+
+def prepareNcurseRow(value=None, altValue=None, color=1):
+    if value != None:
+        return (str(value), color)
+    return (str(altValue), 1)
+
+def set_color_according_to_cumulate_time(delta):
+    if delta == None:
+        return 1
+    if delta < timedelta(minutes=1):
+        return PASSED_TIME_COLOR["s"]
+    elif delta < timedelta(hours=1):
+        return PASSED_TIME_COLOR["min"]
+    elif delta < timedelta(days=1):
+        return PASSED_TIME_COLOR["h"]
+    elif delta < timedelta(days=7):
+        return PASSED_TIME_COLOR["d"]
+    elif delta < timedelta(days=30):
+        return PASSED_TIME_COLOR["w"]
+    elif delta < timedelta(days=365):
+        return PASSED_TIME_COLOR["m"]
+    else:
+        return PASSED_TIME_COLOR["y"]
+
 # Défffinition de classe
 class Game:
     def __init__(self, name=None, code=None, licence=None, url=None, year=None, genre=None, authors=None, studios=[], command=None, comments=None, platform=None):
@@ -117,15 +157,15 @@ class Game:
 
         # Vérifier chaque clé pour une éventuelle valeur vide et remplacer par "-"
         ncurseLine = [
-            self.platform.abbr or symbols.PLATFORM_VOID_SYMBOL.value,
-            self.name or symbols.NAME_VOID_SYMBOL.value,
-            self.licence.abbr or symbols.LICENCE_VOID_SYMBOL.value,
-            self.genre.abbr or symbols.GENRE_VOID_SYMBOL.value,
-            self.year or symbols.DATE_VOID_SYMBOL.value,
-            self.human_latest_opening_duration() or symbols.LASTOPENING_VOID_SYMBOL.value,
-            self.human_cumulate_time() or symbols.CUMULATEDTIME_VOID_SYMBOL.value,
-            self.listOfAuthors() or symbols.AUTHOR_VOID_SYMBOL.value,
-            self.listOfStudios() or symbols.STUDIO_VOID_SYMBOL.value,
+            prepareNcurseRow(value=self.platform.abbr, altValue=symbols.PLATFORM_VOID_SYMBOL.value),
+            prepareNcurseRow(value=self.name, altValue=symbols.NAME_VOID_SYMBOL.value),
+            prepareNcurseRow(value=self.licence.abbr, altValue=symbols.LICENCE_VOID_SYMBOL.value),
+            prepareNcurseRow(value=self.genre.abbr, altValue=symbols.GENRE_VOID_SYMBOL.value),
+            prepareNcurseRow(value=self.year, altValue=symbols.DATE_VOID_SYMBOL.value, color=colorForTheYear(self.year)),
+            prepareNcurseRow(value=self.human_latest_opening_duration(), altValue=symbols.LASTOPENING_VOID_SYMBOL.value, color=set_color_according_to_cumulate_time(self.latest_opening_duration())),
+            prepareNcurseRow(value=self.human_cumulate_time(), altValue=symbols.CUMULATEDTIME_VOID_SYMBOL.value),
+            prepareNcurseRow(value=self.listOfAuthors(), altValue=symbols.AUTHOR_VOID_SYMBOL.value),
+            prepareNcurseRow(value=self.listOfStudios(), altValue=symbols.STUDIO_VOID_SYMBOL.value),
             self
         ]
         return ncurseLine
