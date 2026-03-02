@@ -156,7 +156,10 @@ def drawListOfGames(stdscr):
             for column_number, column in enumerate(item):
                 if column_number < HIDED_DATA_COLUMN:  # Masquer la colonne "commande"
                     #writeInTmp(column)
-                    stdscr.addstr(row_number + 2, sum(col_widths[:column_number]) + column_number * 2, column[0], curses.color_pair(column[1]))
+                    stdscr.addstr(row_number + 2,
+                                  sum(col_widths[:column_number]) + column_number * 2,
+                                  column[0],
+                                  curses.color_pair(column[1]))
 
         stdscr.addstr(global_variables.THE_VISUAL_LIST_OF_GAMES.visualHighlightedLineNumber(screenHeight) + 2, 0, " " * curses.COLS, curses.color_pair(2))  # Effacer toute la ligne avec la couleur de fond
 
@@ -166,7 +169,8 @@ def drawListOfGames(stdscr):
             stdscr.addstr(global_variables.THE_VISUAL_LIST_OF_GAMES.visualHighlightedLineNumber(screenHeight) + 2,
                           sum(col_widths[:column_number]) + column_number * 2,
                           str(column[0]),
-                          curses.color_pair(2) | curses.A_BOLD)
+                          curses.color_pair(3) | curses.A_BOLD)
+
 
 def questionMode(question):
     setBottomBarContent(question + " (Y/n)")
@@ -201,8 +205,8 @@ def mainTui(stdscr):
     curses.use_default_colors()
     print(gray)
 
-    curses.init_pair(1, curses.COLOR_BLACK, curses.COLOR_WHITE)  # Noir sur fond blanc
-    curses.init_pair(2, curses.COLOR_WHITE, curses.COLOR_BLACK)  # Blanc sur fond noir
+#    curses.init_pair(1, curses.COLOR_BLACK, curses.COLOR_WHITE)  # Noir sur fond blanc
+#    curses.init_pair(2, curses.COLOR_WHITE, curses.COLOR_BLACK)  # Blanc sur fond noir
     use_curses_colors()
         #curses.init_pair(aDecade, base[aDecade], -1)  # Noir sur fond blanc
 #    for aDecade in YEAR_COLOR:

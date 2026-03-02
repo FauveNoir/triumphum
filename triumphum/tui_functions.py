@@ -43,7 +43,7 @@ def run_command_and_write_on_history(game):
 	start_time = datetime.now()
 
 	# Lancement du procéssus
-	command_process = subprocess.Popen(game.command, stdin=subprocess.PIPE, stdout=subprocess.PIPE)
+	command_process = subprocess.Popen(game.command.split(), stdin=subprocess.PIPE, stdout=subprocess.PIPE)
 	# Mise en atente pour la fin du processus
 	output, error = command_process.communicate()
 

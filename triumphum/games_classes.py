@@ -106,7 +106,6 @@ def colorForTheYear(year):
     decade=int(decade)
     decade=floor_to_base(decade)
     decadeColor=YEAR_COLOR[decade]
-#    ncursesColorSlot=decadeColor.ncursesSlot
     return decadeColor
 
 def prepareNcurseRow(value=None, altValue=None, color=1):
