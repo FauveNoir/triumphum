@@ -10,6 +10,7 @@ import re
 import triumphum.global_variables as global_variables
 import triumphum.config_file as config_file
 from triumphum.symbols import *
+from triumphum.debug import * # TODO
 
 def parse_str_duration_to_time_delta(s: str) -> timedelta:
     # Transformer les expressions littérales en timedelta
@@ -26,10 +27,9 @@ class HistoryEntry:
         self.start_time=start_time or dictionnary["start_time"]
         self.end_time=end_time or dictionnary["end_time"]
         self.duration=duration or dictionnary["duration"]
-        try:
-            self.date=start_time.isoformat().split("T")[0]
-        except:
-            self.date=start_time
+
+    def date(self):
+        return self.start_time.split("T")[0]
 
     def make_data(self):
         data = {
@@ -104,12 +104,17 @@ class History:
 
         durations_by_date = defaultdict(timedelta)
 
+        writeInTmp(self.history[0].date())
         for anEntry in self.history:
-            durations_by_date[anEntry.date] += parse_str_duration_to_time_delta(anEntry.duration)
+            writeInTmp(anEntry.date())
+            durations_by_date[anEntry.date()] += parse_str_duration_to_time_delta(anEntry.duration)
 
         result = []
         for date in sorted(durations_by_date.keys()):
             total = durations_by_date[date]
+            writeInTmp("---")
+            writeInTmp(date)
+            writeInTmp(total)
             result.append(HistoryEntry(start_time=date, end_time=date, duration=total))
 
         return result
