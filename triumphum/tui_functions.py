@@ -29,11 +29,7 @@ def write_opening_date_on_history(game=None, start_time=None, end_time=None, dur
             data = json.load(f)
 
         data = history_data_with_current_game(game)
-        print(start_time)
-        print(end_time)
-        print(duration)
         history_entry=HistoryEntry(start_time=start_time, end_time=end_time, duration=duration)
-        print(history_entry)
         data['history'][game.code].append(history_entry.make_data())
 
         # Enregistrer la structure de données modifiée en tant que JSON

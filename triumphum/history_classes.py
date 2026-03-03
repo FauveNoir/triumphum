@@ -26,7 +26,10 @@ class HistoryEntry:
         self.start_time=start_time or dictionnary["start_time"]
         self.end_time=end_time or dictionnary["end_time"]
         self.duration=duration or dictionnary["duration"]
-        self.date=self.start_time.split("T")[0]
+        try:
+            self.date=start_time.isoformat().split("T")[0]
+        except:
+            self.date=start_time
 
     def make_data(self):
         data = {
