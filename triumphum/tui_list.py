@@ -214,8 +214,6 @@ class VisualListOfGames:
 	def sortBy(self, property_):
 		self.shiftSortingState(property_)
 		self.softSortBy(property_)
-		# Cas particuliers 
-		#  "latest_opening_date_value"
 
 	def columnsWidth(self):
 		itemsMergedWithTitle = self.items[:]

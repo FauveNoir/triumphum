@@ -132,6 +132,10 @@ def truncate(text=None, max_len=8):
         return text
     return text[:max_len - 1] + "…"
 
+def display_too_small_terminal_message(stdscr):
+    height, width = global_variables.STDSCR.getmaxyx()
+    display_centered_text(stdscr, f"Le terminal est trop petit pour lancer {APP_FANCY_NAME}\nVeuillez utiliser un terminal d’au moins {height}×{width}.")
+
 def drawListOfGames(stdscr):
     #setBottomBarContent("Don:x  Quitter:q  Tri par nom:b  Par date:o  Par licence:é  Par genre:p Par date:o  Par durée de jeu:!") # TODO rendre automatique
     from triumphum.tui_list import getColWidths
@@ -203,28 +207,18 @@ def mainTui(stdscr):
     # Initialiser les couleurs
     curses.start_color()
     curses.use_default_colors()
-    print(gray)
-
-#    curses.init_pair(1, curses.COLOR_BLACK, curses.COLOR_WHITE)  # Noir sur fond blanc
-#    curses.init_pair(2, curses.COLOR_WHITE, curses.COLOR_BLACK)  # Blanc sur fond noir
     use_curses_colors()
-        #curses.init_pair(aDecade, base[aDecade], -1)  # Noir sur fond blanc
-#    for aDecade in YEAR_COLOR:
-#        curses.init_pair(aDecade, YEAR_COLOR[aDecade], -1)  # Noir sur fond blanc
 
     # Définir la couleur du texte comme étant la même que la couleur du fond
     curses.init_pair(1, -1, -1)  # Utilise la couleur par défaut du terminal
 
-    # Nom de l'application
 
-
-#    global global_variables.THE_VISUAL_LIST_OF_GAMES
     global BOTTOM_BAR_TEXT
     global bindSortByName
+
     # Boucle principale
     stdscr.timeout(1000)  # attend max 1000 ms (1 seconde) pour une touche
     while True:
-
         # Mise à jour de l’historique
         #retrive_datas()
         # Mise à jour de la liste des jeux
@@ -232,17 +226,19 @@ def mainTui(stdscr):
         curses.noecho()  # Désactiver l'écho des touches
         stdscr.clear()
 
-        drawListOfGames(stdscr)
+        try:
+            drawListOfGames(stdscr)
 
-        drawBothBars(stdscr)
+            drawBothBars(stdscr)
+        except curses.error as e:
+            display_too_small_terminal_message(stdscr)
+            height, width = global_variables.STDSCR.getmaxyx()
+            print(f"Le terminal est trop petit pour lancer {APP_FANCY_NAME}\nVeuillez utiliser un terminal d’au moins {height}×{width}.")
 
         # Rafraîchir l'écran
         stdscr.refresh()
 
         # Lecture de la touche pressée
-        #from triumphum.keybindings import transformKeyToCharacter
-        #key = transformKeyToCharacter(stdscr.get_wch())
-#        setBottomBarContent(f"Touche préssée {key}")
         from triumphum.keybindings import transformKeyToCharacter
         try:
             key = stdscr.get_wch()
@@ -261,12 +257,10 @@ def mainTui(stdscr):
 
 
 def runTui():
-    try:
-        curses.wrapper(mainTui)
-    except Exception:
-        traceback.print_exc(file=sys.__stdout__)
-        sys.__stdout__.flush()
-    except curses.error as e:
-        print(e)
-        height, width = global_variables.STDSCR.getmaxyx()
-        print(f"Le terminal est trop petit pour lancer {APP_FANCY_NAME}\nVeuillez utiliser un terminal d’au moins {height}×{width}.")
+    curses.wrapper(mainTui)
+#    try:
+#        curses.wrapper(mainTui)
+#    except curses.error as e:
+#        print(e)
+#        height, width = global_variables.STDSCR.getmaxyx()
+#        print(f"Le terminal est trop petit pour lancer {APP_FANCY_NAME}\nVeuillez utiliser un terminal d’au moins {height}×{width}.")
