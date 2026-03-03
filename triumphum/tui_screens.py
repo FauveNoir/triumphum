@@ -53,20 +53,23 @@ def drawGamePlot():
     global_variables.STDSCR.timeout(-1)
     game=global_variables.THE_VISUAL_LIST_OF_GAMES.currentGame()
     plot=game.history.generate_plot()
+    if plot == None:
+        setBottomBarContent(f"Il n’existe pas d’historique de jeu pour « {game.name} ».")
 
-    while True:
-        setBottomBarContent(f"Fréquence de jeu pour « {game.name} »")
-        centeredMessage(global_variables.STDSCR,plot)
-        drawBothBars(global_variables.STDSCR)
-        # Lecture de la touche pressée
-        from triumphum.keybindings import transformKeyToCharacter
-        key = transformKeyToCharacter(global_variables.STDSCR.get_wch())
-        if key == "x":
-            from triumphum.keybindings import bindMakeDonationFunction
-            bindMakeDonationFunction()
-        else:
-            setBottomBarContent("")
-            break
+    else:
+        while True:
+            setBottomBarContent(f"Fréquence de jeu pour « {game.name} »")
+            centeredMessage(global_variables.STDSCR,plot)
+            drawBothBars(global_variables.STDSCR)
+            # Lecture de la touche pressée
+            from triumphum.keybindings import transformKeyToCharacter
+            key = transformKeyToCharacter(global_variables.STDSCR.get_wch())
+            if key == "x":
+                from triumphum.keybindings import bindMakeDonationFunction
+                bindMakeDonationFunction()
+            else:
+                setBottomBarContent("")
+                break
 
 ########################################################################
 # Écran d’aide

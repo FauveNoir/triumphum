@@ -158,7 +158,8 @@ class History:
         return gnuplot_ready_str
 
     def generate_plot(self):
-        
+        if self.history == []:
+            return None
         max_y, max_x = global_variables.STDSCR.getmaxyx()
         width=max_x
         height=max_y-4
