@@ -48,6 +48,7 @@ def drawAboutScreen():
         else:
             setBottomBarContent("")
             break
+    global_variables.STDSCR.timeout(1000)
 
 def drawGamePlot():
     global_variables.STDSCR.timeout(-1)
@@ -70,6 +71,7 @@ def drawGamePlot():
             else:
                 setBottomBarContent("")
                 break
+    global_variables.STDSCR.timeout(1000)
 
 ########################################################################
 # Écran d’aide
