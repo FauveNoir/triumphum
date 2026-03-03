@@ -2,10 +2,12 @@
 # Classe des historiques
 ########################################################################
 import json
+import subprocess
 from datetime import date, datetime, timedelta
 from collections import defaultdict
 import re
-from triumphum.global_variables import *
+#from triumphum.global_variables import *
+import triumphum.global_variables as global_variables
 import triumphum.config_file as config_file
 from triumphum.symbols import *
 
@@ -111,7 +113,7 @@ class History:
 
     def fill_missing_dates(self, data: dict[str, float]) -> dict[str, float]:
         # convertir les clés en datetime
-        print(data)
+        #print(data)
         dates = [datetime.strptime(d, "%Y-%m-%d") for d in data.keys()]
         
         start = min(dates)
@@ -135,9 +137,41 @@ class History:
         for aHistoryEntry in self.reducedToDay():
             h, m, s = str(aHistoryEntry.duration).split(":")
             total_seconds = int(h) * 3600 + int(m) * 60 + float(s)
-            flatHistory[aHistoryEntry.start_time]=total_seconds
+            total_minuts=total_seconds/60
+            flatHistory[aHistoryEntry.start_time]=total_minuts
         flatHistory=self.fill_missing_dates(flatHistory)
         return flatHistory
+
+    def flat_for_gnuplot(self):
+        gnuplot_ready_str=""
+        flaten=self.flat()
+        for anEntry in flaten:
+            gnuplot_ready_str+=anEntry + " " + str(flaten[anEntry]) + "\n"
+        return gnuplot_ready_str
+
+    def generate_plot(self):
+        
+        max_y, max_x = global_variables.STDSCR.getmaxyx()
+        width=max_x
+        height=max_y-4
+        cmd = f"""
+        set terminal dumb size {width}, {height};
+        set xdata time;
+        set timefmt '%Y-%m-%d';
+        unset xtics;
+        plot '-' using 1:2 with lines notitle
+        """
+
+        proc = subprocess.Popen(
+            ["gnuplot", "-e", cmd],
+            stdin=subprocess.PIPE,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            text=True
+        )
+
+        out, _ = proc.communicate(self.flat_for_gnuplot())
+        return out
 
     def cumulate_time(self):
         # Retourne le temps joué cumulé depuis la première partie

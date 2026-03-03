@@ -217,7 +217,8 @@ def mainTui(stdscr):
     global bindSortByName
 
     # Boucle principale
-    stdscr.timeout(1000)  # attend max 1000 ms (1 seconde) pour une touche
+#    stdscr.timeout(1000)  # attend max 1000 ms (1 seconde) pour une touche # TODO à déplacer dans le mode ex seulemet
+    stdscr.timeout(1000)
     while True:
         # Mise à jour de l’historique
         #retrive_datas()

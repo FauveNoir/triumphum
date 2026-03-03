@@ -11,47 +11,52 @@ from triumphum.history_classes import HistoryEntry
 
 
 def history_data_with_current_game(game):
-	with open(config_file.HISTORY_FILE.fullPath()) as f:
-		data = json.load(f)
+    with open(config_file.HISTORY_FILE.fullPath()) as f:
+        data = json.load(f)
 
-	if 'history' not in data:
-		data['history'] = {}
+    if 'history' not in data:
+        data['history'] = {}
 
-	if game.code not in data['history']:
-		data['history'][game.code] = []
+    if game.code not in data['history']:
+        data['history'][game.code] = []
 
-	return data
+    return data
 
 def write_opening_date_on_history(game=None, start_time=None, end_time=None, duration=None):
-	try:
-		# Charger le JSON existant depuis un fichier
-		with open(config_file.HISTORY_FILE.fullPath()) as f:
-			data = json.load(f)
+    try:
+        # Charger le JSON existant depuis un fichier
+        with open(config_file.HISTORY_FILE.fullPath()) as f:
+            data = json.load(f)
 
-		data = history_data_with_current_game(game)
-		history_entry=HistoryEntry(start_time=start_time, end_time=end_time, duration=duration)
-		data['history'][game.code].append(history_entry.make_data())
+        data = history_data_with_current_game(game)
+        print(start_time)
+        print(end_time)
+        print(duration)
+        history_entry=HistoryEntry(start_time=start_time, end_time=end_time, duration=duration)
+        print(history_entry)
+        data['history'][game.code].append(history_entry.make_data())
 
-		# Enregistrer la structure de données modifiée en tant que JSON
-		with open(config_file.HISTORY_FILE.fullPath(), 'w') as f:
-			json.dump(data, f, indent=4)
-	except:
-		pass
+        # Enregistrer la structure de données modifiée en tant que JSON
+        with open(config_file.HISTORY_FILE.fullPath(), 'w') as f:
+            json.dump(data, f, indent=4)
+    except:
+        print("Erreur d’inscription du relevé")
+        pass
 
 def run_command_and_write_on_history(game):
-	# Enregistrement de l’heure de début
-	start_time = datetime.now()
+    # Enregistrement de l’heure de début
+    start_time = datetime.now()
 
-	# Lancement du procéssus
-	command_process = subprocess.Popen(game.command.split(), stdin=subprocess.PIPE, stdout=subprocess.PIPE)
-	# Mise en atente pour la fin du processus
-	output, error = command_process.communicate()
+    # Lancement du procéssus
+    command_process = subprocess.Popen(game.command.split(), stdin=subprocess.PIPE, stdout=subprocess.PIPE)
+    # Mise en atente pour la fin du processus
+    output, error = command_process.communicate()
 
-	# Récupération de l’heure de fin
-	end_time = datetime.now()
+    # Récupération de l’heure de fin
+    end_time = datetime.now()
 
-	# Date
-	duration = end_time - start_time
+    # Date
+    duration = end_time - start_time
 
-	# Inscription de l’évenement dans l’historique
-	write_opening_date_on_history(game, start_time=start_time, end_time=end_time, duration=duration)
+    # Inscription de l’évenement dans l’historique
+    write_opening_date_on_history(game, start_time=start_time, end_time=end_time, duration=duration)
