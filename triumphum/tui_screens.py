@@ -76,5 +76,8 @@ def drawGamePlot():
 ########################################################################
 # Écran d’aide
 
+def filterList():
+    pass
+
 def showHelpScreen():
     pass

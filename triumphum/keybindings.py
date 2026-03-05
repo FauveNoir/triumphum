@@ -14,7 +14,7 @@ from triumphum.misc import bottomBarCoordinate
 from triumphum.internal_shell_class import whatToDoWithShellInput
 from triumphum.tui import  setBottomBarContent, questionMode
 
-from triumphum.tui_screens import drawGamePlot
+from triumphum.tui_screens import drawGamePlot, filterList
 
 #
 ## Diverses fonctions utiles à la gestion des racourcis dactyliques
@@ -169,7 +169,58 @@ def bindRefreshScreenFunction():
     # Rafraichir la vue
     global_variables.THE_VISUAL_LIST_OF_GAMES.refresh()
 
+def enteringFilterMode(stdscr):
+    stdscr.timeout(-1)
+    curses.curs_set(1)  # Afficher le curseur
+    h, w = bottomBarCoordinate(stdscr)
+
+#    curses.init_pair(h-2, curses.COLOR_BLUE, curses.COLOR_BLACK)
+    # Position de départ pour la saisie de texte
+    stdscr.move(h-1, 0)
+
+    # Initialiser une liste pour stocker les caractères saisis
+    input_text = ""
+
+    stdscr.addch("/")  # Afficher le caractère saisi à l'écran
+
+    while True:
+        # Capturer un caractère
+        ch = stdscr.getch()
+
+        if ch == 27:  # Si ESC est pressé
+            break
+
+        elif ch == 263: # Si BSP est préssé
+            y, x = stdscr.getyx()
+
+            if x > 1:
+                input_text=input_text[:-1]
+                stdscr.move(y, x - 1)  # Déplace le curseur à la position juste avant
+                stdscr.delch()         # Supprime le caractère à cette position
+
+                stdscr.refresh()
+            else:
+                break
+
+        elif ch in [curses.KEY_ENTER, 10]:  # Si Entrée est pressé (curses.KEY_ENTER vaut 10)
+
+            whatToDoWithShellInput(input_text)
+            global_variables.THE_VISUAL_LIST_OF_GAMES.filterByPattern(input_text)
+            for aGame in global_variables.THE_VISUAL_LIST_OF_GAMES.relevantList:
+                aGameObject=aGame[global_variables.THE_VISUAL_LIST_OF_GAMES.hiden_data_column_number()]
+                writeInTmp(aGameObject.name)
+            break  # Sortir de la boucle de saisie
+
+        else:
+            # Ajouter le caractère à la chaîne de texte
+            input_text += chr(ch)
+            stdscr.addch(ch)  # Afficher le caractère saisi à l'écran
+            stdscr.refresh()
+
+    curses.curs_set(0)  # Masquer le curseur
+
 def enteringExMode(stdscr):
+    stdscr.timeout(-1)
     # Activer la saisie de texte
 
     #stdscr.timeout(1000)  # attend max 1000 ms (1 seconde) pour une touche # TODO à déplacer dans le mode ex seulemet
@@ -219,6 +270,9 @@ def enteringExMode(stdscr):
 def enteringExModeByBinding():
     enteringExMode(global_variables.STDSCR)
 
+def enteringFilterModeByBinding():
+    enteringFilterMode(global_variables.STDSCR)
+
 ########################################################################
 # Déclaration des racoucis dactiliques
 ########################################################################
@@ -244,10 +298,10 @@ def declareBindings():
     Binding(key="i", code="bindComment", description="Commenter", configFileName="bind_comment")
     Binding(key="x", code="bindMakeDonation", description="Faire un don", instructions=bindMakeDonationFunction, configFileName="bind_donate")
     Binding(key="w", code="bindShowFullLicence", description="Afficher le texte de la licence", configFileName="bind_show_licence")
-    Binding(key="/", code="bindFilter", description="Filtrer", configFileName="bind_filter")
+    Binding(key="/", code="bindFilter", description="Filtrer", configFileName="bind_filter", instructions=enteringFilterModeByBinding)
     Binding(key="h", code="bindSeeBindingHelp", description="Montrer l’aide", configFileName="bind_help")
     Binding(key="y", code="bindCopyLink", description="Copier le lien dans le presse-papier", instructions=bindCopyLinkFunction, configFileName="bind_copy_link")
     Binding(key="l", code="bindRefreshScreen", description="Rafraichir l’écran", instructions=bindRefreshScreenFunction, configFileName="bind_refresh")
     Binding(key="q", code="bindQuit", description=f"Quitter {APP_FANCY_NAME}", configFileName="bind_quit")
     Binding(key=":", code="bindExMode", description=f"Mode Ex", configFileName="bind_exMode", instructions=enteringExModeByBinding)
-    Binding(key="g", code="bindShowPlot", description=f"Montrer le graphique du jeu", configFileName="bind_plot", instructions=drawGamePlot) # TODO Ajouter l’instruction idoine
+    Binding(key="g", code="bindShowPlot", description=f"Montrer le graphique du jeu", configFileName="bind_plot", instructions=drawGamePlot)
