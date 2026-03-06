@@ -169,55 +169,7 @@ def bindRefreshScreenFunction():
     # Rafraichir la vue
     global_variables.THE_VISUAL_LIST_OF_GAMES.refresh()
 
-def enteringFilterMode(stdscr):
-    stdscr.timeout(-1)
-    curses.curs_set(1)  # Afficher le curseur
-    h, w = bottomBarCoordinate(stdscr)
 
-#    curses.init_pair(h-2, curses.COLOR_BLUE, curses.COLOR_BLACK)
-    # Position de départ pour la saisie de texte
-    stdscr.move(h-1, 0)
-
-    # Initialiser une liste pour stocker les caractères saisis
-    input_text = ""
-
-    stdscr.addch("/")  # Afficher le caractère saisi à l'écran
-
-    while True:
-        # Capturer un caractère
-        ch = stdscr.getch()
-
-        if ch == 27:  # Si ESC est pressé
-            break
-
-        elif ch == 263: # Si BSP est préssé
-            y, x = stdscr.getyx()
-
-            if x > 1:
-                input_text=input_text[:-1]
-                stdscr.move(y, x - 1)  # Déplace le curseur à la position juste avant
-                stdscr.delch()         # Supprime le caractère à cette position
-
-                stdscr.refresh()
-            else:
-                break
-
-        elif ch in [curses.KEY_ENTER, 10]:  # Si Entrée est pressé (curses.KEY_ENTER vaut 10)
-
-            whatToDoWithShellInput(input_text)
-            global_variables.THE_VISUAL_LIST_OF_GAMES.filterByPattern(input_text)
-            for aGame in global_variables.THE_VISUAL_LIST_OF_GAMES.relevantList:
-                aGameObject=aGame[global_variables.THE_VISUAL_LIST_OF_GAMES.hiden_data_column_number()]
-                writeInTmp(aGameObject.name)
-            break  # Sortir de la boucle de saisie
-
-        else:
-            # Ajouter le caractère à la chaîne de texte
-            input_text += chr(ch)
-            stdscr.addch(ch)  # Afficher le caractère saisi à l'écran
-            stdscr.refresh()
-
-    curses.curs_set(0)  # Masquer le curseur
 
 def enteringExMode(stdscr):
     stdscr.timeout(-1)
@@ -271,7 +223,8 @@ def enteringExModeByBinding():
     enteringExMode(global_variables.STDSCR)
 
 def enteringFilterModeByBinding():
-    enteringFilterMode(global_variables.STDSCR)
+    if not global_variables.THE_VISUAL_LIST_OF_GAMES.filter_mode:
+        global_variables.THE_VISUAL_LIST_OF_GAMES.filter_mode=True
 
 ########################################################################
 # Déclaration des racoucis dactiliques

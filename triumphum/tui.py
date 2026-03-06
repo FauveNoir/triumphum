@@ -136,6 +136,58 @@ def display_too_small_terminal_message(stdscr):
     height, width = global_variables.STDSCR.getmaxyx()
     display_centered_text(stdscr, f"Le terminal est trop petit pour lancer {APP_FANCY_NAME}\nVeuillez utiliser un terminal d’au moins {height}×{width}.")
 
+
+def display_filter_if_needed(stdscr):
+    if global_variables.THE_VISUAL_LIST_OF_GAMES.filter_mode:
+        display_filter(stdscr)
+
+def display_filter(stdscr):
+    stdscr.timeout(1000)
+    curses.curs_set(1)  # Afficher le curseur
+    h, w = bottomBarCoordinate(stdscr)
+
+#    curses.init_pair(h-2, curses.COLOR_BLUE, curses.COLOR_BLACK)
+    # Position de départ pour la saisie de texte
+    stdscr.move(h-1, 0)
+
+    # Initialiser une liste pour stocker les caractères saisis
+    input_text = global_variables.THE_VISUAL_LIST_OF_GAMES.filter_input
+
+    stdscr.addch("/")  # Afficher le caractère saisi à l'écran
+
+    # Capturer un caractère
+    ch = stdscr.getch()
+
+    if ch == 27:  # Si ESC est pressé
+        global_variables.THE_VISUAL_LIST_OF_GAMES.unactivate_filter()
+
+    elif ch == 263: # Si BSP est préssé
+        y, x = stdscr.getyx()
+
+        if x > 1:
+            input_text=input_text[:-1]
+            stdscr.move(y, x - 1)  # Déplace le curseur à la position juste avant
+            stdscr.delch()         # Supprime le caractère à cette position
+
+        else:
+            global_variables.THE_VISUAL_LIST_OF_GAMES.unactivate_filter()
+
+    elif ch in [curses.KEY_ENTER, 10]:  # Si Entrée est pressé (curses.KEY_ENTER vaut 10)
+            global_variables.THE_VISUAL_LIST_OF_GAMES.unactivate_filter()
+
+    else:
+        # Ajouter le caractère à la chaîne de texte
+        try:
+            writeInTmp("type : " + chr(ch))
+            input_text += chr(ch)
+            stdscr.addstr(input_text)  # Afficher le caractère saisi à l'écran
+        except:
+            pass
+    writeInTmp(input_text)
+    global_variables.THE_VISUAL_LIST_OF_GAMES.set_filter(input_text)
+
+    curses.curs_set(0)  # Masquer le curseur
+
 def drawListOfGames(stdscr):
     #setBottomBarContent("Don:x  Quitter:q  Tri par nom:b  Par date:o  Par licence:é  Par genre:p Par date:o  Par durée de jeu:!") # TODO rendre automatique
     from triumphum.tui_list import getColWidths
@@ -169,7 +221,7 @@ def drawListOfGames(stdscr):
 
         # Affichage des données de la liste avec surbrillance pour la ligne sélectionnée
         # Cas particulier de la ligne ayant le focus
-        for column_number, column in enumerate(global_variables.THE_VISUAL_LIST_OF_GAMES.list[global_variables.THE_VISUAL_LIST_OF_GAMES.selected_row][:HIDED_DATA_COLUMN]):  # Afficher seulement les 4 premières colonnes
+        for column_number, column in enumerate(global_variables.THE_VISUAL_LIST_OF_GAMES.relevantList()[global_variables.THE_VISUAL_LIST_OF_GAMES.selected_row][:HIDED_DATA_COLUMN]):  # Afficher seulement les 4 premières colonnes
             stdscr.addstr(global_variables.THE_VISUAL_LIST_OF_GAMES.visualHighlightedLineNumber(screenHeight) + 2,
                           sum(col_widths[:column_number]) + column_number * 2,
                           str(column[0]),
@@ -229,8 +281,10 @@ def mainTui(stdscr):
 
         try:
             drawListOfGames(stdscr)
-
             drawBothBars(stdscr)
+            display_filter_if_needed(stdscr)
+            #writeInTmp(global_variables.THE_VISUAL_LIST_OF_GAMES.getCurrentVisibleList(screenHeight))
+
         except curses.error as e:
             display_too_small_terminal_message(stdscr)
             height, width = global_variables.STDSCR.getmaxyx()

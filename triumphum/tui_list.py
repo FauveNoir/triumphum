@@ -73,7 +73,10 @@ class VisualListOfGames:
         self.columns=None
         self.titles = [" ", "Titre", "Licence", "Genre", "Date", "Dernière ouverture", "Temps cumulé", "Auteur", "Studio"]
         self.list=None
-        self.relevantList=None
+        #self.relevantList=None
+        self.filter_input=""
+        self.filter_mode=False
+        self.patern=None
         self.sortByProperty=None
         self.sortingState=SORTING_ORDER[1]
         self.selected_row = 0
@@ -84,13 +87,13 @@ class VisualListOfGames:
         global_variables.THE_VISUAL_LIST_OF_GAMES = self # Le seul objet de cette classe est TheVisualListOfGames
 
     def isTheListEmpty(self):
-        if self.list in [None, []]:
+        if self.relevantList() in [None, []]:
             return True
         return False
 
     def getNthNLines(self, lineRank, numberOfLines):
         # Retourne une portion de la liste commençan par lineRank et contenant numberOfLines lignes
-        subList = self.list[lineRank:lineRank+numberOfLines]
+        subList = self.relevantList()[lineRank:lineRank+numberOfLines]
         return subList
 
     # TODO intégéré screenHeight-3 dans la déffiniton de classe
@@ -114,7 +117,7 @@ class VisualListOfGames:
         return visibleList
 
     def goDown(self):
-        self.selected_row = min(len(self.list) - 1, self.selected_row + 1)
+        self.selected_row = min(len(self.relevantList()) - 1, self.selected_row + 1)
         self.lastMove=goDown
 
     def goUp(self):
@@ -124,45 +127,44 @@ class VisualListOfGames:
     def openCurrent(self):
         # Exécuter la commande de lancement du jeu associée à la ligne sélectionnée
         global HIDED_DATA_COLUMN
-        setBottomBarContent(f"Ouverture de « {self.list[self.selected_row][HIDED_DATA_COLUMN].name} ».")
-        game = self.list[self.selected_row][HIDED_DATA_COLUMN]
+        setBottomBarContent(f"Ouverture de « {self.relevantList()[self.selected_row][HIDED_DATA_COLUMN].name} ».")
+        game = self.relevantList()[self.selected_row][HIDED_DATA_COLUMN]
         threading.Thread(target=run_command_and_write_on_history, args=(game,)).start()
 
     def currentGame(self):
         # TODO factorisé un peu partout.
-        game = self.list[self.selected_row][HIDED_DATA_COLUMN]
+        game = self.relevantList()[self.selected_row][HIDED_DATA_COLUMN]
         return game
 
     def deleteCurrent(self):
         # Exécuter la commande de lancement du jeu associée à la ligne sélectionnée
         global HIDED_DATA_COLUMN
-        setBottomBarContent(f"Supression du jeu « {self.list[self.selected_row][HIDED_DATA_COLUMN].name} ».")
-        game = self.list[self.selected_row][HIDED_DATA_COLUMN]
-        if self.selected_row == len(self.list)-1:
+        setBottomBarContent(f"Supression du jeu « {self.relevantList()[self.selected_row][HIDED_DATA_COLUMN].name} ».")
+        game = self.relevantList()[self.selected_row][HIDED_DATA_COLUMN]
+        if self.selected_row == len(self.relevantList())-1:
             self.goUp()
-            game = self.list[self.selected_row+1][HIDED_DATA_COLUMN]
+            game = self.relevantList()[self.selected_row+1][HIDED_DATA_COLUMN]
         game.delete()
-        writeInTmp("deletion done")
-        self.list[self.selected_row]
+        self.relevantList()[self.selected_row]
         self.refresh()
 
     def copyLinkToClipBoard(self):
-        url = self.list[self.selected_row][self.hiden_data_column_number()].url
+        url = self.relevantList()[self.selected_row][self.hiden_data_column_number()].url
         if url != None:
-            setBottomBarContent(f"Copie de « {self.list[self.selected_row][HIDED_DATA_COLUMN].url} » dans le presse-papier.")
+            setBottomBarContent(f"Copie de « {self.relevantList()[self.selected_row][HIDED_DATA_COLUMN].url} » dans le presse-papier.")
             pyperclip.copy(url)
         else:
-            setBottomBarContent(f"Aucun lien associé à « {self.list[self.selected_row][HIDED_DATA_COLUMN].name} », rien à copier.")
+            setBottomBarContent(f"Aucun lien associé à « {self.relevantList()[self.selected_row][HIDED_DATA_COLUMN].name} », rien à copier.")
 
     def openLink(self):
         global HIDED_DATA_COLUMN
-        url = self.list[self.selected_row][HIDED_DATA_COLUMN].url  # Supposons que l'URL est stockée à l'indice 5
+        url = self.relevantList()[self.selected_row][HIDED_DATA_COLUMN].url  # Supposons que l'URL est stockée à l'indice 5
         if url != None:
-            setBottomBarContent(f"Ouverture de « {self.list[self.selected_row][HIDED_DATA_COLUMN].url} »")
+            setBottomBarContent(f"Ouverture de « {self.relevantList()[self.selected_row][HIDED_DATA_COLUMN].url} »")
             self.refresh()
             threading.Thread(target=webbrowser.open, args=(url,)).start()
         else:
-            setBottomBarContent(f"Pas de lien associé à « {self.list[self.selected_row][HIDED_DATA_COLUMN].name} »")
+            setBottomBarContent(f"Pas de lien associé à « {self.relevantList()[self.selected_row][HIDED_DATA_COLUMN].name} »")
 
     def hiden_data_column_number(self):
         return len(self.list[0])-1
@@ -203,7 +205,7 @@ class VisualListOfGames:
     def softSortBy(self, property_):
         if property_:
             self.sortByProperty=property_
-            tmpList0=self.list
+            tmpList0=self.relevantList()
             tmpList1 = sorted(tmpList0, 
                              reverse=self.sortingState, 
                              key=lambda x: (getattr(x[self.hiden_data_column_number()], property_) is None, 
@@ -211,7 +213,7 @@ class VisualListOfGames:
 
             tmpList2=self.putVoidAtEnd(tmpList1, property_)
             # Déplacer les entrées avec property_ == "-" à la fin
-            self.list=tmpList2
+#            self.relevantList=tmpList2
 
     def sortBy(self, property_):
         self.shiftSortingState(property_)
@@ -233,10 +235,19 @@ class VisualListOfGames:
 
         return allHistoryEntriesList
 
-    def filterByPattern(self, pattern):
-        self.relevantList=[]
+    def set_filter(self, filter_text):
+        self.filter_input=filter_text
+
+    def unactivate_filter(self):
+        self.filter_input=""
+        self.filter_mode=False
+
+    def relevantList(self):
+        if self.filter_input in [None, ""]:
+            return self.list
+        relevantList=[]
         for aGame in self.list:
             aGameObject=aGame[self.hiden_data_column_number()]
-            if re.search(pattern, aGameObject.name, re.IGNORECASE):
-                self.relevantList.append(aGame)
-        writeInTmp(self.relevantList)
+            if re.search(self.filter_input, aGameObject.name, re.IGNORECASE):
+                relevantList.append(aGame)
+        return relevantList
