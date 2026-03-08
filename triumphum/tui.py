@@ -146,7 +146,6 @@ def display_filter(stdscr):
     curses.curs_set(1)  # Afficher le curseur
     h, w = bottomBarCoordinate(stdscr)
 
-#    curses.init_pair(h-2, curses.COLOR_BLUE, curses.COLOR_BLACK)
     # Position de départ pour la saisie de texte
     stdscr.move(h-1, 0)
 
@@ -270,7 +269,6 @@ def mainTui(stdscr):
     # Boucle principale
     while True:
         stdscr.timeout(1000)
-        #stdscr.timeout(-1)
         # Mise à jour de l’historique
         #retrive_datas()
         # Mise à jour de la liste des jeux
@@ -283,7 +281,6 @@ def mainTui(stdscr):
             drawBothBars(stdscr)
             display_filter_if_needed(stdscr)
             stdscr.refresh()
-            #writeInTmp(global_variables.THE_VISUAL_LIST_OF_GAMES.getCurrentVisibleList(screenHeight))
 
         except curses.error as e:
             display_too_small_terminal_message(stdscr)
@@ -314,9 +311,3 @@ def mainTui(stdscr):
 
 def runTui():
     curses.wrapper(mainTui)
-#    try:
-#        curses.wrapper(mainTui)
-#    except curses.error as e:
-#        print(e)
-#        height, width = global_variables.STDSCR.getmaxyx()
-#        print(f"Le terminal est trop petit pour lancer {APP_FANCY_NAME}\nVeuillez utiliser un terminal d’au moins {height}×{width}.")

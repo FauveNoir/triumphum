@@ -271,4 +271,5 @@ class VisualListOfGames:
             aGameObject=aGame[self.hiden_data_column_number()]
             if re.search(self.filter_input, aGameObject.name, re.IGNORECASE):
                 relevantList.append(aGame)
+        
         return relevantList
