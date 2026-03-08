@@ -142,7 +142,7 @@ def display_filter_if_needed(stdscr):
        display_filter(stdscr)
 
 def display_filter(stdscr):
-    stdscr.timeout(-1)
+    stdscr.timeout(1000)
     curses.curs_set(1)  # Afficher le curseur
     h, w = bottomBarCoordinate(stdscr)
 
@@ -180,7 +180,10 @@ def display_filter(stdscr):
 
     else:
         # Ajouter le caractère à la chaîne de texte
-        input_text += chr(ch)
+        try:
+            input_text += chr(ch)
+        except:
+            pass
     global_variables.THE_VISUAL_LIST_OF_GAMES.set_filter(input_text)
 
     curses.curs_set(0)  # Masquer le curseur
