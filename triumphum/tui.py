@@ -139,10 +139,10 @@ def display_too_small_terminal_message(stdscr):
 
 def display_filter_if_needed(stdscr):
     if global_variables.THE_VISUAL_LIST_OF_GAMES.filter_mode:
-        display_filter(stdscr)
+       display_filter(stdscr)
 
 def display_filter(stdscr):
-    stdscr.timeout(1000)
+    stdscr.timeout(-1)
     curses.curs_set(1)  # Afficher le curseur
     h, w = bottomBarCoordinate(stdscr)
 
@@ -154,6 +154,9 @@ def display_filter(stdscr):
     input_text = global_variables.THE_VISUAL_LIST_OF_GAMES.filter_input
 
     stdscr.addch("/")  # Afficher le caractère saisi à l'écran
+
+    stdscr.addstr(input_text)  # Afficher le caractère saisi à l'écran
+    stdscr.move(h-1, len(input_text)+1)
 
     # Capturer un caractère
     ch = stdscr.getch()
@@ -177,13 +180,7 @@ def display_filter(stdscr):
 
     else:
         # Ajouter le caractère à la chaîne de texte
-        try:
-            writeInTmp("type : " + chr(ch))
-            input_text += chr(ch)
-            stdscr.addstr(input_text)  # Afficher le caractère saisi à l'écran
-        except:
-            pass
-    writeInTmp(input_text)
+        input_text += chr(ch)
     global_variables.THE_VISUAL_LIST_OF_GAMES.set_filter(input_text)
 
     curses.curs_set(0)  # Masquer le curseur
@@ -211,7 +208,6 @@ def drawListOfGames(stdscr):
         for row_number, item in enumerate(global_variables.THE_VISUAL_LIST_OF_GAMES.getCurrentVisibleList(screenHeight)):
             for column_number, column in enumerate(item):
                 if column_number < HIDED_DATA_COLUMN:  # Masquer la colonne "commande"
-                    #writeInTmp(column)
                     stdscr.addstr(row_number + 2,
                                   sum(col_widths[:column_number]) + column_number * 2,
                                   column[0],
@@ -269,9 +265,9 @@ def mainTui(stdscr):
     global bindSortByName
 
     # Boucle principale
-#    stdscr.timeout(1000)  # attend max 1000 ms (1 seconde) pour une touche # TODO à déplacer dans le mode ex seulemet
-    stdscr.timeout(1000)
     while True:
+        stdscr.timeout(1000)
+        #stdscr.timeout(-1)
         # Mise à jour de l’historique
         #retrive_datas()
         # Mise à jour de la liste des jeux
@@ -283,6 +279,7 @@ def mainTui(stdscr):
             drawListOfGames(stdscr)
             drawBothBars(stdscr)
             display_filter_if_needed(stdscr)
+            stdscr.refresh()
             #writeInTmp(global_variables.THE_VISUAL_LIST_OF_GAMES.getCurrentVisibleList(screenHeight))
 
         except curses.error as e:
@@ -294,21 +291,22 @@ def mainTui(stdscr):
         stdscr.refresh()
 
         # Lecture de la touche pressée
-        from triumphum.keybindings import transformKeyToCharacter
-        try:
-            key = stdscr.get_wch()
-            key = transformKeyToCharacter(key)
-        except curses.error:
-            key = None  # aucune touche pressée pendant 1 seconde
+        if not global_variables.THE_VISUAL_LIST_OF_GAMES.filter_mode:
+            from triumphum.keybindings import transformKeyToCharacter
+            try:
+                key = stdscr.get_wch()
+                key = transformKeyToCharacter(key)
+            except curses.error:
+                key = None  # aucune touche pressée pendant 1 seconde
 
-        if (key) == transformKeyToCharacter('q'):  # Quitter si la touche 'q' est pressée # TODO factoriser
-            break
-        elif any(key == aBinding.key for aBinding in global_variables.listOfBindings):
-            # Teste si la touche préssé correspond à l’attribut key d’un des élements de listOfBindings
-            setBottomBarContent("")
+            if (key) == transformKeyToCharacter('q'):  # Quitter si la touche 'q' est pressée # TODO factoriser
+                break
+            elif any(key == aBinding.key for aBinding in global_variables.listOfBindings):
+                # Teste si la touche préssé correspond à l’attribut key d’un des élements de listOfBindings
+                setBottomBarContent("")
 
-            # ↓ Trouver au sein de `listOfBindings` l’élément ayant dans son paramettre « key » la valeure contenue dans `value`, et en éxecute aussitôt les instructions.
-            getElementHavingParameterWithValue(givenList=global_variables.listOfBindings, parameter="key", value=key).executeInstructions()
+                # ↓ Trouver au sein de `listOfBindings` l’élément ayant dans son paramettre « key » la valeure contenue dans `value`, et en éxecute aussitôt les instructions.
+                getElementHavingParameterWithValue(givenList=global_variables.listOfBindings, parameter="key", value=key).executeInstructions()
 
 
 def runTui():

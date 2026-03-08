@@ -236,11 +236,32 @@ class VisualListOfGames:
         return allHistoryEntriesList
 
     def set_filter(self, filter_text):
+        old_relevant_list=self.relevantList()
         self.filter_input=filter_text
+        self.selected_row=self.get_new_selected_row(old_relevant_list)
 
     def unactivate_filter(self):
         self.filter_input=""
         self.filter_mode=False
+
+
+    def get_new_selected_row(self, old_relevant_list):
+        global HIDED_DATA_COLUMN
+        new_relevant_list=self.relevantList()
+        old_postion=self.selected_row
+        old_code=old_relevant_list[self.selected_row][HIDED_DATA_COLUMN].code
+
+        if any(row[-1].code == old_code for row in new_relevant_list):
+        # Si l’élement existe encore dans la liste filtrée, retourner sa position
+            for index, aRow in enumerate(new_relevant_list):
+                if aRow[-1].code == old_code:
+                    return index
+        elif len(new_relevant_list) > old_postion:
+        # si l’élement n’existe plus, retourner sa position (à condition que la liste soit suffisement longue)
+            return old_postion
+        else:
+            # Sinon, retourner la dernière ligne
+            return len(new_relevant_list)-1
 
     def relevantList(self):
         if self.filter_input in [None, ""]:
