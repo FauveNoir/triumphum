@@ -176,7 +176,6 @@ class VisualListOfGames:
         self.list=[]
         for aGame in global_variables.listOfGames:
             self.list.append(global_variables.listOfGames[aGame].ncurseLine())
-        self.softSortBy(self.sortByProperty)
 
     def shiftSortingState(self, property_):
         if ( property_ == self.sortByProperty) :
@@ -202,22 +201,22 @@ class VisualListOfGames:
         newList= beginingOfNewList + endOfNewList
         return newList
 
-    def softSortBy(self, property_):
+    def softSortBy(self, relevantList):
+        property_=self.sortByProperty
         if property_:
-            self.sortByProperty=property_
-            tmpList0=self.relevantList()
+            tmpList0=relevantList
             tmpList1 = sorted(tmpList0, 
                              reverse=self.sortingState, 
                              key=lambda x: (getattr(x[self.hiden_data_column_number()], property_) is None, 
                                             getattr(x[self.hiden_data_column_number()], property_)))
 
             tmpList2=self.putVoidAtEnd(tmpList1, property_)
-            # Déplacer les entrées avec property_ == "-" à la fin
-#            self.relevantList=tmpList2
+            return tmpList2
+        return relevantList
 
     def sortBy(self, property_):
         self.shiftSortingState(property_)
-        self.softSortBy(property_)
+        self.sortByProperty=property_
 
     def columnsWidth(self):
         itemsMergedWithTitle = self.items[:]
@@ -264,12 +263,13 @@ class VisualListOfGames:
             return len(new_relevant_list)-1
 
     def relevantList(self):
-        if self.filter_input in [None, ""]:
-            return self.list
         relevantList=[]
-        for aGame in self.list:
-            aGameObject=aGame[self.hiden_data_column_number()]
-            if re.search(self.filter_input, aGameObject.name, re.IGNORECASE):
-                relevantList.append(aGame)
-        
+        if self.filter_input in [None, ""]:
+            relevantList=self.list
+        else:
+            for aGame in self.list:
+                aGameObject=aGame[self.hiden_data_column_number()]
+                if re.search(self.filter_input, aGameObject.name, re.IGNORECASE):
+                    relevantList.append(aGame)
+        relevantList=self.softSortBy(relevantList)
         return relevantList

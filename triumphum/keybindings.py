@@ -9,17 +9,16 @@ from triumphum.__init__ import *
 from triumphum.global_variables import listOfBindings
 import triumphum.global_variables as global_variables
 from triumphum.misc import getElementHavingParameterWithValue
-from triumphum.debug import * # TODO
 from triumphum.misc import bottomBarCoordinate
 from triumphum.internal_shell_class import whatToDoWithShellInput
 from triumphum.tui import  setBottomBarContent, questionMode
 
 from triumphum.tui_screens import drawGamePlot, filterList
+from triumphum.debug import * # TODO
 
 #
 ## Diverses fonctions utiles à la gestion des racourcis dactyliques
 #
-
 
 # Cas particuliers des mapings où le keycode ne correspond pas au symbole produit.
 KEY_MAPPING = {
@@ -81,6 +80,7 @@ class Binding:
         # Renvoit la ligne de fichier de configuration apropriée
         configEntry=self.configFileName + "=" + transform_character_to_key(self.key)
         return configEntry
+
     def __str__(self):
         return f"{self.code}: {self.key}"
 
@@ -145,12 +145,10 @@ def bindDeleteGameFunction():
     else:
         setBottomBarContent(f"« {currentGame} est conservé. Rien n’est altéré.")
 
-
 def bindShowGameChart():
+    # Affiche le graphique de fréquence de jeu
     currentGame=global_variables.THE_VISUAL_LIST_OF_GAMES.currentGame()
     drawGamePlot(game)
-
-
 
 def bindOpenLinkFunction():
     # Ouvrir le lien associé à l’item ayant le focus
@@ -170,21 +168,19 @@ def bindRefreshScreenFunction():
     global_variables.THE_VISUAL_LIST_OF_GAMES.refresh()
 
 
-
 def enteringExMode(stdscr):
-    stdscr.timeout(-1)
-    # Activer la saisie de texte
+    # Fonction d’entrée dans le mode de commande
 
-    #stdscr.timeout(1000)  # attend max 1000 ms (1 seconde) pour une touche # TODO à déplacer dans le mode ex seulemet
+    stdscr.timeout(-1) # Rend le délai de rafraichissement de la boucle principale infini
+
     h, w = bottomBarCoordinate(stdscr)
     curses.curs_set(1)  # Afficher le curseur
 
-#    curses.init_pair(h-2, curses.COLOR_BLUE, curses.COLOR_BLACK)
     # Position de départ pour la saisie de texte
     stdscr.move(h-1, 0)
 
     # Initialiser une liste pour stocker les caractères saisis
-    input_text = ""
+    full_input_text = ""
 
     stdscr.addch(":")  # Afficher le caractère saisi à l'écran
     while True:
@@ -198,7 +194,7 @@ def enteringExMode(stdscr):
             y, x = stdscr.getyx()
 
             if x > 1:
-                input_text=input_text[:-1]
+                full_input_text=full_input_text[:-1]
                 stdscr.move(y, x - 1)  # Déplace le curseur à la position juste avant
                 stdscr.delch()         # Supprime le caractère à cette position
 
@@ -208,21 +204,28 @@ def enteringExMode(stdscr):
 
         elif ch in [curses.KEY_ENTER, 10]:  # Si Entrée est pressé (curses.KEY_ENTER vaut 10)
 
-            whatToDoWithShellInput(input_text)
+            whatToDoWithShellInput(full_input_text)
             break  # Sortir de la boucle de saisie
 
         else:
             # Ajouter le caractère à la chaîne de texte
-            input_text += chr(ch)
+            full_input_text += chr(ch)
             stdscr.addch(ch)  # Afficher le caractère saisi à l'écran
             stdscr.refresh()
 
     curses.curs_set(0)  # Masquer le curseur
 
+########################################################################
+# Fonctions intermédiaires
+# Utile pour l’initialisation du binding qui n’accepte que le nom d’une fonction sans paramettre.
+########################################################################
+
 def enteringExModeByBinding():
+    # Fonction intermédiaire d’entrée dans le mode ex
     enteringExMode(global_variables.STDSCR)
 
 def enteringFilterModeByBinding():
+    # Fonction intermédiaire d’entrée dans le mode de filtre
     if not global_variables.THE_VISUAL_LIST_OF_GAMES.filter_mode:
         global_variables.THE_VISUAL_LIST_OF_GAMES.filter_mode=True
 

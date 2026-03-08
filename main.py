@@ -18,7 +18,6 @@ def main():
 	setInternalShellCommands()
 	declareBindings()
 
-
 	# /!\ Il est imporatnt que prepareConfigFiles() soit éxecutée après les déclarations de bindings car elle en a besoin pour générer les bindings par défaut.
 	prepareConfigFiles()
 	verifyConfigFileExistence()
