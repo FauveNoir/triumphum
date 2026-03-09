@@ -15,14 +15,6 @@ from triumphum.tui_functions import run_command_and_write_on_history
 
 from triumphum.debug import * # TODO
 
-class VisuaColumn:
-    # EXPERIMENTAL
-    def __init__(self, label=None, property_=None):
-        self.label=label
-        self.property=property_
-
-        listOfPossibleColumns.append(self)
-
 def getColWidths():
     itemsMergedWithTitle = global_variables.items[:]
     itemsMergedWithTitle.append(titles)
@@ -33,47 +25,52 @@ def getColWidths():
 ########################################################################
 # Classe de la liste visuelle
 ########################################################################
+
 class ListMove:
+    # Classe des mouvements au sein d’une liste. C’est à dire HAUT et BAS
     def __init__(self, label=None, code=None):
         self.label=label
         self.code=code
-        globals()[self.code] = self # Le seul objet de cette classe est TheVisualListOfGames
+        globals()[self.code] = self # les objets déffinits deviennent des variables globales identifiées par self.code
 
-
+# Les deux mouvements de classe ListMove
 ListMove(label="Go up", code="goUp")
 ListMove(label="Go down", code="goDown")
+
+########################################################################
+# Classe de la liste ligne de liste visuelle
+########################################################################
+
+class VisualRow:
+    # Classe de liste visuelle Ncurses
+    def __init__(self, game):
+        self.data=game
+        self.formated_data=game.ncurseLine()
+
+
 ########################################################################
 # Classe de la liste visuelle
 ########################################################################
 
-class Sort:
-    # EXPERIMENTAL
-    def __init__(self, label=None, code=None, command=None):
-        self.label = label
-        self.code = code
-        self.command = command
-
-        listOflistSorting.append(self) # Adjonction à la liste des jeux
-
-
 SORTING_ORDER=[True, False]
 
-
 def getNextSortingOrder(currentSortingOrder):
+    # Les types de tri sont circulaires, entre Croissant, décroissant, et pas-de-tri.
+    # Aussi cette fonction permet d’obtenir le type de tri suivant dans l’ordre de succèssion, selon le type actuellement en vigeur
     global SORTING_ORDER
     currentIndex=SORTING_ORDER.index(currentSortingOrder)
     tmpNextIndex=currentIndex+1
     realNextIndex=tmpNextIndex % len(SORTING_ORDER)
     nextSortingOrder=SORTING_ORDER[realNextIndex]
-    
+
     return nextSortingOrder
 
 class VisualListOfGames:
+    # Classe de liste visuelle Ncurses
     def __init__(self):
         self.columns=None
         self.titles = [" ", "Titre", "Licence", "Genre", "Date", "Dernière ouverture", "Temps cumulé", "Auteur", "Studio"]
         self.list=None
-        #self.relevantList=None
         self.filter_input=""
         self.filter_mode=False
         self.patern=None
@@ -87,12 +84,14 @@ class VisualListOfGames:
         global_variables.THE_VISUAL_LIST_OF_GAMES = self # Le seul objet de cette classe est TheVisualListOfGames
 
     def isTheListEmpty(self):
+        # Renvoies True ou False, selon que la liste soit pleine ou vide
         if self.relevantList() in [None, []]:
             return True
         return False
 
     def getNthNLines(self, lineRank, numberOfLines):
         # Retourne une portion de la liste commençan par lineRank et contenant numberOfLines lignes
+        # Cette fonction est utile pour la pagination
         subList = self.relevantList()[lineRank:lineRank+numberOfLines]
         return subList
 
@@ -102,6 +101,7 @@ class VisualListOfGames:
         return visualHighlightedLineNumber
 
     def getCurrentVisibleList(self, screenHeight):
+        # Retourne la partie visible de la liste d’après la hauteur disponible de l’écran
         if self.lastMove == goDown:
             if self.selected_row > self.firstRowOnVisibleList + screenHeight-4-3 :
                 self.firstRowOnVisibleList+=1
@@ -110,78 +110,77 @@ class VisualListOfGames:
             if self.selected_row == self.firstRowOnVisibleList +1 and self.selected_row > 1 :
                 self.firstRowOnVisibleList-=1
 
-
         visibleList=self.getNthNLines(self.firstRowOnVisibleList, screenHeight-4) # TODO remplacer le 2 par une variable
-
 
         return visibleList
 
     def goDown(self):
+        # Déplace le focus d’une ligne vers le bas
         self.selected_row = min(len(self.relevantList()) - 1, self.selected_row + 1)
         self.lastMove=goDown
 
     def goUp(self):
+        # Déplace le focus d’une ligne vers le haut
         self.selected_row = max(0, self.selected_row - 1)
         self.lastMove=goUp
 
     def openCurrent(self):
         # Exécuter la commande de lancement du jeu associée à la ligne sélectionnée
-        global HIDED_DATA_COLUMN
-        setBottomBarContent(f"Ouverture de « {self.relevantList()[self.selected_row][HIDED_DATA_COLUMN].name} ».")
-        game = self.relevantList()[self.selected_row][HIDED_DATA_COLUMN]
-        threading.Thread(target=run_command_and_write_on_history, args=(game,)).start()
+        setBottomBarContent(f"Ouverture de « {self.currentGame().name} ».")
+        threading.Thread(target=run_command_and_write_on_history, args=(self.currentGame(),)).start()
 
     def currentGame(self):
-        # TODO factorisé un peu partout.
-        game = self.relevantList()[self.selected_row][HIDED_DATA_COLUMN]
+        # objet Game ayant le focus
+        game = self.relevantList()[self.selected_row].data
         return game
 
     def deleteCurrent(self):
-        # Exécuter la commande de lancement du jeu associée à la ligne sélectionnée
-        global HIDED_DATA_COLUMN
-        setBottomBarContent(f"Supression du jeu « {self.relevantList()[self.selected_row][HIDED_DATA_COLUMN].name} ».")
-        game = self.relevantList()[self.selected_row][HIDED_DATA_COLUMN]
+        # Supprimer le jeu ayant le focus de la base de donnée
+        setBottomBarContent(f"Supression du jeu « {self.openCurrent().name} ».")
+        game = self.currentGame()
         if self.selected_row == len(self.relevantList())-1:
+            # Après avoir supprimé le jeu, postioner le focus sur le jeu ayant prit sa place dans l’ordre 
             self.goUp()
-            game = self.relevantList()[self.selected_row+1][HIDED_DATA_COLUMN]
+            game = self.relevantList()[self.selected_row+1].data
         game.delete()
         self.relevantList()[self.selected_row]
         self.refresh()
 
     def copyLinkToClipBoard(self):
-        url = self.relevantList()[self.selected_row][self.hiden_data_column_number()].url
+        # Copier le lien du jeu dans le presse papier
+        url = self.relevantList()[self.selected_row].data.url
         if url != None:
-            setBottomBarContent(f"Copie de « {self.relevantList()[self.selected_row][HIDED_DATA_COLUMN].url} » dans le presse-papier.")
+            setBottomBarContent(f"Copie de « {self.currentGame().url} » dans le presse-papier.")
             pyperclip.copy(url)
         else:
-            setBottomBarContent(f"Aucun lien associé à « {self.relevantList()[self.selected_row][HIDED_DATA_COLUMN].name} », rien à copier.")
+            setBottomBarContent(f"Aucun lien associé à « {self.currentGame().name} », rien à copier.")
 
     def openLink(self):
-        global HIDED_DATA_COLUMN
-        url = self.relevantList()[self.selected_row][HIDED_DATA_COLUMN].url  # Supposons que l'URL est stockée à l'indice 5
+        # Ouvrir l’URL du jeu dans le navigateur par défaut
+        url = self.currentGame().url  # Supposons que l'URL est stockée à l'indice 5
         if url != None:
-            setBottomBarContent(f"Ouverture de « {self.relevantList()[self.selected_row][HIDED_DATA_COLUMN].url} »")
+            setBottomBarContent(f"Ouverture de « {url} »")
             self.refresh()
             threading.Thread(target=webbrowser.open, args=(url,)).start()
         else:
-            setBottomBarContent(f"Pas de lien associé à « {self.relevantList()[self.selected_row][HIDED_DATA_COLUMN].name} »")
-
-    def hiden_data_column_number(self):
-        return len(self.list[0])-1
+            setBottomBarContent(f"Pas de lien associé à « {self.currentGame().name} »")
 
     def refresh(self):
+        # Rafraichir la liste, notament en ré-interogant la base de donnée
         retrive_datas()
         global_variables.listOfGames
 
         self.list=[]
-        for aGame in global_variables.listOfGames:
-            self.list.append(global_variables.listOfGames[aGame].ncurseLine())
+        for aGame in global_variables.listOfGames.values():
+            self.list.append(VisualRow(aGame))
 
     def shiftSortingState(self, property_):
+        # Basculer le type d’ordre de tri vers le suivant dans la liste
         if ( property_ == self.sortByProperty) :
             self.sortingState=getNextSortingOrder(self.sortingState)
 
     def isAtributeShouldBeSorted(self, attribute):
+        # Tester si l’attribut doit être inclus dans l’ordre de tri, ou relégé vers le bas
         if attribute in ["-", None]:
             return False
         if hasattr(attribute, "includeInSorting"):
@@ -191,69 +190,76 @@ class VisualListOfGames:
         return True
 
     def putVoidAtEnd(self, oldList, property_):
-        beginingOfNewList=[]
-        endOfNewList=[]
+        # Relegué vers le bas les jeux dont l’attribut selon lequel il faut trier est vide
+        beginingOfNewList=[] # Éléments qui seront en haut
+        endOfNewList=[] # Éléments qui seront en bas
         for item in oldList:
-            if self.isAtributeShouldBeSorted(getattr(item[self.hiden_data_column_number()], property_)) :
+            if self.isAtributeShouldBeSorted(getattr(item.data, property_)) :
                 beginingOfNewList.append(item)
             else:
                 endOfNewList.append(item)
-        newList= beginingOfNewList + endOfNewList
+        newList= beginingOfNewList + endOfNewList # fusion des deux listes
         return newList
 
     def softSortBy(self, relevantList):
         property_=self.sortByProperty
         if property_:
-            tmpList0=relevantList
-            tmpList1 = sorted(tmpList0, 
-                             reverse=self.sortingState, 
-                             key=lambda x: (getattr(x[self.hiden_data_column_number()], property_) is None, 
-                                            getattr(x[self.hiden_data_column_number()], property_)))
+            # Procéder au tri si une option de tri est déffinie
+            relevantList = sorted(relevantList, 
+                             reverse=self.sortingState, # Inverser l’ordre de tri si besoin
+                             key=lambda x: (getattr(x.data, property_) is None, 
+                                            getattr(x.data, property_)))
 
-            tmpList2=self.putVoidAtEnd(tmpList1, property_)
-            return tmpList2
-        return relevantList
+            # Relégué les jeux dont la propriété a triée est vide vers le bas
+            relevantList=self.putVoidAtEnd(relevantList, property_) 
+        return relevantList # retourner directement la liste donnée en entrée s’il n’y a rien à trier
 
     def sortBy(self, property_):
+        # Déffinir la propriété selon laquelle trier et le sens de tri (croissant ou décroissant)
+        # MAIS ne trie pas à proprement parler
         self.shiftSortingState(property_)
         self.sortByProperty=property_
 
     def columnsWidth(self):
-        itemsMergedWithTitle = self.items[:]
-        itemsMergedWithTitle.append(self.titles)
+        # Définir la largeur des colones d’après leur contenu le plus large
+        itemsMergedWithTitle = self.items[:] # Inclure les titres de colones
+        itemsMergedWithTitle.append(self.titles) # Inclure le corps du tableau
         col_widths = [max(len(str(column)) for column in col) for col in zip(*itemsMergedWithTitle)]
 
         return col_widths
 
     def allHistoryEntries(self):
-        global HIDED_DATA_COLUMN
+        # Ensemble de l’historique de tous les jeux confondus
+        # En vue d’établir des statistiques globales de jeu
 
         allHistoryEntriesList=History()
         for aGameRow in self.list:
-            allHistoryEntriesList.history.extend(aGameRow[HIDED_DATA_COLUMN].history.history)
+            allHistoryEntriesList.history.extend(aGameRow.data.history.history)
 
         return allHistoryEntriesList
 
     def set_filter(self, filter_text):
+        # Activer le filtre de recherche
         old_relevant_list=self.relevantList()
         self.filter_input=filter_text
         self.selected_row=self.get_new_selected_row(old_relevant_list)
 
     def unactivate_filter(self):
+        # Désactiver le filtre de recherche
         self.filter_input=""
         self.filter_mode=False
 
 
     def get_new_selected_row(self, old_relevant_list):
-        global HIDED_DATA_COLUMN
+        # Définir la nouvelle ligne ayant le focus après un filtre
         new_relevant_list=self.relevantList()
         old_postion=self.selected_row
-        old_code=old_relevant_list[self.selected_row][HIDED_DATA_COLUMN].code
+        old_code=old_relevant_list[self.selected_row].data.code
 
-        if any(row[-1].code == old_code for row in new_relevant_list):
+        if any(row.data.code == old_code for row in new_relevant_list):
         # Si l’élement existe encore dans la liste filtrée, retourner sa position
             for index, aRow in enumerate(new_relevant_list):
-                if aRow[-1].code == old_code:
+                if aRow.data.code == old_code:
                     return index
         elif len(new_relevant_list) > old_postion:
         # si l’élement n’existe plus, retourner sa position (à condition que la liste soit suffisement longue)
@@ -263,12 +269,15 @@ class VisualListOfGames:
             return len(new_relevant_list)-1
 
     def relevantList(self):
+        # Retourne la liste pertinante des jeux, en prenant en compte un filtre de recherche éventuel
         relevantList=[]
         if self.filter_input in [None, ""]:
+            # Si aucun filtre n’est actif, retourner toute la liste
             relevantList=self.list
         else:
+            # Si un filtre existe, alors retourner les jeux qui y correspondent
             for aGame in self.list:
-                aGameObject=aGame[self.hiden_data_column_number()]
+                aGameObject=aGame.data
                 if re.search(self.filter_input, aGameObject.name, re.IGNORECASE):
                     relevantList.append(aGame)
         relevantList=self.softSortBy(relevantList)

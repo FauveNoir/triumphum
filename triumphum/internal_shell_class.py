@@ -114,7 +114,7 @@ def whatToDoWithShellInput(shellInput):
 addNewGamepatern='(a|add|addgame)\s+.*'
 
 def internalShelldrawAboutScreen(shellInput):
-    # Fonction d’affichage de l’écran à propos
+    # Fonction intermédiaire d’affichage de l’écran à propos
     drawAboutScreen()
 
 def internalShellbindMakeDonationFunction(shellInput):

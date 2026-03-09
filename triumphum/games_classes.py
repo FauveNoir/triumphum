@@ -183,7 +183,6 @@ class Game:
             prepareNcurseRow(value=self.human_cumulate_time(), altValue=symbols.CUMULATEDTIME_VOID_SYMBOL.value, color=set_color_according_to_cumulate_time(self.cumulate_time())),
             prepareNcurseRow(value=self.listOfAuthors(), altValue=symbols.AUTHOR_VOID_SYMBOL.value),
             prepareNcurseRow(value=self.listOfStudios(), altValue=symbols.STUDIO_VOID_SYMBOL.value),
-            self
         ]
         return ncurseLine
 

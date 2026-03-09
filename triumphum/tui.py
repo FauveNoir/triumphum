@@ -208,18 +208,18 @@ def drawListOfGames(stdscr):
 
         # Affichage des données de la liste
         for row_number, item in enumerate(global_variables.THE_VISUAL_LIST_OF_GAMES.getCurrentVisibleList(screenHeight)):
-            for column_number, column in enumerate(item):
-                if column_number < HIDED_DATA_COLUMN:  # Masquer la colonne "commande"
-                    stdscr.addstr(row_number + 2,
-                                  sum(col_widths[:column_number]) + column_number * 2,
-                                  column[0],
-                                  curses.color_pair(column[1]))
+            for column_number, column in enumerate(item.formated_data):
+                #writeInTmp(column)
+                stdscr.addstr(row_number + 2,
+                              sum(col_widths[:column_number]) + column_number * 2,
+                              column[0],
+                              curses.color_pair(column[1]))
 
         stdscr.addstr(global_variables.THE_VISUAL_LIST_OF_GAMES.visualHighlightedLineNumber(screenHeight) + 2, 0, " " * curses.COLS, curses.color_pair(2))  # Effacer toute la ligne avec la couleur de fond
 
         # Affichage des données de la liste avec surbrillance pour la ligne sélectionnée
         # Cas particulier de la ligne ayant le focus
-        for column_number, column in enumerate(global_variables.THE_VISUAL_LIST_OF_GAMES.relevantList()[global_variables.THE_VISUAL_LIST_OF_GAMES.selected_row][:HIDED_DATA_COLUMN]):  # Afficher seulement les 4 premières colonnes
+        for column_number, column in enumerate(global_variables.THE_VISUAL_LIST_OF_GAMES.relevantList()[global_variables.THE_VISUAL_LIST_OF_GAMES.selected_row].formated_data):  # Afficher seulement les 4 premières colonnes
             stdscr.addstr(global_variables.THE_VISUAL_LIST_OF_GAMES.visualHighlightedLineNumber(screenHeight) + 2,
                           sum(col_widths[:column_number]) + column_number * 2,
                           str(column[0]),
