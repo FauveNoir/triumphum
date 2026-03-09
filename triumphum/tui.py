@@ -209,7 +209,6 @@ def drawListOfGames(stdscr):
         # Affichage des données de la liste
         for row_number, item in enumerate(global_variables.THE_VISUAL_LIST_OF_GAMES.getCurrentVisibleList(screenHeight)):
             for column_number, column in enumerate(item.formated_data):
-                #writeInTmp(column)
                 stdscr.addstr(row_number + 2,
                               sum(col_widths[:column_number]) + column_number * 2,
                               column[0],
@@ -232,15 +231,18 @@ def questionMode(question):
     global_variables.STDSCR.refresh()
     from triumphum.keybindings import transformKeyToCharacter
     while True:
-        key = transformKeyToCharacter(global_variables.STDSCR.get_wch())
-        if key in ['y', 'yes']:
-            return True
-        elif key in ['n', 'no']:
-            return False
-        else:
-            setBottomBarContent("Veuillez répondre par 'Y' ou 'n'.")
-            draw_bottom_bar(global_variables.STDSCR)
-            global_variables.STDSCR.refresh()
+        try:
+            key = transformKeyToCharacter(global_variables.STDSCR.get_wch())
+            if key in ['y', 'yes']:
+                return True
+            elif key in ['n', 'no']:
+                return False
+            else:
+                setBottomBarContent("Veuillez répondre par 'Y' ou 'n'.")
+                draw_bottom_bar(global_variables.STDSCR)
+                global_variables.STDSCR.refresh()
+        except:
+            pass
 
 ########################################################################
 # Main
