@@ -13,7 +13,6 @@ from triumphum.cli_functions import *
 from triumphum.config_file import  applyFileConfigurationsBindings, applyFileConfigurationsGraphicalSymbols
 from triumphum.descriptors import addNewGameAfterInterativeDescriptor, addNewGenreAfterInterativeDescriptor, addNewLicenceAfterInterativeDescriptor, addNewPlatformAfterInterativeDescriptor
 from triumphum.autocomplection import listOfAllGamesCodePerLine, listOfAllLicencesCodePerLine, listOfAllGenresCodePerLine, listOfAllPlatformsCodePerLine
-from triumphum.cli_list import printGamesTable, printLicencesTable, printPlatformsTable, printGenresTable
 from triumphum.db_edition import deleteGameFromDatabase, deleteLicenceFromDatabase, deleteGenreFromDatabase, deletePlatformFromDatabase
 from triumphum.tui import runTui
 from triumphum.tui_functions import run_command_and_write_on_history

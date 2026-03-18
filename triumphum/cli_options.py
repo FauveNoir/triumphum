@@ -72,10 +72,15 @@ autocompletionFunctionsGroup.add_argument("--ap", action="store_true",  dest="au
 ########################################################################
 # Éléments à exporter
 ########################################################################
-# Execution du pareur
+# Execution du paseur
 args = parser.parse_args()
 
+########################################################################
+# Ajustements d’options dépendant d’autres options
+########################################################################
+
 if args.newGameDescriptor == None:
+    # Vérifier que l’option --(no-)create-launcher est bien appelée avec --new-game
     if args.shouldCreateTheLauncher == True:
         print("L’argument --create-launcher ne peut être appellé sans --new-game")
         sys.exit()
@@ -83,6 +88,7 @@ if args.newGameDescriptor == None:
         print("L’argument --no-create-launcher ne peut être appellé sans --new-game")
         sys.exit()
 else:
+    # Dans le cas où --new-game est bien appelé et que --no-create-launcher n’a pas été appellé par défaut, alors rendre shouldCreateTheLauncher positif
     if args.shouldCreateTheLauncher == None:
         args.shouldCreateTheLauncher = True
 
