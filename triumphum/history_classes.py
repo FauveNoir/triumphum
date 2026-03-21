@@ -89,18 +89,8 @@ class History:
         # Trie l’historique de sorte à ce que les entrées se retrouvent dans l’ordre chronologique
         self.history.sort(reverse=True)
 
-#    def newer(self):
-#        if len(self.history) > 0:
-#            return self.history[0]
-#        return None
-#
-#    def last_date(self):
-#        # Retourne la dateHeure de fermeture de la dernière partie jouée
-#        if self.newer() != None:
-#            return self.newer().end_time
-#        return None
-
     def last_date(self):
+        # Retourne la date de dernière ouverture
         if len(self.history) > 0:
             return self.history[0].end_time
         return None
@@ -112,17 +102,12 @@ class History:
 
         durations_by_date = defaultdict(timedelta)
 
-        writeInTmp(self.history[0].date())
         for anEntry in self.history:
-            writeInTmp(anEntry.date())
             durations_by_date[anEntry.date()] += parse_str_duration_to_time_delta(anEntry.duration)
 
         result = []
         for date in sorted(durations_by_date.keys()):
             total = durations_by_date[date]
-            writeInTmp("---")
-            writeInTmp(date)
-            writeInTmp(total)
             result.append(HistoryEntry(start_time=date, end_time=date, duration=total))
 
         return result
