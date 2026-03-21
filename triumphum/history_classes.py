@@ -28,9 +28,11 @@ class HistoryEntry:
         self.duration=duration or dictionnary["duration"]
 
     def date(self):
+        # Retourne la date seule, sans le temps
         return self.start_time.split("T")[0]
 
     def make_data(self):
+        # retourne les valeures sous forme de structure de données.
         data = {
             "start_time": self.start_time.strftime("%Y-%m-%dT%H:%M:%S"),
             "end_time": self.end_time.strftime("%Y-%m-%dT%H:%M:%S"),
@@ -73,27 +75,34 @@ class HistoryEntry:
 
 ########################################################################
 
-# Classe d’historique d’un jeu donné
 class History:
+    # Classe d’historique d’ensemble d’un jeu donné
     def __init__(self):
-        self.history = []
+        self.history = [] # Attends d’être allimentée d’une suite de valeures de type HistoryEntry
 
     def append(self, historyEntry):
+        # Ajoute une entrée HistoryEntry à l’historique
         self.history.append(historyEntry)
         self.sort()
 
     def sort(self):
+        # Trie l’historique de sorte à ce que les entrées se retrouvent dans l’ordre chronologique
         self.history.sort(reverse=True)
 
-    def newer(self):
-        if len(self.history) > 0:
-            return self.history[0]
-        return None
+#    def newer(self):
+#        if len(self.history) > 0:
+#            return self.history[0]
+#        return None
+#
+#    def last_date(self):
+#        # Retourne la dateHeure de fermeture de la dernière partie jouée
+#        if self.newer() != None:
+#            return self.newer().end_time
+#        return None
 
     def last_date(self):
-        # Retourne la dateHeure de fermeture de la dernière partie jouée
-        if self.newer() != None:
-            return self.newer().end_time
+        if len(self.history) > 0:
+            return self.history[0].end_time
         return None
 
     def reducedToDay(self):
