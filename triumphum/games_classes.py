@@ -283,12 +283,13 @@ class Game:
         deleteGameFromDatabase(self.code)
 
     def create_launcher(self):
-        directory = Path("~/.local/bin").expanduser()
-        file_name=self.code
+        # Création du lanceur du jeu avec traqeur de startistiques de Triumphum
+        directory=Path("~/.local/bin").expanduser() # Déffinition du répertoire où sera créé le lanceur
+        file_name=self.code # Déffinition du nom du fichier d’après le code du jeu
         Path(directory) \
-            .mkdir(parents=True, exist_ok=True)
-        content=full_script_content(self)
-        file_path = os.path.join(directory, file_name)
+            .mkdir(parents=True, exist_ok=True) # Création du répertoire au cas où il n’existerait pas déjà
+        content=full_script_content(self) # Récupération du contenu du  scirpt
+        file_path=os.path.join(directory, file_name) # Déclaration du lien complet du scirpt
         try:
             # Création
             isFileCreated=yesNoCreateFile(file_path=file_path, content=content)
