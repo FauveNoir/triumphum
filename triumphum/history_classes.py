@@ -25,6 +25,8 @@ class HistoryEntry:
     def __init__(self, start_time=None, end_time=None, duration=None, dictionnary=None):
         self.start_time=start_time or dictionnary["start_time"]
         self.end_time=end_time or dictionnary["end_time"]
+
+        # /!\ Attention, la valeur de `self.duration` n’est pas calculée automatiquement lors de l’initialisation m’est est explicitement indiquée par la clé duration.
         self.duration=duration or dictionnary["duration"]
 
     def date(self):
@@ -96,12 +98,13 @@ class History:
         return None
 
     def reducedToDay(self):
-    # Retourne un historique avec le temps cumulé par jour
+        # Retourne un historique avec le temps cumulé par jour
         if self.history == []:
             return self.history
 
         durations_by_date = defaultdict(timedelta)
 
+        # Premier établissemnt d’une liste de durées timedelta simples
         for anEntry in self.history:
             durations_by_date[anEntry.date()] += parse_str_duration_to_time_delta(anEntry.duration)
 
@@ -113,10 +116,10 @@ class History:
         return result
 
     def fill_missing_dates(self, data: dict[str, float]) -> dict[str, float]:
+        # Comble les dates vides d’un historique en y attribuant des temps de jeux égaux à 0
         # convertir les clés en datetime
-        #print(data)
         dates = [datetime.strptime(d, "%Y-%m-%d") for d in data.keys()]
-        
+
         start = min(dates)
         end = max(dates)
 
@@ -144,6 +147,7 @@ class History:
         return flatHistory
 
     def flat_for_gnuplot(self):
+        # Formate l’historique en vue d’allimenter la commande GNUplot
         gnuplot_ready_str=""
         flaten=self.flat()
         for anEntry in flaten:
@@ -185,7 +189,7 @@ class History:
         return total_time
 
     def historyEntriesFromNDays(self, numberOfDays):
-        # Retourne un sous-ensemble de l’historique commençant depuis n jours
+        # Retourne un sous-ensemble de l’historique complet commençant depuis n jours
         today = date.today()
         durationAgo = today - timedelta(days=numberOfDays)
         durationEntries = History()
@@ -196,6 +200,7 @@ class History:
         return durationEntries
 
     def cumulatedPlayingTimeFromNDays(self, numberOfDays):
+        # Retourne le temps de jeu total, tous jeux confondus, depuis le nombre de jour indiqué par `numberOfDays`.
         cumulatedTime=self.historyEntriesFromNDays(numberOfDays)
         return cumulatedTime.cumulate_time()
 
@@ -221,13 +226,14 @@ def is_history_duration_relevant(date):
     return False
 
 def is_history_entry_relevant(history_entry):
-    
+    # Teste si les dates et durées sont dans un format valide c’est à dire 
     if "start_time" in history_entry and "end_time" in history_entry and "duration" in history_entry :
         if is_history_date_relevant(history_entry["start_time"]) and is_history_date_relevant(history_entry["end_time"]) and is_history_duration_relevant(history_entry["duration"]):
             return True
     return False
 
 def retrive_history_of_a_game(game):
+    # Récupérer l’historique du jeu d’après le fichier d’historique
     prepared_history = History()
     with open(config_file.HISTORY_FILE.fullPath()) as f:
         data = json.load(f)
