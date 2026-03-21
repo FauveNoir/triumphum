@@ -6,23 +6,22 @@ import subprocess
 from datetime import date, datetime, timedelta
 from collections import defaultdict
 import re
-#from triumphum.global_variables import *
 import triumphum.global_variables as global_variables
 import triumphum.config_file as config_file
 from triumphum.symbols import *
 from triumphum.debug import * # TODO
 
-def parse_str_duration_to_time_delta(s: str) -> timedelta:
-    # Transformer les expressions littérales en timedelta
-    h, m, s = s.split(":")
+def parse_str_duration_to_time_delta(str_duration: str) -> timedelta:
+    # Transformer les expressions littérales de temps en timedelta
+    h, m, s = str_duration.split(":")
     return timedelta(
         hours=int(h),
         minutes=int(m),
         seconds=float(s)
     )
 
-# Classe d’une entrée particulière d’un historique
 class HistoryEntry:
+    # Classe d’une entrée particulière d’un historique
     def __init__(self, start_time=None, end_time=None, duration=None, dictionnary=None):
         self.start_time=start_time or dictionnary["start_time"]
         self.end_time=end_time or dictionnary["end_time"]
