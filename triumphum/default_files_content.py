@@ -130,7 +130,7 @@ defaultLicencesContent="""{
 		},
 		{
 			"name": "Droits d’auteur",
-			"abbr": "C",
+			"abbr": "©",
 			"code": "c",
 			"shortText": "Le droit d’auteur est un ensemble de droits exclusifs accordés par la loi aux auteurs ou à leurs ayants droit pour l’exploitation de leurs œuvres originales.",
 			"freedomCoefficient": 0

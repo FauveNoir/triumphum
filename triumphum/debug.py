@@ -1,6 +1,10 @@
 ########################################################################
 # fonctions de test
 ########################################################################
+# Ce paquet contient des fonctions utiles au test et débeugage.
+# Il n’est pas sensé être maintenu dans les versions finales, même s’il est bénin
+########################################################################
+
 from datetime import  datetime
 import inspect
 

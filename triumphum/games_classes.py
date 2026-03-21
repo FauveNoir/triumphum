@@ -1,6 +1,7 @@
 ########################################################################
 # Classe des jeux
 ########################################################################
+
 import sys
 import humanize
 from datetime import date, datetime, timedelta
@@ -32,10 +33,13 @@ from triumphum.debug import * # TODO
 ########################################################################
 
 
-file_path = Path("mon_fichier.txt")
-content = "Contenu du fichier"
+file_path = Path("mon_fichier.txt") # \__ TODO à quoi servent ces deux variables ?
+content = "Contenu du fichier"      # /
 
 def yesNoCreateFile(file_path=None, content=None):
+    # Dialogue de la ligne de commande posant une question fermée sur la création de fichier
+    # file_path : chemin vers le fichier à créer
+    # content : contenu à mettre dans le fichier
     file_path=Path(file_path)
     if file_path.exists():
         answer = input(f"Le fichier « {file_path} » existe déjà. Écraser ? [o/N] ").strip().lower()
@@ -52,6 +56,8 @@ def yesNoCreateFile(file_path=None, content=None):
         return True
 
 def commentText(theGame):
+    # Retourne le texte d’entête contenu dans le script de lanceur de jeu
+    # theGame : variable de type Game du jeu dont il s’agira d’écrire le lanceur
     return f"""#!/bin/sh
 # Ce script a été généré automatiquement par {APP_FANCY_NAME} {APP_VERSION} le {datetime.now()}.
 # Le présent lanceur d’application permet d’executer le jeu {theGame.name} avec le traqueur de pérformance de {APP_FANCY_NAME}.
@@ -59,11 +65,12 @@ def commentText(theGame):
 """
 
 def prepare_script_command(theGame):
+    # Retourne la partie du script correspondant à la commande à proprement parler (et non au script d’entête)
+    # theGame : variable de type Game du jeu dont il s’agira d’écrire le lanceur
     entry_point = " ".join(
         [shlex.quote(sys.executable)] +
         [shlex.quote(sys.argv[0])]
     )
-    #entry_point = Path(sys.argv[0]).resolve()
     entry_point=APP_CODE_NAME
     run_option=run_command.option_strings[0]
     launcher_command= " ".join([str(entry_point), run_option, theGame.code])
@@ -71,15 +78,21 @@ def prepare_script_command(theGame):
 
 
 def full_script_content(theGame):
+    # Retourne l’ensemble du contenu du script
+    # theGame : variable de type Game du jeu dont il s’agira d’écrire le lanceur
     script_content=commentText(theGame)
     script_content+=prepare_script_command(theGame)
     return script_content
 
 ########################################################################
-# Autre (à commenter)
+# Effets visuels d’NCurses
 ########################################################################
 
 def formatDataListToLitteralList(list_, voidSymbol):
+    # Formate les listes (notament d’auteurs et de studios) selon la bonne typographie.
+    # C’est à dire en plaçant des virgules et un « et » préposal aux bons endroits.
+
+    # prétraitement du nombre d’éléments de la liste, avec la prise en compte du cas où la liste est vide, ou où elle correspond juste à None, ou autre chose qu’une liste
     try:
         n = len(list_)
     except:
@@ -97,9 +110,12 @@ def formatDataListToLitteralList(list_, voidSymbol):
 
 
 def floor_to_base(n, base=10):
+    # Arondi à l’année d’entrée de décénie
+    # Par exemple 1984→1980, 1992→1990, 2020→2020
     return (n // base) * base
 
 def colorForTheYear(year):
+    # Établissement de la couleur de décénie selon l’année donnée en entrée
     if not isinstance(year, int):
         return 1
     decade=str(year)[-2:]
@@ -108,12 +124,14 @@ def colorForTheYear(year):
     decadeColor=YEAR_COLOR[decade]
     return decadeColor
 
-def prepareNcurseRow(value=None, altValue=None, color=1):
+def prepare_NCurses_cell(value=None, altValue=None, color=1):
+    # Préparation de la cellule NCURSES
     if value != None:
         return (str(value), color)
     return (str(altValue), 1)
 
 def set_color_according_to_last_opening_duration(delta):
+    # Établissement de la couleur selon la dernière date d’ouverture
     if delta == None:
         return 1
     if delta < timedelta(minutes=1):
@@ -132,6 +150,7 @@ def set_color_according_to_last_opening_duration(delta):
         return PASSED_TIME_COLOR["y"]
 
 def set_color_according_to_cumulate_time(delta):
+    # Établissement de la couleur selon le temps cumulé de jeu
     if delta == None:
         return 1
     if delta < timedelta(minutes=1):
@@ -163,9 +182,9 @@ class Game:
         self.command = command
         self.comments = comments
         self.platform = platform
-        self.history = self.get_history()
-        self.latest_opening_date_value = self.latest_opening_date()
-        self.playing_duration = self.cumulate_time()
+        self.history = self.get_history()                            #
+        self.latest_opening_date_value = self.latest_opening_date()  # TODO à voir s’il ne faudra pas supprimer ses attributs,
+        self.playing_duration = self.cumulate_time()                 # et utiliser à la place les méthodes diréctement, partout où y est fait appel
 
         listOfGames[self.code]=self # Adjonction à la liste des jeux
 
@@ -174,15 +193,15 @@ class Game:
 
         # Vérifier chaque clé pour une éventuelle valeur vide et remplacer par "-"
         ncurseLine = [
-            prepareNcurseRow(value=self.platform.abbr, altValue=symbols.PLATFORM_VOID_SYMBOL.value),
-            prepareNcurseRow(value=self.name, altValue=symbols.NAME_VOID_SYMBOL.value),
-            prepareNcurseRow(value=self.licence.abbr, altValue=symbols.LICENCE_VOID_SYMBOL.value),
-            prepareNcurseRow(value=self.genre.abbr, altValue=symbols.GENRE_VOID_SYMBOL.value),
-            prepareNcurseRow(value=self.year, altValue=symbols.DATE_VOID_SYMBOL.value, color=colorForTheYear(self.year)),
-            prepareNcurseRow(value=self.human_latest_opening_duration(), altValue=symbols.LASTOPENING_VOID_SYMBOL.value, color=set_color_according_to_last_opening_duration(self.latest_opening_duration())),
-            prepareNcurseRow(value=self.human_cumulate_time(), altValue=symbols.CUMULATEDTIME_VOID_SYMBOL.value, color=set_color_according_to_cumulate_time(self.cumulate_time())),
-            prepareNcurseRow(value=self.listOfAuthors(), altValue=symbols.AUTHOR_VOID_SYMBOL.value),
-            prepareNcurseRow(value=self.listOfStudios(), altValue=symbols.STUDIO_VOID_SYMBOL.value),
+            prepare_NCurses_cell(value=self.platform.abbr, altValue=symbols.PLATFORM_VOID_SYMBOL.value),
+            prepare_NCurses_cell(value=self.name, altValue=symbols.NAME_VOID_SYMBOL.value),
+            prepare_NCurses_cell(value=self.licence.abbr, altValue=symbols.LICENCE_VOID_SYMBOL.value),
+            prepare_NCurses_cell(value=self.genre.abbr, altValue=symbols.GENRE_VOID_SYMBOL.value),
+            prepare_NCurses_cell(value=self.year, altValue=symbols.DATE_VOID_SYMBOL.value, color=colorForTheYear(self.year)),
+            prepare_NCurses_cell(value=self.human_latest_opening_duration(), altValue=symbols.LASTOPENING_VOID_SYMBOL.value, color=set_color_according_to_last_opening_duration(self.latest_opening_duration())),
+            prepare_NCurses_cell(value=self.human_cumulate_time(), altValue=symbols.CUMULATEDTIME_VOID_SYMBOL.value, color=set_color_according_to_cumulate_time(self.cumulate_time())),
+            prepare_NCurses_cell(value=self.listOfAuthors(), altValue=symbols.AUTHOR_VOID_SYMBOL.value),
+            prepare_NCurses_cell(value=self.listOfStudios(), altValue=symbols.STUDIO_VOID_SYMBOL.value),
         ]
         return ncurseLine
 
@@ -202,7 +221,7 @@ class Game:
         return asciiRow
 
     def sheet(self):
-        # Fiche rapide de description de jeu
+        # Fiche rapide de description de jeu à afficher sur la sortie standard
         sheet_data=[
             ["Nom", self.name],
             ["code", self.code],
@@ -252,16 +271,16 @@ class Game:
         return "-"
 
     def listOfAuthors(self):
+        # Retourne la liste des auteurs formatées avec les bons séparateurs
         return formatDataListToLitteralList(self.authors, symbols.AUTHOR_VOID_SYMBOL.value)
 
     def listOfStudios(self):
+        # Retourne la liste des studios formatées avec les bons séparateurs
         return formatDataListToLitteralList(self.studios, symbols.STUDIO_VOID_SYMBOL.value)
 
     def delete(self):
+        # Supprimer le jeu de la base de donnée
         deleteGameFromDatabase(self.code)
-
-    def showPlot(self):
-        pass
 
     def create_launcher(self):
         directory = Path("~/.local/bin").expanduser()
