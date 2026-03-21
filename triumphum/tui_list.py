@@ -16,7 +16,7 @@ from triumphum.tui_functions import run_command_and_write_on_history
 from triumphum.debug import * # TODO
 
 def getColWidths():
-    itemsMergedWithTitle = global_variables.items[:]
+    itemsMergedWithTitle = global_variables.THE_VISUAL_LIST_OF_GAMES.items[:]
     itemsMergedWithTitle.append(titles)
     col_widths = [max(len(str(column[0])) for column in col) for col in zip(*itemsMergedWithTitle)]
 
@@ -79,6 +79,7 @@ class VisualListOfGames:
         self.selected_row = 0
         self.firstRowOnVisibleList = 0
         self.lastMove=None
+        self.items=[]
 
         self.refresh()
         global_variables.THE_VISUAL_LIST_OF_GAMES = self # Le seul objet de cette classe est TheVisualListOfGames
@@ -221,6 +222,7 @@ class VisualListOfGames:
         self.sortByProperty=property_
 
     def columnsWidth(self):
+        # TODO innutilisé
         # Définir la largeur des colones d’après leur contenu le plus large
         itemsMergedWithTitle = self.items[:] # Inclure les titres de colones
         itemsMergedWithTitle.append(self.titles) # Inclure le corps du tableau

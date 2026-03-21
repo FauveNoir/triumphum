@@ -23,10 +23,10 @@ from triumphum.debug import * # TODO
 SORTING_COLUMN=0
 
 def makeItemsList():
-    global_variables.items=[]
+    global_variables.THE_VISUAL_LIST_OF_GAMES.items=[]
     for aGame in listOfGames:
-        global_variables.items.append(listOfGames[aGame].ncurseLine())
-    return global_variables.items
+        global_variables.THE_VISUAL_LIST_OF_GAMES.items.append(listOfGames[aGame].ncurseLine())
+    return global_variables.THE_VISUAL_LIST_OF_GAMES.items
 
 BOTTOM_BAR_TEXT=APP_MOTO
 
