@@ -10,10 +10,8 @@ import traceback
 from triumphum.__init__ import *
 from triumphum.global_variables import *
 from triumphum.colors import *
-#from triumphum.global_variables import STDSCR as STDSCR
 import triumphum.global_variables as global_variables
 import triumphum.symbols as symbols
-#from triumphum.misc import bottomBarCoordinate
 from triumphum.misc import getElementHavingParameterWithValue
 from triumphum.debug import *
 from triumphum.debug import * # TODO
