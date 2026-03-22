@@ -84,6 +84,10 @@ class VisualListOfGames:
         self.refresh()
         global_variables.THE_VISUAL_LIST_OF_GAMES = self # Le seul objet de cette classe est TheVisualListOfGames
 
+    def get_feeded(self):
+        for aGame in global_variables.listOfGames:
+            self.items.append(global_variables.listOfGames[aGame].ncurseLine())
+
     def isTheListEmpty(self):
         # Renvoies True ou False, selon que la liste soit pleine ou vide
         if self.relevantList() in [None, []]:

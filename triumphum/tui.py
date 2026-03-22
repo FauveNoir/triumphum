@@ -18,17 +18,11 @@ from triumphum.debug import * # TODO
 
 # Titres des colonnes
 
-SORTING_COLUMN=0
-
-def makeItemsList():
-    global_variables.THE_VISUAL_LIST_OF_GAMES.items=[]
-    for aGame in listOfGames:
-        global_variables.THE_VISUAL_LIST_OF_GAMES.items.append(listOfGames[aGame].ncurseLine())
-    return global_variables.THE_VISUAL_LIST_OF_GAMES.items
 
 BOTTOM_BAR_TEXT=APP_MOTO
 
 def setBottomBarContent(newBottomBarText):
+    # Inscrire un message sur la barre de message en bas
     global BOTTOM_BAR_TEXT
     BOTTOM_BAR_TEXT = newBottomBarText
     global_variables.STDSCR.refresh()
@@ -193,7 +187,7 @@ def display_filter(stdscr):
 def drawListOfGames(stdscr):
     #setBottomBarContent("Don:x  Quitter:q  Tri par nom:b  Par date:o  Par licence:é  Par genre:p Par date:o  Par durée de jeu:!") # TODO rendre automatique
     from triumphum.tui_list import getColWidths
-    makeItemsList()
+    global_variables.THE_VISUAL_LIST_OF_GAMES.get_feeded()
     global_variables.THE_VISUAL_LIST_OF_GAMES.refresh()
     screenHeight, screenWidth = stdscr.getmaxyx()
     if global_variables.THE_VISUAL_LIST_OF_GAMES.isTheListEmpty():
