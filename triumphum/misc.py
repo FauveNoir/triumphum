@@ -11,7 +11,3 @@ def getElementHavingParameterWithValue(givenList=None, parameter=None, value=Non
 		if hasattr(anElement, parameter) and getattr(anElement, parameter) == value:
 				return anElement
 	return None
-
-def bottomBarCoordinate(stdscr):
-	"""Déplacé dans misc pour cause d’import circulaire"""
-	return stdscr.getmaxyx()

@@ -9,7 +9,7 @@ from triumphum.__init__ import *
 from triumphum.global_variables import listOfBindings
 import triumphum.global_variables as global_variables
 from triumphum.misc import getElementHavingParameterWithValue
-from triumphum.misc import bottomBarCoordinate
+from triumphum.tui import bottomBarCoordinate
 from triumphum.internal_shell_class import whatToDoWithShellInput
 from triumphum.tui import  setBottomBarContent, questionMode
 

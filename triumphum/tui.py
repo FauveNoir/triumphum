@@ -13,7 +13,7 @@ from triumphum.colors import *
 #from triumphum.global_variables import STDSCR as STDSCR
 import triumphum.global_variables as global_variables
 import triumphum.symbols as symbols
-from triumphum.misc import bottomBarCoordinate
+#from triumphum.misc import bottomBarCoordinate
 from triumphum.misc import getElementHavingParameterWithValue
 from triumphum.debug import *
 from triumphum.debug import * # TODO
@@ -40,6 +40,11 @@ def setBottomBarColor(color):
 
 
 # Barre inférieure
+
+def bottomBarCoordinate(stdscr):
+    """Déplacé dans misc pour cause d’import circulaire"""
+    return stdscr.getmaxyx()
+
 def draw_bottom_bar(stdscr):
     # Récupère les dimensions de l'écran
     global BOTTOM_BAR_TEXT
@@ -245,9 +250,8 @@ def questionMode(question):
             pass
 
 ########################################################################
-# Main
+# Partie principale
 ########################################################################
-
 
 def mainTui(stdscr):
 
