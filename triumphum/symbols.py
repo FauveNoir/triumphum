@@ -4,12 +4,11 @@
 
 from triumphum.global_variables import listOfGraphicalSymbols
 
-#
 ## Explication
-# Les symboles graphiques sont l’ensemble des éléments d’interface qui se présente sous la forme d’ùn caractère typographique, comme les lignes permettant de dessiner les boites, ou encore les symboles servant à designant des informations manquantes.
+# Les symboles graphiques sont l’ensemble des éléments d’interface qui se présente sous la forme d’ùn caractère typographique, comme les lignes permettant de dessiner les boites, ou encore les symboles ayant un rôle presque pictographique.
 
 class GraphicalSymbol:
-	# Classe des symboles symboles graphiques, qui crée les variables globales désignants les dits symbols
+	# Classe des symboles graphiques, qui crée les variables globales désignants les dits symbols
 	def __init__(self, localName=None, fileConfigName=None, description=None, value=None):
 		self.localName=localName # Nom sous lequel sera désignée la variable du fichier dans le code python
 
@@ -31,7 +30,7 @@ class GraphicalSymbol:
 		return self.value
 
 	def __add__(self, other):
-		# S’il doit être sommé à un autre objet de type char, alors l’objet renvoit sa valeur à preprement parler.
+		# S’il doit être sommé à un autre objet de type char, alors l’objet renvoit sa .value à preprement parler.
 		if isinstance(other, str):
 			return str(self) + other
 		else:
@@ -60,4 +59,3 @@ GraphicalSymbol(localName="CUMULATED_TIME_PLAYED_PER_WEEK", value="W", descripti
 GraphicalSymbol(localName="CUMULATED_TIME_PLAYED_PER_MONTH", value="M", description="Symbole de temps de jeu cumulé durant le mois")
 GraphicalSymbol(localName="CUMULATED_TIME_PLAYED_PER_YEAR", value="Y", description="Symbole de temps de jeu cumulé durant l’année ")
 GraphicalSymbol(localName="CUMULATED_TIME_PLAYED_SEPARATOR", value="│", description="Séparateur des indicateurs de temps de jeu cumulé")
-
