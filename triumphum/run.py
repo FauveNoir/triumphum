@@ -20,51 +20,65 @@ from triumphum.tui_functions import run_command_and_write_on_history
 from triumphum.debug import * # TODO
 
 def processArgs(args):
+    # Traitement des paramettre d’appel en ligne de commande
+
     if args.config_file != None:
+        # Cas d’appel avec un fichier de configuration explicite
         config_file.CONFIG_FILE.setNew(args.config_file)
 
 
+    # Bloc de génération des racourcis clavier et des symboles graphiques
     applyFileConfigurationsBindings()
     applyFileConfigurationsGraphicalSymbols()
 
     # Fichiers de configuration
     if args.games_file:
+        # Base de données des jeux
         config_file.GAME_FILE.setNew(args.games_file)
     if args.genres_file:
+        # Base de données des genres
         config_file.GENRE_FILE.setNew(args.genres_file)
     if args.licences_file:
+        # Base de données des licences
         config_file.LICENCE_FILE.setNew(args.licences_file)
     if args.platforms_file:
+        # Base de données des plateformes
         config_file.PLATFORM_FILE.setNew(args.platforms_file)
 
     if  args.verbose == True:
+        # Cas dappel avec le paramettre verbose
         print(f"Fichier de configuration principal : {config_file.CONFIG_FILE}")
         print(f"Fichier des jeux : {config_file.GAME_FILE}")
         print(f"Fichier des genres de jeux : {config_file.GENRE_FILE}")
         print(f"Fichier des licences : {config_file.LICENCE_FILE}")
         print(f"Fichier des plateformes : {config_file.PLATFORM_FILE}")
 
-    # Configuration
-
-
     # Section des adjonctions
     if args.newGameDescriptor :
+        # Adjonction de jeux
         addNewGameAfterInterativeDescriptor(descriptor=args.newGameDescriptor, isSplited=True, shouldCreateTheLauncher=args.shouldCreateTheLauncher)
     elif args.newGenreDescriptor :
+        # Adjonction de genres
         addNewGenreAfterInterativeDescriptor(args.newGenreDescriptor, True)
     elif args.newLicenceDescriptor :
+        # Adjonction de licences
         addNewLicenceAfterInterativeDescriptor(args.newLicenceDescriptor, True)
     elif args.newPlatformDescriptor :
+        # Adjonction de plateformes
         addNewPlatformAfterInterativeDescriptor(args.newPlatformDescriptor, True)
 
     # Parametres de l’autocompletion
     elif args.autocompletionGame:
+        # Génération de l’autocmpletion pour les jeux disponibles
         print(listOfAllGamesCodePerLine())
     elif args.autocompletionGenre :
+        # Génération de l’autocmpletion pour les genres disponibles
         print(listOfAllGenresCodePerLine())
     elif args.autocompletionLicence :
+        # Génération de l’autocmpletion pour les licences disponibles
         print(listOfAllLicencesCodePerLine())
     elif args.autocompletionPlatform :
+        # Génération de l’autocmpletion pour les plateformes disponibles
         print(listOfAllPlatformsCodePerLine())
 
     # Affichages des listes cli
@@ -97,7 +111,7 @@ def processArgs(args):
         else:
             print(f"Aucun jeu ne correspond à l’identifiant « {args.run} »")
 
-    # Autres fonctions autonomes
+    # Autres fonctions autonomes. C’est à dire n’étant pas sensées être combinables avec d’autres paramettres.
     elif  args.about == True:
         print(APP_FANCY_NAME + " " + APP_VERSION + " " + APP_DESCRIPTION)
 
@@ -106,6 +120,7 @@ def processArgs(args):
         webbrowser.open(APP_AUTHOR_DONATION_LINK)
 
     elif args.regenerate_launcher:
+        # Cas de la regénération des lanceurs d’un jeu spécifique
         try:
             theGame=listOfGames[args.regenerate_launcher]
             theGame.create_launcher()
@@ -113,10 +128,12 @@ def processArgs(args):
             print(f"Aucun jeu ne correspond à l’identifiant « {args.regenerate_launcher} »")
 
     elif args.regenerate_all_launcher:
+        # Cas de la regénération des lanceurs de tous les jeux
         for aGameCode in listOfGames:
             listOfGames[aGameCode].create_launcher()
 
     elif args.tui == True:
+        # cas (défaut) de lancement de la TUI pour la liste visuelle des jeux.
         if args.layout:
             layout=global_variables.listOfLayouts[args.layout]
             layout.apply()

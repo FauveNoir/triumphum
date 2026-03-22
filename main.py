@@ -14,17 +14,18 @@ from triumphum.debug import * # TODO
 
 def main():
 
-	makeLayoutsList()
-	setInternalShellCommands()
-	declareBindings()
+    makeLayoutsList() # déploiement de la liste des dispositions de clavier hardcodées
+    setInternalShellCommands() # déploiement des commandes internes de shell
+    declareBindings()
 
-	# /!\ Il est imporatnt que prepareConfigFiles() soit éxecutée après les déclarations de bindings car elle en a besoin pour générer les bindings par défaut.
-	prepareConfigFiles()
-	verifyConfigFileExistence()
+    # /!\ Il est imporatnt que prepareConfigFiles() soit éxecutée après les déclarations de bindings car elle en a besoin pour générer les bindings par défaut.
+    prepareConfigFiles()
+    verifyConfigFileExistence()
 
-	# /!\ Il est imporatnt que VisualListOfGames() vienne après prepareConfigFiles() car ce dernier décalre des variables globales dont VisualListOfGames() a besoin
-	VisualListOfGames()
+    # /!\ Il est imporatnt que VisualListOfGames() vienne après prepareConfigFiles() car ce dernier décalre des variables globales dont VisualListOfGames() a besoin
+    VisualListOfGames()
 
-	processArgs(args)
+    # Traitement des paramettres donnés en entrée
+    processArgs(args)
 
 main()
