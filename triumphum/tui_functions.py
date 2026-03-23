@@ -11,6 +11,7 @@ from triumphum.history_classes import HistoryEntry
 
 
 def history_data_with_current_game(game):
+    # Récupérer depuis la base de donnée l’historique du jeu `game`
     with open(config_file.HISTORY_FILE.fullPath()) as f:
         data = json.load(f)
 
@@ -23,6 +24,7 @@ def history_data_with_current_game(game):
     return data
 
 def write_opening_date_on_history(game=None, start_time=None, end_time=None, duration=None):
+    # Enregistrer les données de la session de jeu
     try:
         # Charger le JSON existant depuis un fichier
         with open(config_file.HISTORY_FILE.fullPath()) as f:
@@ -40,6 +42,8 @@ def write_opening_date_on_history(game=None, start_time=None, end_time=None, dur
         pass
 
 def run_command_and_write_on_history(game):
+    # Executer un jeu et suivre les statistiques autour de la partie
+
     # Enregistrement de l’heure de début
     start_time = datetime.now()
 
