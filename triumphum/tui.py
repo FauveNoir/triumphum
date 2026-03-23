@@ -13,12 +13,9 @@ from triumphum.colors import *
 import triumphum.global_variables as global_variables
 import triumphum.symbols as symbols
 from triumphum.misc import getElementHavingParameterWithValue
-from triumphum.debug import *
 from triumphum.debug import * # TODO
 
-# Titres des colonnes
-
-
+# Par défaut à l’ouverture, placer le slogan dans la bare de message
 BOTTOM_BAR_TEXT=APP_MOTO
 
 def setBottomBarContent(newBottomBarText):
@@ -32,12 +29,13 @@ def setBottomBarColor(color):
 
 
 # Barre inférieure
-
 def bottomBarCoordinate(stdscr):
-    """Déplacé dans misc pour cause d’import circulaire"""
+    # Retourne les coordonées de la barre de saisie
     return stdscr.getmaxyx()
 
 def draw_bottom_bar(stdscr):
+    # Dessine la barre de saisie
+
     # Récupère les dimensions de l'écran
     global BOTTOM_BAR_TEXT
     h, w = bottomBarCoordinate(stdscr)
@@ -49,6 +47,7 @@ def draw_bottom_bar(stdscr):
 
 
 def prepareTextForRightIndicator(visualListOfGames):
+    # Retourne le texte du bas droit, sensé afficher le résumé du temps cumulé de jeu par périodes (jour, semaine, mois, année en cours)
 
     rightIndicatorText=  symbols.CUMULATED_TIME_PLAYED_PER_DAY + ": "
     rightIndicatorText+= humanize.naturaldelta(visualListOfGames.allHistoryEntries().cumulatedPlayingTimeFromNDays(1))
@@ -73,13 +72,13 @@ def prepareTextForRightIndicator(visualListOfGames):
 MAIN_SCREEN_MARGIN_BOTTOM=2
 # Barre inférieure
 def draw_bottom_right(stdscr, visualListOfGames):
-    # Récupère les dimensions de l'écran
+    # Dessine le contenu du bas droit
 
     rightIndicatorText=prepareTextForRightIndicator(visualListOfGames)
+
+    # Récupère les dimensions de l'écran
     h, w = stdscr.getmaxyx()
     global_variables.STDSCR=stdscr
-
-    # Définir le texte de la barre inférieure
 
     # Calculer la position de départ pour l'alignement à droite
     x_start = w - len(rightIndicatorText)
@@ -94,6 +93,8 @@ def draw_bottom_right(stdscr, visualListOfGames):
     stdscr.refresh()
 
 def drawBothBars(stdscr):
+    #Dessine toutes les bares
+
     # Dessiner la barre supérieure avec le nom de l'application
     stdscr.attron(curses.color_pair(1))
     stdscr.addstr(0, 0, APP_NAME.ljust(curses.COLS), curses.color_pair(2))
@@ -104,6 +105,9 @@ def drawBothBars(stdscr):
     draw_bottom_right(stdscr, global_variables.THE_VISUAL_LIST_OF_GAMES)
 
 def display_centered_text(stdscr, text):
+    # Affiche du texte centré verticalement et horisontalement
+
+
     # Obtenir les dimensions de l'écran
     h, w = stdscr.getmaxyx()
 
@@ -124,21 +128,26 @@ def display_centered_text(stdscr, text):
         stdscr.addstr(start_y + i, x, line)
 
 def truncate(text=None, max_len=8):
+    # Tronque le texte
     text=str(text)
     if len(text) <= max_len:
         return text
     return text[:max_len - 1] + "…"
 
 def display_too_small_terminal_message(stdscr):
+    # Afficher le message d’erreur en cas de terminal trop petit
     height, width = global_variables.STDSCR.getmaxyx()
     display_centered_text(stdscr, f"Le terminal est trop petit pour lancer {APP_FANCY_NAME}\nVeuillez utiliser un terminal d’au moins {height}×{width}.")
 
 
 def display_filter_if_needed(stdscr):
+    # Nactiver le mode de filtre que si nécéssaire
     if global_variables.THE_VISUAL_LIST_OF_GAMES.filter_mode:
        display_filter(stdscr)
 
 def display_filter(stdscr):
+    # activer le filtre
+
     stdscr.timeout(1000)
     curses.curs_set(1)  # Afficher le curseur
     h, w = bottomBarCoordinate(stdscr)
@@ -185,23 +194,35 @@ def display_filter(stdscr):
     curses.curs_set(0)  # Masquer le curseur
 
 def drawListOfGames(stdscr):
+    # Dessin de la liste des jeux à proprement parler
+
     #setBottomBarContent("Don:x  Quitter:q  Tri par nom:b  Par date:o  Par licence:é  Par genre:p Par date:o  Par durée de jeu:!") # TODO rendre automatique
     from triumphum.tui_list import getColWidths
+
+    # Rafraichissement des données
     global_variables.THE_VISUAL_LIST_OF_GAMES.get_feeded()
     global_variables.THE_VISUAL_LIST_OF_GAMES.refresh()
+
+    # Récuparation des dimentions
     screenHeight, screenWidth = stdscr.getmaxyx()
+
     if global_variables.THE_VISUAL_LIST_OF_GAMES.isTheListEmpty():
+        # Cas où la liste est vide
         noGameFoundText="""Aucun jeu trouvé.
  Saissez :h ou consultez man triphum
         """
         display_centered_text(stdscr,noGameFoundText)
     else:
+        # Cas où la liste n’est pas vide
+
         # Calcul de la largeur des colones
         col_widths = getColWidths()
 
+        # TODO sur les sections en bas. La valeur 2 représentant le séparateur entre colones doit être factorisé.
+
         # Affichage de l’entête de liste
         for row_number, title in enumerate(titles):
-            stdscr.addstr(1, sum(col_widths[:row_number]) + row_number * 2, str(title), curses.color_pair(2) | curses.A_BOLD)
+            stdscr.addstr(1, sum(col_widths[:row_number]) + row_number * 2, str(title), curses.color_pair(2) | curses.A_BOLD) 
 
         # Affichage des données de la liste
         for row_number, item in enumerate(global_variables.THE_VISUAL_LIST_OF_GAMES.getCurrentVisibleList(screenHeight)):
@@ -211,7 +232,7 @@ def drawListOfGames(stdscr):
                               column[0],
                               curses.color_pair(column[1]))
 
-        stdscr.addstr(global_variables.THE_VISUAL_LIST_OF_GAMES.visualHighlightedLineNumber(screenHeight) + 2, 0, " " * curses.COLS, curses.color_pair(2))  # Effacer toute la ligne avec la couleur de fond
+        stdscr.addstr(global_variables.THE_VISUAL_LIST_OF_GAMES.visualHighlightedLineNumber(screenHeight) + 2, 0, " " * curses.COLS, curses.color_pair(2))  # Appliquer une couleur de fond différente à toute
 
         # Affichage des données de la liste avec surbrillance pour la ligne sélectionnée
         # Cas particulier de la ligne ayant le focus
@@ -223,6 +244,7 @@ def drawListOfGames(stdscr):
 
 
 def questionMode(question):
+    # Question interactive en TUI à l’utilisateur
     setBottomBarContent(question + " (Y/n)")
     draw_bottom_bar(global_variables.STDSCR)
     global_variables.STDSCR.refresh()
@@ -246,6 +268,8 @@ def questionMode(question):
 ########################################################################
 
 def mainTui(stdscr):
+    # Fonction principale de production de la TUI
+    from triumphum.keybindings import bindQuit
 
     global_variables.STDSCR=stdscr
     # Initialisation de ncurses
@@ -267,10 +291,6 @@ def mainTui(stdscr):
     # Boucle principale
     while True:
         stdscr.timeout(1000)
-        # Mise à jour de l’historique
-        #retrive_datas()
-        # Mise à jour de la liste des jeux
-
         curses.noecho()  # Désactiver l'écho des touches
         stdscr.clear()
 
@@ -281,6 +301,7 @@ def mainTui(stdscr):
             stdscr.refresh()
 
         except curses.error as e:
+            # Gestion du cas où le terminal est trop petit
             display_too_small_terminal_message(stdscr)
             height, width = global_variables.STDSCR.getmaxyx()
             print(f"Le terminal est trop petit pour lancer {APP_FANCY_NAME}\nVeuillez utiliser un terminal d’au moins {height}×{width}.")
@@ -295,9 +316,12 @@ def mainTui(stdscr):
                 key = stdscr.get_wch()
                 key = transformKeyToCharacter(key)
             except curses.error:
+                # Cet except est rendu nécéssaire par le fait qu’il y’ai un .timeout()
+                # Il sert à traiter les ittérations au cours desquelles aucune touche n’a été saisie
                 key = None  # aucune touche pressée pendant 1 seconde
 
-            if (key) == transformKeyToCharacter('q'):  # Quitter si la touche 'q' est pressée # TODO factoriser
+#            if (key) == transformKeyToCharacter('q'):  # Quitter si la touche 'q' est pressée # TODO factoriser
+            if (key) == bindQuit.key :  # Quitter si la touche 'q' est pressée # TODO factoriser
                 break
             elif any(key == aBinding.key for aBinding in global_variables.listOfBindings):
                 # Teste si la touche préssé correspond à l’attribut key d’un des élements de listOfBindings
@@ -308,4 +332,5 @@ def mainTui(stdscr):
 
 
 def runTui():
+    # Fonction générale de lancement de la TUI
     curses.wrapper(mainTui)
